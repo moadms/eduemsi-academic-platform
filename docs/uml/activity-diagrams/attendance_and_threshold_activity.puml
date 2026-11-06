@@ -1,0 +1,49 @@
+@startuml
+!theme cerulean-outline
+skinparam defaultFontName "Segoe UI"
+
+title Diagramme d'Activité : Pointage de Séance & Alerte Seuil Éliminatoire 20% (Sans QR Code)
+
+|Professeur|
+start
+:Ouvre l'application mobile en début de séance;
+:Sélectionne sa séance planifiée;
+:Affiche la feuille d'appel pré-remplie;
+
+note right
+  Option par exception :
+  Tous les étudiants sont
+  initialisés à "Présent".
+end note
+
+repeat
+  :Pointe manuellement l'état de l'étudiant
+  (Présent / Absent Injustifié / Absent Justifié);
+repeat while (Tous les étudiants vérifiés ?) is (non)
+->oui;
+
+:Valide et soumet l'émargement de séance;
+
+|Système Backend (Spring Boot)|
+:Horodate et persiste l'émargement dans PostgreSQL;
+:Pour chaque étudiant absent, recalcule le cumul d'heures;
+:Calcule le ratio d'absentéisme :
+ratio = (heures_injustifiees / volume_total_module) * 100;
+
+if (ratio >= 20.0 %) then (oui : seuil critique atteint)
+  #Pink:Générer Alerte Rouge Administrative;
+  :Flaguer l'étudiant en statut "NON_ADMISSIBLE_EXAMEN";
+  :Envoyer notification Push & Email au Responsable de Scolarité;
+  :Envoyer SMS / Email d'alerte officielle à l'étudiant et tuteur;
+else (non : quota régulier)
+  #LightGreen:Statut régulier maintenu;
+endif
+
+|Professeur|
+:Fin du créneau de cours (détecté par le système);
+:Reçoit une notification de rappel "Cahier de texte";
+:Renseigne les chapitres traités, objectifs et devoirs;
+:Valide la fiche de séance (immédiatement archivée);
+
+stop
+@enduml

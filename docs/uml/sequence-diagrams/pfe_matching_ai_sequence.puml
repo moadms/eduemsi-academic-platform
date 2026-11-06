@@ -1,0 +1,64 @@
+@startuml
+!theme cerulean-outline
+autonumber
+skinparam defaultFontName "Segoe UI"
+skinparam responseMessageBelowArrow true
+
+title Scénario d'Interaction : Matching Jury PFE avec Gemini 2.0 Flash & Fallback Heuristique Local
+
+actor "Chef de Filière" as User
+boundary "Angular Frontend\n(PfeMatchingComponent)" as UI
+control "PfeJuryController" as API
+participant "GeminiAiServiceClient" as AIService
+boundary "Google Gemini 2.0 Flash\n(Free REST API)" as GeminiAPI
+participant "LocalHeuristicEngine\n(Secours Jaccard)" as LocalEngine
+database "PostgreSQL DB" as DB
+
+User -> UI : Clique sur "Générer Jury PFE (IA)"(pfeId)
+activate UI
+
+UI -> API : POST /api/pfe/{id}/match-jury
+activate API
+
+API -> DB : Charger PFE, thématique, encadrantId et enseignants disponibles
+activate DB
+DB --> API : Entités PFE & List<Professeur>
+deactivate DB
+
+API -> AIService : matchPfeJuryWithFallback(pfe, candidats)
+activate AIService
+
+alt #LightCyan Connexion Internet Active & Quota Valide
+    AIService -> GeminiAPI : POST /v1beta/models/gemini-2.0-flash:generateContent\n{ prompt: spec_json, regle_deonto: encadrant != jury }
+    activate GeminiAPI
+    GeminiAPI --> AIService : 200 OK { presidentId, rapporteurId, score: 96, motif: "..." }
+    deactivate GeminiAPI
+
+    AIService -> AIService : Valider Intégrité Déontologique (presidentId != encadrant && rapporteurId != encadrant)
+    note right: Sécurité applicative stricte : double vérification
+
+else #MistyRose Coupure Internet / Quota Épuisé (HTTP 429 / 5xx / Timeout)
+    AIService -> AIService : Détection anomalie externe (Exception capturée)
+    AIService -> LocalEngine : computeLocalJaccardMatching(pfe, candidats)
+    activate LocalEngine
+    LocalEngine -> LocalEngine : Filtrer candidats (exclure encadrant)
+    LocalEngine -> LocalEngine : Calculer score pertinence lexicale
+    LocalEngine --> AIService : Résultat Heuristique Local { presidentId, rapporteurId, source: "LOCAL_FALLBACK" }
+    deactivate LocalEngine
+end
+
+AIService --> API : PfeJuryMatchResultDTO
+deactivate AIService
+
+API -> DB : Enregistrer proposition jury en statut 'PROPOSE'
+activate DB
+DB --> API : Enregistré
+deactivate DB
+
+API --> UI : 200 OK { president, rapporteur, score, source }
+deactivate API
+
+UI --> User : Affichage de la proposition de jury avec badge de certification
+deactivate UI
+
+@enduml

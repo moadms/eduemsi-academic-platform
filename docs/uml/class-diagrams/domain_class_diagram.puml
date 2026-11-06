@@ -1,0 +1,169 @@
+@startuml
+!theme cerulean-outline
+skinparam defaultFontName "Segoe UI"
+skinparam classAttributeIconSize 0
+
+title EMSI Academic Platform - Diagramme de Classes du Domaine (UML 2.5.1)
+
+enum RoleEnum {
+    ROLE_SUPERADMIN
+    ROLE_DIRECTEUR
+    ROLE_RESPONSABLE_FILIERE
+    ROLE_PLANIFICATEUR
+}
+
+enum StatutProfesseur {
+    PERMANENT
+    VACATAIRE
+}
+
+enum TypeSalle {
+    COURS_MAGISTRAL
+    TP_INFORMATIQUE
+    TP_INDUSTRIEL
+    AMPHITHEATRE
+}
+
+class User <<entity>> {
+    - id : Long
+    - username : String
+    - passwordHash : String
+    - email : String
+    - isActive : Boolean
+    + hasRole(role : RoleEnum) : Boolean
+}
+
+class Role <<entity>> {
+    - id : Long
+    - name : RoleEnum
+}
+
+class AuditLog <<entity>> {
+    - id : Long
+    - timestamp : LocalDateTime
+    - action : String
+    - authorUsername : String
+    - ipAddress : String
+    - detailsJson : String
+}
+
+class Campus <<entity>> {
+    - id : Long
+    - nom : String
+    - ville : String
+    - adresse : String
+}
+
+class Salle <<entity>> {
+    - id : Long
+    - code : String
+    - typeSalle : TypeSalle
+    - capacite : Integer
+    - hasComputers : Boolean
+    - pcCount : Integer
+}
+
+class Filiere <<entity>> {
+    - id : Long
+    - code : String
+    - libelle : String
+}
+
+class Classe <<entity>> {
+    - id : Long
+    - code : String
+    - anneeNiveau : Integer
+    - effectif : Integer
+}
+
+class Professeur <<entity>> {
+    - id : Long
+    - matricule : String
+    - nom : String
+    - prenom : String
+    - statut : StatutProfesseur
+    - specialitePrincipale : String
+    - volumeHoraireMax : Integer
+}
+
+class DisponibiliteVacataire <<entity>> {
+    - id : Long
+    - jourSemaine : DayOfWeek
+    - creneauDebut : LocalTime
+    - creneauFin : LocalTime
+}
+
+class SeancePlanifiee <<entity>> {
+    - id : Long
+    - dateJour : LocalDate
+    - creneauIndex : Integer
+    - heureDebut : LocalTime
+    - heureFin : LocalTime
+    - isTpMachine : Boolean
+    - validationStatut : String
+}
+
+class FicheSeance <<entity>> {
+    - id : Long
+    - dateSoumission : LocalDateTime
+    - chapitresTraites : String
+    - travailAFaire : String
+    - observations : String
+}
+
+class Emargement <<entity>> {
+    - id : Long
+    - horodatageAppel : LocalDateTime
+    - isCloture : Boolean
+}
+
+class LignePresence <<entity>> {
+    - id : Long
+    - isPresent : Boolean
+    - isJustifie : Boolean
+    - motifJustificatif : String
+}
+
+class PfeProjet <<entity>> {
+    - id : Long
+    - titre : String
+    - resumeThematique : String
+    - technologies : String
+    - anneeUniversitaire : String
+}
+
+class PfeJury <<entity>> {
+    - id : Long
+    - dateSoutenance : LocalDateTime
+    - scoreMatchingIA : Double
+    - algorithmeSource : String
+    + validerConflitInteret() : Boolean
+}
+
+' Relations
+User "1" *-- "*" Role
+User "1" ..> "*" AuditLog : génère
+
+Campus "1" *-- "1..*" Salle
+Filiere "1" *-- "1..*" Classe
+Classe "1" o-- "*" SeancePlanifiee
+Salle "1" o-- "*" SeancePlanifiee
+Professeur "1" o-- "*" SeancePlanifiee
+Professeur "1" *-- "*" DisponibiliteVacataire
+
+SeancePlanifiee "1" *-- "0..1" FicheSeance
+SeancePlanifiee "1" *-- "1" Emargement
+Emargement "1" *-- "1..*" LignePresence
+
+PfeProjet "1" --> "1" Professeur : encadré par
+PfeProjet "1" *-- "0..1" PfeJury
+PfeJury "1" --> "1" Professeur : président
+PfeJury "1" --> "1" Professeur : rapporteur
+
+note right of PfeJury
+  Contrainte d'intégrité déontologique :
+  president != encadrant &&
+  rapporteur != encadrant
+end note
+
+@enduml

@@ -1,0 +1,70 @@
+@startuml
+!theme cerulean-outline
+skinparam backgroundColor #FFFFFF
+skinparam handwritten false
+skinparam defaultFontName "Segoe UI"
+skinparam roundCorner 10
+
+title EMSI Academic Platform - Diagramme des Cas d'Utilisation (UML 2.5.1)
+
+left to right direction
+
+actor "Super Administrateur" as SuperAdmin
+actor "Directeur Pédagogique" as Directeur
+actor "Chef de Filière" as ChefFiliere
+actor "Professeur (Permanent/Vacataire)" as Professeur
+actor "Étudiant" as Etudiant
+
+rectangle "Plateforme EMSI Campus (Système)" {
+    package "Gouvernance & Sécurité" {
+        usecase "Créer & Administrer les Responsables" as UC_AdminUsers
+        usecase "Auditer les Actions Système" as UC_Audit
+        usecase "S'authentifier (JWT / RBAC)" as UC_Auth
+    }
+
+    package "Module IA & RH (Free Gemini API)" {
+        usecase "Affecter les Jurys PFE (Zéro Conflit)" as UC_JuryPFE
+        usecase "Analyser les CV & Détecter Déficits Filières" as UC_RecrutementRH
+        usecase "Basculer sur le Moteur Heuristique Local" as UC_Fallback
+    }
+
+    package "Moteur de Planification & Solveur OR-Tools" {
+        usecase "Générer Emploi du Temps Automatisé" as UC_GenEDT
+        usecase "Appliquer Contrainte Priorité Vacataires" as UC_Vacataires
+        usecase "Affecter Obligatoirement Salles TP PC" as UC_SallesPC
+        usecase "Garantir Campus Unique & Pauses" as UC_ReglesCampus
+    }
+
+    package "Scolarité, Émargement & Pédagogie" {
+        usecase "Effectuer l'Appel Manuel de Séance" as UC_Appel
+        usecase "Déclencher Alerte Seuil 20% Absences" as UC_AlerteAbsence
+        usecase "Renseigner Cahier de Texte Post-Séance" as UC_CahierTexte
+        usecase "Consulter Emploi du Temps Hebdomadaire" as UC_ConsulterEDT
+    }
+}
+
+' Relations Gouvernance
+SuperAdmin --> UC_AdminUsers
+SuperAdmin --> UC_Audit
+UC_AdminUsers ..> UC_Auth : <<include>>
+
+' Relations IA & RH
+ChefFiliere --> UC_JuryPFE
+Directeur --> UC_RecrutementRH
+UC_JuryPFE ..> UC_Fallback : <<extend>>
+
+' Relations Planification
+ChefFiliere --> UC_GenEDT
+UC_GenEDT ..> UC_Vacataires : <<include>>
+UC_GenEDT ..> UC_SallesPC : <<include>>
+UC_GenEDT ..> UC_ReglesCampus : <<include>>
+
+' Relations Scolarité & Enseignants
+Professeur --> UC_Appel
+Professeur --> UC_CahierTexte
+UC_Appel ..> UC_AlerteAbsence : <<extend>>
+
+' Consultation
+Etudiant --> UC_ConsulterEDT
+Professeur --> UC_ConsulterEDT
+@enduml
