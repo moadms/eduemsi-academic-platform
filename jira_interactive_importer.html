@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jira Scrum Backlog Manager - EMSI Academic Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0052cc;
+            --primary-dark: #0747a6;
+            --emsi-green: #059669;
+            --emsi-green-dark: #047857;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --card-border: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-red: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 24px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 24px 32px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .badge-jira {
+            background: #0052cc;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .header-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .team-strip {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .member-chip {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .member-chip:hover {
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 13px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .role-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .member-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f1f5f9;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .instructions-box {
+            background: #172554;
+            border: 1px solid #1e40af;
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+        }
+
+        .instructions-box h3 {
+            color: #60a5fa;
+            font-size: 16px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .instructions-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .step-item {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+            padding: 12px 16px;
+            border-left: 3px solid #38bdf8;
+        }
+
+        .step-num {
+            font-weight: 800;
+            color: #38bdf8;
+            margin-right: 6px;
+        }
+
+        .sprint-section {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .sprint-header {
+            background: #243247;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .sprint-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #e2e8f0;
+        }
+
+        .sprint-badge {
+            background: rgba(56, 189, 248, 0.15);
+            color: #38bdf8;
+            border: 1px solid rgba(56, 189, 248, 0.3);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .sprint-dates {
+            font-size: 13px;
+            color: var(--accent-orange);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .issues-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .issues-table th {
+            text-align: left;
+            padding: 12px 20px;
+            background: #1a2333;
+            color: var(--text-muted);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .issues-table td {
+            padding: 14px 20px;
+            border-bottom: 1px solid #293548;
+            vertical-align: middle;
+        }
+
+        .issues-table tr:hover {
+            background: #243044;
+        }
+
+        .type-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .type-epic { background: #582be8; color: white; }
+        .type-story { background: #00875a; color: white; }
+        .type-task { background: #0052cc; color: white; }
+
+        .issue-summary {
+            font-weight: 600;
+            color: #f8fafc;
+            display: block;
+            margin-bottom: 3px;
+        }
+
+        .issue-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            max-width: 550px;
+        }
+
+        .copy-btn {
+            background: #334155;
+            color: #f1f5f9;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-btn:hover {
+            background: #0284c7;
+            color: white;
+        }
+
+        .copy-btn.copied {
+            background: #059669;
+            color: white;
+        }
+
+        .points-badge {
+            background: #334155;
+            color: #e2e8f0;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 11px;
+        }
+
+        .btn-action-primary {
+            background: #0284c7;
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-action-primary:hover {
+            background: #0369a1;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-title">
+            <h1>
+                <span class="badge-jira">JIRA SCRUM</span>
+                EMSI Campus Platform &amp; Backlog Officiel
+            </h1>
+            <p class="header-desc">
+                Projet : <strong>emsiProjet (SCRUM)</strong> &bull; Date limite finale : <strong style="color: #38bdf8;">24 Décembre 2026</strong> &bull; Scrum Master : <strong>Moad Moussaoui</strong>
+            </p>
+        </div>
+        <div>
+            <a href="jira_scrum_full_import.csv" download="jira_scrum_full_import.csv" class="btn-action-primary">
+                ⬇️ Télécharger le CSV Jira Complet
+            </a>
+        </div>
+    </header>
+
+    <!-- ÉQUIPE OFFICIELLE & ROLES -->
+    <div class="team-strip">
+        <div class="member-chip">
+            <div class="avatar" style="background: #2563eb;">NB</div>
+            <div>
+                <div class="role-title">Technical Lead</div>
+                <div class="member-name">Noussair Benassou</div>
+            </div>
+        </div>
+        <div class="member-chip" style="border-color: #38bdf8;">
+            <div class="avatar" style="background: #059669;">MM</div>
+            <div>
+                <div class="role-title">Scrum Master</div>
+                <div class="member-name">Moad Moussaoui</div>
+            </div>
+        </div>
+        <div class="member-chip">
+            <div class="avatar" style="background: #d97706;">AB</div>
+            <div>
+                <div class="role-title">Product Owner</div>
+                <div class="member-name">Amine Bella</div>
+            </div>
+        </div>
+        <div class="member-chip">
+            <div class="avatar" style="background: #dc2626;">BA</div>
+            <div>
+                <div class="role-title">DevOps</div>
+                <div class="member-name">Brahim Abod</div>
+            </div>
+        </div>
+        <div class="member-chip">
+            <div class="avatar" style="background: #7c3aed;">IA</div>
+            <div>
+                <div class="role-title">Test and Quality</div>
+                <div class="member-name">Ilyass Ait Ouahman</div>
+            </div>
+        </div>
+        <div class="member-chip">
+            <div class="avatar" style="background: #db2777;">IM</div>
+            <div>
+                <div class="role-title">UX/UI Designer</div>
+                <div class="member-name">Ikram Mellakh</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GUIDE D'IMPORT JIRA EXPRESS -->
+    <div class="instructions-box">
+        <h3>🚀 Comment importer ou synchroniser directement dans votre Jira en 2 minutes :</h3>
+        <div class="instructions-steps">
+            <div class="step-item">
+                <span class="step-num">Méthode A (Import CSV 1-Click) :</span>
+                Dans votre Jira (en haut à droite), cliquez sur l'icône <strong>⚙️ Paramètres &gt; Système &gt; Importation externe de tickets &gt; CSV</strong>. Sélectionnez le fichier <code>jira_scrum_full_import.csv</code> généré dans votre dossier projet !
+            </div>
+            <div class="step-item">
+                <span class="step-num">Méthode B (Création Rapide +) :</span>
+                Dans votre onglet Jira <strong>Backlog</strong>, cliquez directement sur le bouton <strong>+ Créer</strong> sous chaque Sprint et collez les titres ci-dessous en 1 clic grâce aux boutons <em>"Copier Titre"</em> !
+            </div>
+            <div class="step-item">
+                <span class="step-num">Assignation Automatique :</span>
+                Chaque ticket ci-dessous possède son assigné dédié selon son rôle strict (Technical Lead, Scrum Master, PO, DevOps, QA, UI Designer) et son estimation Story Points Fibonacci.
+            </div>
+        </div>
+    </div>
+
+    <!-- SPRINT 0 -->
+    <div class="sprint-section">
+        <div class="sprint-header">
+            <div class="sprint-title">
+                <span class="sprint-badge">Sprint 0</span>
+                <span>Cadrage, Architecture &amp; Environnement</span>
+            </div>
+            <div class="sprint-dates">📅 06 Nov. 2026 &rarr; 13 Nov. 2026 (En cours)</div>
+        </div>
+        <table class="issues-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Ticket / User Story</th>
+                    <th>Assigné</th>
+                    <th>Points</th>
+                    <th>Échéance</th>
+                    <th>Action Rapide</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-04] Gouvernance Hiérarchique à 4 Niveaux &amp; Matrice RBAC</span>
+                        <div class="issue-desc">Modéliser les rôles SuperAdmin, Directeur, ResponsableFiliere et Planificateur avec traçabilité complète des actions.</div>
+                    </td>
+                    <td><strong style="color: #38bdf8;">Moad Moussaoui</strong> (Scrum Master)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>10 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-04] Gouvernance Hiérarchique à 4 Niveaux & Matrice RBAC', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-09] Configuration Organisation GitHub &amp; Repositories Officiels</span>
+                        <div class="issue-desc">Organisation GitHub eduemsiproject, protection des branches main/develop et règles de revue de code de l'équipe de 6.</div>
+                    </td>
+                    <td><strong style="color: #ef4444;">Brahim Abod</strong> (DevOps)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>08 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-09] Configuration Organisation GitHub & Repositories Officiels', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-10] Conteneurisation Docker &amp; Orchestration Docker Compose</span>
+                        <div class="issue-desc">Fichiers multi-étapes pour PostgreSQL 16, Spring Boot 3 et Nginx/Angular 18 démarrables en un seul docker compose up.</div>
+                    </td>
+                    <td><strong style="color: #ef4444;">Brahim Abod</strong> (DevOps)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>11 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-10] Conteneurisation Docker & Orchestration Docker Compose', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-05] Pilotage du Backlog Scrum &amp; Cérémonies de Synchronisation</span>
+                        <div class="issue-desc">Animation des daily standups, gestion de la vélocité et suivi de l'avancement des 6 membres jusqu'au 24/12/2026.</div>
+                    </td>
+                    <td><strong style="color: #38bdf8;">Moad Moussaoui</strong> (Scrum Master)</td>
+                    <td><span class="points-badge">3 pts</span></td>
+                    <td>13 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-05] Pilotage du Backlog Scrum & Cérémonies de Synchronisation', this)">📋 Copier</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SPRINT 1 -->
+    <div class="sprint-section">
+        <div class="sprint-header">
+            <div class="sprint-title">
+                <span class="sprint-badge">Sprint 1</span>
+                <span>Socle Technique &amp; Solveur Contraintes EDT (OR-Tools)</span>
+            </div>
+            <div class="sprint-dates">📅 14 Nov. 2026 &rarr; 24 Nov. 2026</div>
+        </div>
+        <table class="issues-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Ticket / User Story</th>
+                    <th>Assigné</th>
+                    <th>Points</th>
+                    <th>Échéance</th>
+                    <th>Action Rapide</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-01] Solveur OR-Tools avec Priorité Absolue aux Professeurs Vacataires</span>
+                        <div class="issue-desc">Affectation prioritaire des créneaux stricts des vacataires avant les professeurs permanents pour garantir zéro conflit externe.</div>
+                    </td>
+                    <td><strong style="color: #60a5fa;">Noussair Benassou</strong> (Technical Lead)</td>
+                    <td><span class="points-badge">8 pts</span></td>
+                    <td>20 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-01] Solveur OR-Tools avec Priorité Absolue aux Professeurs Vacataires', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-02] Contrainte de Campus Unique par Jour et Pauses Réglementaires</span>
+                        <div class="issue-desc">Étudiant sur le même campus toute la journée, pause obligatoire de 15 min le matin (10h-10h15) et trou méridien &le; 1h30.</div>
+                    </td>
+                    <td><strong style="color: #60a5fa;">Noussair Benassou</strong> (Technical Lead)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>22 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-02] Contrainte de Campus Unique par Jour et Pauses Réglementaires', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-03] Affectation Obligatoire des Salles TP PC (IIR &amp; Industriel)</span>
+                        <div class="issue-desc">Filtrage strict : tout module pratique requérant des machines doit être affecté uniquement dans une salle de TP équipée.</div>
+                    </td>
+                    <td><strong style="color: #60a5fa;">Noussair Benassou</strong> (Technical Lead)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>24 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-03] Affectation Obligatoire des Salles TP PC (IIR & Industriel)', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-14] Design System Tailwind CSS &amp; Thème Visuel EMSI Campus</span>
+                        <div class="issue-desc">Charte graphique EMSI (Vert émeraude #059669 et Bleu Marine #0f172a), tokens Tailwind et composants Angular Standalone.</div>
+                    </td>
+                    <td><strong style="color: #f472b6;">Ikram Mellakh</strong> (UX/UI Designer)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>16 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-14] Design System Tailwind CSS & Thème Visuel EMSI Campus', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-15] Grille Hebdomadaire d'Emploi du Temps Interactive &amp; Filtrable</span>
+                        <div class="issue-desc">Affichage dynamique de l'EDT par classe, salle, campus et professeur avec indicateurs visuels des séances en laboratoire TP.</div>
+                    </td>
+                    <td><strong style="color: #f472b6;">Ikram Mellakh</strong> (UX/UI Designer)</td>
+                    <td><span class="points-badge">8 pts</span></td>
+                    <td>22 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-15] Grille Hebdomadaire d\'Emploi du Temps Interactive & Filtrable', this)">📋 Copier</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SPRINT 2 -->
+    <div class="sprint-section">
+        <div class="sprint-header">
+            <div class="sprint-title">
+                <span class="sprint-badge">Sprint 2</span>
+                <span>Fiche de Séance, Notifications Prof &amp; Gestion des Absences</span>
+            </div>
+            <div class="sprint-dates">📅 25 Nov. 2026 &rarr; 05 Déc. 2026</div>
+        </div>
+        <table class="issues-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Ticket / User Story</th>
+                    <th>Assigné</th>
+                    <th>Points</th>
+                    <th>Échéance</th>
+                    <th>Action Rapide</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-07] Cahier de Texte Numérique &amp; Notification Automatique Post-Séance</span>
+                        <div class="issue-desc">Notification automatique à l'enseignant dès la fin de son cours pour remplir sa fiche de séance (objectifs, chapitres, devoirs).</div>
+                    </td>
+                    <td><strong style="color: #fbbf24;">Amine Bella</strong> (Product Owner)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>02 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-07] Cahier de Texte Numérique & Notification Automatique Post-Séance', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-08] Gestion des Absences &amp; Alerte Automatique au Seuil Éliminatoire 20%</span>
+                        <div class="issue-desc">Appel numérique manuel (pas de QR code), calcul instantané du taux d'absentéisme et alerte immédiate scolarité au seuil de 20%.</div>
+                    </td>
+                    <td><strong style="color: #fbbf24;">Amine Bella</strong> (Product Owner)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>05 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-08] Gestion des Absences & Alerte Automatique au Seuil Éliminatoire 20%', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-06] Spécification Déontologique des Jurys de Soutenance PFE</span>
+                        <div class="issue-desc">Interdiction formelle : l'encadrant ne peut en aucun cas être président ou rapporteur de son propre étudiant.</div>
+                    </td>
+                    <td><strong style="color: #fbbf24;">Amine Bella</strong> (Product Owner)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>28 Nov. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-06] Spécification Déontologique des Jurys de Soutenance PFE', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-16] Interface d'Émargement Numérique &amp; Validation des Fiches</span>
+                        <div class="issue-desc">Écran responsive pour les professeurs permettant la saisie rapide de l'appel et le suivi des justificatifs médicaux déposés.</div>
+                    </td>
+                    <td><strong style="color: #f472b6;">Ikram Mellakh</strong> (UX/UI Designer)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>04 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-16] Interface d\'Émargement Numérique & Validation des Fiches', this)">📋 Copier</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SPRINT 3 -->
+    <div class="sprint-section">
+        <div class="sprint-header">
+            <div class="sprint-title">
+                <span class="sprint-badge">Sprint 3</span>
+                <span>Briques d'Intelligence Artificielle (Free Gemini API) &amp; RH</span>
+            </div>
+            <div class="sprint-dates">📅 06 Déc. 2026 &rarr; 15 Déc. 2026</div>
+        </div>
+        <table class="issues-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Ticket / User Story</th>
+                    <th>Assigné</th>
+                    <th>Points</th>
+                    <th>Échéance</th>
+                    <th>Action Rapide</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-17] Intégration Google Gemini 2.0 Flash API (Free Tier) pour Jurys PFE</span>
+                        <div class="issue-desc">Matching sémantique par IA pour proposer le Président et Rapporteur optimaux selon les thématiques de soutenance sans conflit.</div>
+                    </td>
+                    <td><strong style="color: #60a5fa;">Noussair Benassou</strong> (Technical Lead)</td>
+                    <td><span class="points-badge">8 pts</span></td>
+                    <td>10 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-17] Intégration Google Gemini 2.0 Flash API (Free Tier) pour Jurys PFE', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-18] Analyse Prédictive RH des CV &amp; Détection des Déficits par Filière</span>
+                        <div class="issue-desc">Extraction IA des compétences depuis les CV des postulants (vacataires/permanents) et alertes sur les manques d'enseignants par filière.</div>
+                    </td>
+                    <td><strong style="color: #60a5fa;">Noussair Benassou</strong> (Technical Lead)</td>
+                    <td><span class="points-badge">8 pts</span></td>
+                    <td>14 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-18] Analyse Prédictive RH des CV & Détection des Déficits par Filière', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-task">Task</span></td>
+                    <td>
+                        <span class="issue-summary">[TK-17] Client REST Java 21 avec Dual-Mode (Gemini + Local Heuristic)</span>
+                        <div class="issue-desc">Sécurisation des appels HTTP avec bascule automatique instantanée vers le moteur local en cas de coupure internet.</div>
+                    </td>
+                    <td><strong style="color: #60a5fa;">Noussair Benassou</strong> (Technical Lead)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>08 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[TK-17] Client REST Java 21 avec Dual-Mode (Gemini + Local Heuristic)', this)">📋 Copier</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- SPRINT 4 -->
+    <div class="sprint-section">
+        <div class="sprint-header">
+            <div class="sprint-title">
+                <span class="sprint-badge">Sprint 4</span>
+                <span>Assurance Qualité, Déploiement &amp; Soutenance Finale</span>
+            </div>
+            <div class="sprint-dates" style="color: #10b981;">🏁 16 Déc. 2026 &rarr; 24 Déc. 2026 (CLÔTURE DU PROJET)</div>
+        </div>
+        <table class="issues-table">
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Ticket / User Story</th>
+                    <th>Assigné</th>
+                    <th>Points</th>
+                    <th>Échéance</th>
+                    <th>Action Rapide</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-12] Suite de Tests Unitaires JUnit 5 pour le Solveur d'Emplois du Temps</span>
+                        <div class="issue-desc">Validation rigoureuse du non-chevauchement des créneaux, priorité vacataires et contrainte de campus unique.</div>
+                    </td>
+                    <td><strong style="color: #a78bfa;">Ilyass Ait Ouahman</strong> (Test &amp; Quality)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>18 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-12] Suite de Tests Unitaires JUnit 5 pour le Solveur d\'Emplois du Temps', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-13] Protocole de Validation du Fallback Heuristique Local en cas de Panne IA</span>
+                        <div class="issue-desc">Test de robustesse en coupant l'accès internet : vérification que la démo soutenance continue sans la moindre erreur.</div>
+                    </td>
+                    <td><strong style="color: #a78bfa;">Ilyass Ait Ouahman</strong> (Test &amp; Quality)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>21 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-13] Protocole de Validation du Fallback Heuristique Local en cas de Panne IA', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-task">Task</span></td>
+                    <td>
+                        <span class="issue-summary">[TK-14] Recette Fonctionnelle Complète &amp; Rapport de Tests Globaux</span>
+                        <div class="issue-desc">Vérification des 15 cas d'usage principaux, zéro anomalie bloquante avant livraison finale.</div>
+                    </td>
+                    <td><strong style="color: #a78bfa;">Ilyass Ait Ouahman</strong> (Test &amp; Quality)</td>
+                    <td><span class="points-badge">3 pts</span></td>
+                    <td>23 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[TK-14] Recette Fonctionnelle Complète & Rapport de Tests Globaux', this)">📋 Copier</button></td>
+                </tr>
+                <tr>
+                    <td><span class="type-badge type-story">Story</span></td>
+                    <td>
+                        <span class="issue-summary">[US-19] Bilan Final Démonstration Sans Faille &amp; Clôture du Projet</span>
+                        <div class="issue-desc">Organisation de la soutenance finale du 24/12/2026, bilan du projet, démonstration live devant le jury professoral.</div>
+                    </td>
+                    <td><strong style="color: #38bdf8;">Moad Moussaoui</strong> (Scrum Master)</td>
+                    <td><span class="points-badge">5 pts</span></td>
+                    <td>24 Déc. 2026</td>
+                    <td><button class="copy-btn" onclick="copyText('[US-19] Bilan Final Démonstration Sans Faille & Clôture du Projet', this)">📋 Copier</button></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function copyText(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const orig = btn.innerHTML;
+                btn.innerHTML = '✓ Copié !';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = orig;
+                    btn.classList.remove('copied');
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>
