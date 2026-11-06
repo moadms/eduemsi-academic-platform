@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMSI Campus ERP — Guide de Cadrage & Briefing Équipe</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #090d16;
+            --bg-card: #111827;
+            --bg-card-subtle: #162032;
+            --bg-hover: #1f293d;
+            --border: #1f293d;
+            --border-highlight: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --primary: #059669;
+            --primary-light: #10b981;
+            --primary-glow: rgba(16, 185, 129, 0.2);
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-cyan: #06b6d4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        /* Top Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(9, 13, 22, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .nav-logo {
+            height: 40px;
+            background: #ffffff;
+            padding: 4px 10px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+        .nav-title {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .nav-links {
+            display: flex;
+            gap: 20px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover {
+            color: var(--primary-light);
+        }
+
+        /* Hero Header */
+        .hero {
+            padding: 50px 32px 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .hero-badge-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .hero-badge.highlight {
+            border-color: rgba(16, 185, 129, 0.4);
+            color: var(--primary-light);
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .hero h1 {
+            font-size: 38px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.2;
+            margin-bottom: 14px;
+            background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            max-width: 860px;
+            margin-bottom: 30px;
+        }
+
+        /* KPI Quick Stats */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+        .kpi-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        .kpi-card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 4px; height: 100%;
+        }
+        .kpi-card.green::before { background: var(--primary-light); }
+        .kpi-card.blue::before { background: var(--accent-blue); }
+        .kpi-card.amber::before { background: var(--accent-amber); }
+        .kpi-card.purple::before { background: var(--accent-purple); }
+
+        .kpi-val {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--text-primary);
+        }
+        .kpi-label {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        .kpi-sub {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        /* Section Headings */
+        .section-header {
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .section-title {
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-subtitle {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Standard Cards */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .card:hover {
+            border-color: var(--border-highlight);
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-body {
+            font-size: 13.5px;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* Pain Points vs Solutions Cards */
+        .problem-card {
+            background: rgba(244, 63, 94, 0.05);
+            border: 1px solid rgba(244, 63, 94, 0.2);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 14px;
+        }
+        .problem-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #fb7185;
+            margin-bottom: 6px;
+        }
+        .solution-card {
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 14px;
+        }
+        .solution-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #34d399;
+            margin-bottom: 6px;
+        }
+
+        /* Architecture Visual Viewer */
+        .diagram-container {
+            background: #090d16;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 14px;
+            text-align: center;
+        }
+        .diagram-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #1e293b;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            transition: transform 0.3s ease;
+        }
+        .diagram-img:hover {
+            transform: scale(1.01);
+            cursor: pointer;
+        }
+        .diagram-caption {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            margin-top: 10px;
+            font-weight: 500;
+        }
+
+        /* Team Roles & Tasks */
+        .role-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .role-architect { background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .role-front { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .role-mobile { background: rgba(6, 182, 212, 0.15); color: #22d3ee; border: 1px solid rgba(6, 182, 212, 0.3); }
+        .role-back { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .role-ai { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .role-qa { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
+
+        .task-list {
+            list-style: none;
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .task-item {
+            font-size: 12.5px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .task-item span.bullet {
+            color: var(--primary-light);
+            font-weight: bold;
+        }
+
+        /* Rules Table */
+        .rule-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+        .rule-table th, .rule-table td {
+            padding: 10px 14px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        .rule-table th {
+            background: var(--bg-card-subtle);
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        .rule-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Code snippets */
+        .code-block {
+            font-family: 'JetBrains Mono', Consolas, monospace;
+            font-size: 12px;
+            background: #090d16;
+            border: 1px solid #1e293b;
+            border-radius: 8px;
+            padding: 12px 14px;
+            color: #38bdf8;
+            overflow-x: auto;
+            margin-top: 10px;
+            line-height: 1.5;
+        }
+
+        /* Timeline Roadmap */
+        .timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            position: relative;
+            padding-left: 24px;
+            border-left: 2px solid var(--border);
+        }
+        .timeline-item {
+            position: relative;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 16px 20px;
+        }
+        .timeline-item::before {
+            content: "";
+            position: absolute;
+            left: -31px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            border: 3px solid var(--bg-main);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .footer strong { color: var(--primary-light); }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="assets/emsi_logo.png" alt="EMSI Logo" class="nav-logo">
+            <div class="nav-title">
+                EMSI Campus ERP
+                <span class="nav-tag">Équipe Ingénieurs D2SI</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#vision">1. Vision & Contexte</a></li>
+            <li><a href="#regles">2. Règles Non-Négociables</a></li>
+            <li><a href="#architecture">3. Architecture</a></li>
+            <li><a href="#equipe">4. Répartition Équipe</a></li>
+            <li><a href="#donnees">5. Base de Données</a></li>
+            <li><a href="#planning">6. Roadmap Sprints</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <header class="hero">
+        <div class="hero-badge-bar">
+            <span class="hero-badge highlight">⚡ Guide de Démarrage & Cadrage Projet</span>
+            <span class="hero-badge">🎓 Promotion 5e Année 2025–2026</span>
+            <span class="hero-badge">📍 EMSI Marrakech (Gueliz & Targa)</span>
+            <span class="hero-badge">💼 Destiné à l'Équipe de 6 Développeurs</span>
+        </div>
+        <h1>Briefing Équipe : Maîtriser le Cahier des Charges EMSI Campus</h1>
+        <p>Ce document est notre feuille de route technique interne. Il synthétise l'ensemble des 24 pages du cahier des charges officiel, détaille l'architecture modulaire en 5 couches, clarifie les rôles de chacun et garantit qu'aucune règle métier ne sera oubliée pendant le sprint.</p>
+
+        <!-- KPI SUMMARY BAR -->
+        <div class="kpi-grid">
+            <div class="kpi-card green">
+                <div class="kpi-val">45 min</div>
+                <div class="kpi-label">Transit Strict Gueliz ↔ Targa</div>
+                <div class="kpi-sub">Règle dure dans OR-Tools CP-SAT</div>
+            </div>
+            <div class="kpi-card blue">
+                <div class="kpi-val">15 sec</div>
+                <div class="kpi-label">Rotation QR Code Présence</div>
+                <div class="kpi-sub">Jeton cryptographique anti-fraude</div>
+            </div>
+            <div class="kpi-card amber">
+                <div class="kpi-val">0 Excel</div>
+                <div class="kpi-label">Saisie Directe & PV Officiel</div>
+                <div class="kpi-sub">Seuil éliminatoire auto &lt; 7.00/20</div>
+            </div>
+            <div class="kpi-card purple">
+                <div class="kpi-val">40 Tables</div>
+                <div class="kpi-label">Schéma Flyway PostgreSQL</div>
+                <div class="kpi-sub">Cloisonnement multi-tenant garanti</div>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN BODY CONTENT -->
+    <main class="container">
+
+        <!-- ==================================================================== -->
+        <!-- SECTION 1 : VISION, PROBLEMATIQUE ET SOLUTIONS                       -->
+        <!-- ==================================================================== -->
+        <section id="vision">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title"><span>🎯</span> 1. Pourquoi ce projet ? Problèmes réels vs Solutions</h2>
+                    <p class="section-subtitle">Ce qui ne fonctionne pas actuellement à l'école et comment nous le résolvons.</p>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- COLONNE PROBLEMES -->
+                <div>
+                    <h3 style="font-size: 15px; margin-bottom: 12px; color: #fb7185; display: flex; align-items: center; gap: 6px;">
+                        <span>❌</span> La Douleur Actuelle de l'EMSI
+                    </h3>
+                    
+                    <div class="problem-card">
+                        <div class="problem-header">🚗 Le Conflit Multi-Sites Gueliz vs Targa</div>
+                        <div class="card-body">Des professeurs et groupes ont cours à 10h15 à Gueliz puis à 10h30 à Targa. Avec la circulation de Marrakech, c'est impossible : retards systématiques et mécontentement.</div>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-header">📑 L'Enfer des Fichiers Excel pour les Notes</div>
+                        <div class="card-body">Chaque professeur envoie son propre fichier Excel. Risques d'erreurs de formules, pertes de notes, conflits de versions et des journées entières perdues pour délibérer.</div>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-header">📝 Oubli Fréquent du Cahier de Texte</div>
+                        <div class="card-body">En fin de séance, les enseignants quittent la salle sans consigner ce qui a été fait. La direction pédagogique ne sait pas qui a avancé sur le syllabus officiel.</div>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-header">⚖️ Affectation Inappropriée des Jurys PFE</div>
+                        <div class="card-body">Affectation manuelle chronophage des jurys : un professeur spécialisé en réseau se retrouve à évaluer un PFE en Intelligence Artificielle ou Microservices Java.</div>
+                    </div>
+
+                    <div class="problem-card">
+                        <div class="problem-header">💳 Impayés de Scolarité & Feuilles Papier</div>
+                        <div class="card-body">Des étudiants retirent des attestations de réussite alors qu'ils ont des mensualités impayées, et les feuilles d'émargement papier sont signées à la place des absents.</div>
+                    </div>
+                </div>
+
+                <!-- COLONNE SOLUTIONS -->
+                <div>
+                    <h3 style="font-size: 15px; margin-bottom: 12px; color: #34d399; display: flex; align-items: center; gap: 6px;">
+                        <span>✅</span> La Réponse de notre EMSI Campus ERP
+                    </h3>
+
+                    <div class="solution-card">
+                        <div class="solution-header">⚡ Solveur sous Contraintes Google OR-Tools</div>
+                        <div class="card-body">Contrainte rigide : <strong>45 minutes de battement obligatoire</strong> pour tout transit Gueliz ↔ Targa. Vérification automatique du matériel de la salle (PC/GPU).</div>
+                    </div>
+
+                    <div class="solution-card">
+                        <div class="solution-header">🔒 Saisie Web Directe & PV Automatiques</div>
+                        <div class="card-body">Zéro fichier Excel externe. Les profs saisissent directement sur la plateforme avec contrôles de bornes (0-20), verrouillage à date fixe et note éliminatoire automatique (&lt; 7/20).</div>
+                    </div>
+
+                    <div class="solution-card">
+                        <div class="solution-header">📲 Notification Push Mobile à la Sonnerie</div>
+                        <div class="card-body">À la minute exacte où la séance se termine, l'application mobile envoie une alerte au smartphone du prof. En 30 secondes, il valide son chapitre et ses devoirs.</div>
+                    </div>
+
+                    <div class="solution-card">
+                        <div class="solution-header">🤖 Matching Sémantique par IA Locale (Ollama)</div>
+                        <div class="card-body">Ollama (Llama 3.2 local) analyse le résumé du sujet de l'étudiant, extrait les compétences (ex: Spring, Flutter, IA) et l'associe à un jury expert du même domaine.</div>
+                    </div>
+
+                    <div class="solution-card">
+                        <div class="solution-header">🛡️ QR Code Rotatif (15s) & Verrou Administratif</div>
+                        <div class="card-body">Émargement par QR code dynamique renouvelé toutes les 15s. Blocage automatique de délivrance d'attestations si l'échéance de scolarité est impayée depuis > 10 jours.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- SECTION 2 : LES REGLES NON-NEGOCIABLES                               -->
+        <!-- ==================================================================== -->
+        <section id="regles">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title"><span>⚖️</span> 2. Les Règles Métier Non-Négociables (Business Logic)</h2>
+                    <p class="section-subtitle">Chaque développeur DOIT implémenter ces contrôles stricts dans le code frontend et backend.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <table class="rule-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 140px;">Identifiant</th>
+                            <th style="width: 220px;">Règle Métier</th>
+                            <th>Spécification Technique & Implémentation</th>
+                            <th style="width: 140px;">Impact Développeur</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: #fbbf24;">RULE-GEO-01</strong></td>
+                            <td><strong>Transit Gueliz ↔ Targa</strong></td>
+                            <td>Si <code>Room_A.campus != Room_B.campus</code> pour le même enseignant ou le même groupe d'étudiants consécutif, l'écart temporel doit être supérieur ou égal à <strong>45 minutes</strong>.</td>
+                            <td><span class="role-badge role-ai">OR-Tools Engine</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #34d399;">RULE-ATT-02</strong></td>
+                            <td><strong>Rotation QR Code 15s</strong></td>
+                            <td>Le jeton JWT émis pour l'émargement expire après 15 secondes. Si un étudiant tente de scanner une capture d'écran WhatsApp transmise par un ami, le serveur renvoie <code>HTTP 410 Gone</code>.</td>
+                            <td><span class="role-badge role-back">Backend + Mobile</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #f43f5e;">RULE-NOT-03</strong></td>
+                            <td><strong>Cahier de Texte Obligatoire</strong></td>
+                            <td>À <code>session.end_time</code>, le backend déclenche un push FCM haute priorité sur le téléphone de l'enseignant. Tant que le compte-rendu n'est pas envoyé, la séance reste en statut <code>PENDING_REPORT</code>.</td>
+                            <td><span class="role-badge role-mobile">Mobile Flutter</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #ec4899;">RULE-DELIB-04</strong></td>
+                            <td><strong>Seuil Éliminatoire &lt; 7/20</strong></td>
+                            <td>Un module est composé de CC (Control Continu) et d'un Examen. Même si la moyenne du module dépasse 10.00/20, si la note de l'examen final est strictement inférieure à <strong>7.00/20.00</strong>, l'étudiant est automatiquement déclaré non admis et ajourné à la session de rattrapage.</td>
+                            <td><span class="role-badge role-back">Backend Core</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #c084fc;">RULE-AI-05</strong></td>
+                            <td><strong>Matching Spécialité PFE</strong></td>
+                            <td>Ollama extrait les tags techniques du sujet PFE (Word/PDF). Le score de similarité cosinus avec l'historique des publications de l'enseignant doit être &gt; 0.70 pour l'affectation automatique.</td>
+                            <td><span class="role-badge role-ai">AI Specialist</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #22d3ee;">RULE-FIN-06</strong></td>
+                            <td><strong>Verrou Administratif</strong></td>
+                            <td>Si <code>unpaid_days &gt; 10</code>, le champ <code>administrative_locks.is_active = true</code>. Le bouton de téléchargement d'attestation scolaire dans l'app mobile est désactivé avec message courtois.</td>
+                            <td><span class="role-badge role-front">Frontend + Mobile</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: #38bdf8;">RULE-SEC-07</strong></td>
+                            <td><strong>Loi 09-08 CNDP</strong></td>
+                            <td>Toutes les actions d'insertion ou modification de notes doivent insérer un enregistrement immuable dans la table <code>audit_logs</code> (qui, quand, ancienne note, nouvelle note, IP).</td>
+                            <td><span class="role-badge role-qa">DevOps / Sec</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- SECTION 3 : ARCHITECTURE TECHNIQUE & SCHEMAS VISUELS                 -->
+        <!-- ==================================================================== -->
+        <section id="architecture">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title"><span>🏛️</span> 3. Architecture Globale & Schémas Visuels</h2>
+                    <p class="section-subtitle">Les 4 diagrammes maîtres générés pour le projet (à projeter devant le client).</p>
+                </div>
+            </div>
+
+            <!-- TAB 1 : SYSTEM ARCHITECTURE 5 LAYERS -->
+            <div class="card" style="margin-bottom: 24px;">
+                <div class="card-header">
+                    <div class="card-title">
+                        <span style="color: #60a5fa;">🏗️</span> Architecture Système en 5 Couches (Clean Architecture)
+                    </div>
+                    <span class="role-badge role-architect">Diagramme 2</span>
+                </div>
+                <div class="card-body">
+                    L'architecture est strictement découplée : la couche Présentation (React/Flutter) communique exclusivement via API REST JSON sécurisée avec le Backend Spring Boot 3.3. Ce dernier délègue les calculs lourds de planification au solveur Google OR-Tools et l'analyse sémantique à Ollama.
+                </div>
+                <div class="diagram-container">
+                    <img src="assets/diagram_2_system_architecture_5layers.png" alt="Architecture 5 Couches EMSI Campus" class="diagram-img">
+                    <div class="diagram-caption">Figure : Vue d'ensemble des 5 couches logiques et flux de communication chiffrés TLS 1.3</div>
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <!-- TAB 2 : ARBORESCENCE MONOREPO -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span style="color: #34d399;">📁</span> Arborescence & Monorepo
+                        </div>
+                        <span class="role-badge role-front">Diagramme 1</span>
+                    </div>
+                    <div class="card-body">
+                        Organisation des 6 sous-modules du dépôt Git. Chacun a son propre cycle de vie et Dockerfile.
+                    </div>
+                    <div class="diagram-container">
+                        <img src="assets/diagram_1_project_tree_structure.png" alt="Arborescence Codebase" class="diagram-img">
+                        <div class="diagram-caption">Figure : Structure modulaire (Frontend Next.js, Mobile Flutter, Backend Spring Boot)</div>
+                    </div>
+                </div>
+
+                <!-- TAB 3 : WORKFLOWS CLES -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span style="color: #fbbf24;">🔄</span> Workflows Opérationnels
+                        </div>
+                        <span class="role-badge role-ai">Diagramme 4</span>
+                    </div>
+                    <div class="card-body">
+                        Les 4 cycles de vie : Planification OR-Tools, Émargement QR 15s, Clôture séance push et Soutenances IA.
+                    </div>
+                    <div class="diagram-container">
+                        <img src="assets/diagram_4_workflow_seance_soutenance.png" alt="Workflows Opérationnels" class="diagram-img">
+                        <div class="diagram-caption">Figure : Déroulement pas-à-pas des processus terrain de l'école</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- SECTION 4 : REPARTITION DE L'EQUIPE (6 INGENIEURS)                   -->
+        <!-- ==================================================================== -->
+        <section id="equipe">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title"><span>👥</span> 4. Qui fait quoi ? Répartition des 6 Élèves-Ingénieurs</h2>
+                    <p class="section-subtitle">Chaque membre de l'équipe a un rôle clair, mesurable et des livrables précis.</p>
+                </div>
+            </div>
+
+            <div class="grid-3">
+                <!-- MEMBRE 1 : LEAD ARCHITECT -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Ingénieur 1 : Lead Tech & DB</div>
+                        <span class="role-badge role-architect">Architecte</span>
+                    </div>
+                    <div class="card-body">
+                        Responsable de l'intégrité globale, du schéma PostgreSQL et de la sécurité des transactions.
+                        <ul class="task-list">
+                            <li class="task-item"><span class="bullet">▶</span> Déploiement Flyway (40 tables SQL).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Filtre multi-tenant Spring Security JWT.</li>
+                            <li class="task-item"><span class="bullet">▶</span> Intégration MinIO (stockage conventions/rapports).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Supervision des revues de code Git PR.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- MEMBRE 2 : FRONTEND LEAD -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Ingénieur 2 : Lead Frontend Web</div>
+                        <span class="role-badge role-front">Next.js 14</span>
+                    </div>
+                    <div class="card-body">
+                        Responsable du portail Web de la direction, des responsables pédagogiques et des professeurs.
+                        <ul class="task-list">
+                            <li class="task-item"><span class="bullet">▶</span> Dashboard administrateur (Salles Gueliz & Targa).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Grille d'emploi du temps interactive.</li>
+                            <li class="task-item"><span class="bullet">▶</span> Module <strong>Zéro Excel</strong> (Saisie notes & délibérations).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Export PDF des procès-verbaux officiels.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- MEMBRE 3 : MOBILE LEAD -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Ingénieur 3 : Lead Mobile</div>
+                        <span class="role-badge role-mobile">Flutter 3.x</span>
+                    </div>
+                    <div class="card-body">
+                        Responsable des applications mobiles Étudiants et Professeurs (Android & iOS).
+                        <ul class="task-list">
+                            <li class="task-item"><span class="bullet">▶</span> Scanner QR Code caméra réactif (MobileScanner).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Écran de projection QR rotatif pour l'enseignant.</li>
+                            <li class="task-item"><span class="bullet">▶</span> Réception <strong>Push FCM</strong> fin de cours (cahier texte).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Espace notes, absences et emploi du temps étudiant.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- MEMBRE 4 : BACKEND CORE -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Ingénieur 4 : Backend Core</div>
+                        <span class="role-badge role-back">Spring Boot 3</span>
+                    </div>
+                    <div class="card-body">
+                        Développement des services REST métier et des calculs d'évaluation académique.
+                        <ul class="task-list">
+                            <li class="task-item"><span class="bullet">▶</span> APIs CRUD Filières, Modules, Salles, Groupes.</li>
+                            <li class="task-item"><span class="bullet">▶</span> Moteur de calcul des délibérations et rattrapages.</li>
+                            <li class="task-item"><span class="bullet">▶</span> Module Émargement (génération de token 15s).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Gestion du verrou financier de scolarité.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- MEMBRE 5 : IA & SOLVEUR -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Ingénieur 5 : Moteurs de Calcul</div>
+                        <span class="role-badge role-ai">OR-Tools & Ollama</span>
+                    </div>
+                    <div class="card-body">
+                        Spécialiste de la programmation sous contraintes et du traitement du langage naturel.
+                        <ul class="task-list">
+                            <li class="task-item"><span class="bullet">▶</span> Modélisation <strong>OR-Tools CP-SAT</strong> (45 min transit).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Affectation des salles TP selon inventaire PC/GPU.</li>
+                            <li class="task-item"><span class="bullet">▶</span> Intégration <strong>Ollama (Llama 3.2)</strong> en local.</li>
+                            <li class="task-item"><span class="bullet">▶</span> Algorithme de matching spécialités PFE ↔ Jurys.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- MEMBRE 6 : DEVOPS & QA -->
+                <div class="card">
+                    <div class="card-header">
+                        <div class="card-title">Ingénieur 6 : DevOps & Sécurité</div>
+                        <span class="role-badge role-qa">DevOps & Tests</span>
+                    </div>
+                    <div class="card-body">
+                        Garant de la stabilité de la plateforme, des tests automatisés et de la conformité légale.
+                        <ul class="task-list">
+                            <li class="task-item"><span class="bullet">▶</span> Pipelines CI/CD GitHub Actions (TDD unitaire).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Tests automatisés E2E avec Playwright.</li>
+                            <li class="task-item"><span class="bullet">▶</span> Configuration Docker Compose (Postgres, Redis, Ollama).</li>
+                            <li class="task-item"><span class="bullet">▶</span> Audit de sécurité et conformité Loi 09-08 CNDP.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- SECTION 5 : BASE DE DONNEES & TABLES SQL                             -->
+        <!-- ==================================================================== -->
+        <section id="donnees">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title"><span>🗄️</span> 5. Schéma de Données (40 Tables Flyway)</h2>
+                    <p class="section-subtitle">Cartographie complète des tables créées dans <code>database/migrations/V1__init_schema.sql</code>.</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="diagram-container" style="margin-top: 0;">
+                    <img src="assets/diagram_3_database_erd_modules.png" alt="Schéma ERD des 40 Tables" class="diagram-img">
+                    <div class="diagram-caption">Figure : Cartographie des 40 tables PostgreSQL normalisées réparties en 8 domaines métiers</div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <h3 style="font-size: 14px; font-weight: 700; color: #f1f5f9; margin-bottom: 8px;">Exemple d'Entity JPA avec TenantScope :</h3>
+                    <div class="code-block">
+@Entity
+@Table(name = "timetable_sessions")
+public class TimetableSession {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "tenant_id", nullable = false)
+    private String tenantId; // 'EMSI_MARRAKECH', 'EMSI_CASA', etc.
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id", nullable = false)
+    private Room room; // Vérifie la localisation Gueliz ou Targa
+
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
+
+    @Column(name = "end_time", nullable = false)
+    private LocalDateTime endTime;
+
+    @Column(name = "requires_transit_buffer")
+    private Boolean requiresTransitBuffer; // True si cours précédent sur autre campus
+}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- SECTION 6 : ROADMAP ET SPRINTS AGILE                                 -->
+        <!-- ==================================================================== -->
+        <section id="planning">
+            <div class="section-header">
+                <div>
+                    <h2 class="section-title"><span>🚀</span> 6. Calendrier de Réalisation (Scrum + XP sur 10 Semaines)</h2>
+                    <p class="section-subtitle">Découpage en 5 Sprints atomiques avec Definition of Done (DoD) stricte.</p>
+                </div>
+            </div>
+
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #38bdf8; font-size: 15px;">Sprint 0 : Socle & Environnements (Semaines 1–2)</strong>
+                        <span class="nav-tag">Fondations</span>
+                    </div>
+                    <div class="card-body">
+                        Mise en place du monorepo Git, initialisation de Spring Boot 3.3, conteneurs Docker (PostgreSQL 16, Redis, MinIO), exécution des migrations Flyway V1 (40 tables) et configuration de la CI/CD GitHub Actions.
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #34d399; font-size: 15px;">Sprint 1 : Authentification, Multi-Sites & Planning OR-Tools (Semaines 3–4)</strong>
+                        <span class="nav-tag" style="background: rgba(52, 211, 153, 0.15); color: #34d399; border-color: rgba(52, 211, 153, 0.3);">Cœur Planification</span>
+                    </div>
+                    <div class="card-body">
+                        Authentification JWT multi-rôles, CRUD des campus de Gueliz et Targa, modélisation mathématique du solveur OR-Tools avec la <strong>règle des 45 minutes de transit</strong> et génération du premier emploi du temps sans conflit.
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #fbbf24; font-size: 15px;">Sprint 2 : Émargement QR Rotatif & Push Mobile Cahier de Texte (Semaines 5–6)</strong>
+                        <span class="nav-tag" style="background: rgba(251, 191, 36, 0.15); color: #fbbf24; border-color: rgba(251, 191, 36, 0.3);">Mobile & Terrain</span>
+                    </div>
+                    <div class="card-body">
+                        Génération du QR Code rotatif (15 secondes) sur l'écran prof, scan caméra sur Flutter en 1 seconde, détection de fin de cours et déclenchement automatique de la notification push mobile pour obliger le remplissage du compte-rendu.
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #f43f5e; font-size: 15px;">Sprint 3 : Évaluation Zéro Excel, Délibérations & Scolarité (Semaines 7–8)</strong>
+                        <span class="nav-tag" style="background: rgba(244, 63, 94, 0.15); color: #f43f5e; border-color: rgba(244, 63, 94, 0.3);">Finance & Notes</span>
+                    </div>
+                    <div class="card-body">
+                        Grilles de saisie des notes directes en ligne, calcul instantané des délibérations avec application de la note éliminatoire (&lt; 7.00/20), génération du PV officiel signé, et activation du verrou administratif pour impayés de scolarité.
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong style="color: #c084fc; font-size: 15px;">Sprint 4 : Soutenances PFE, Matching IA Ollama & Recette (Semaines 9–10)</strong>
+                        <span class="nav-tag" style="background: rgba(192, 132, 252, 0.15); color: #c084fc; border-color: rgba(192, 132, 252, 0.3);">IA & Livraison</span>
+                    </div>
+                    <div class="card-body">
+                        Téléchargement des templates officiels EMSI (Word, LaTeX, PPT), soumission des rapports, analyse sémantique et extraction des compétences techniques par Ollama, matching automatique des jurys et tests E2E finaux.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>Document Interne — <strong>EMSI Campus ERP (Univora)</strong> • École Marocaine des Sciences de l'Ingénieur Marrakech</p>
+        <p style="margin-top: 6px;">Réalisé par l'équipe de 6 élèves-ingénieurs 5e Année <strong>D2SI / IIR</strong> • Année Universitaire 2025–2026</p>
+    </footer>
+
+</body>
+</html>

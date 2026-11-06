@@ -1,0 +1,107 @@
+@startuml dia01_functional_map_overview
+title Cartographie Fonctionnelle Complète & Architecture Métier — EMSI Campus ERP (Univora)
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+skinparam roundcorner 8
+skinparam linetype ortho
+
+skinparam rectangle {
+    BackgroundColor<<iam>> #E0F2FE
+    BorderColor<<iam>> #0284C7
+    BackgroundColor<<plan>> #FEF3C7
+    BorderColor<<plan>> #D97706
+    BackgroundColor<<att>> #DCFCE7
+    BorderColor<<att>> #16A34A
+    BackgroundColor<<eval>> #FEE2E2
+    BorderColor<<eval>> #DC2626
+    BackgroundColor<<pfe>> #F3E8FF
+    BorderColor<<pfe>> #9333EA
+    BackgroundColor<<fin>> #ECFDF5
+    BorderColor<<fin>> #059669
+    BackgroundColor<<sec>> #F1F5F9
+    BorderColor<<sec>> #475569
+}
+
+actor "Étudiant" as ActEtud #16A34A
+actor "Enseignant" as ActProf #0284C7
+actor "Chef de Département" as ActDept #D97706
+actor "Direction des Études" as ActDir #9333EA
+actor "Scolarité" as ActScol #059669
+actor "Finance" as ActFin #D97706
+actor "DPO / Admin" as ActAdmin #475569
+
+rectangle "PLATEFORME GLOBALE EMSI CAMPUS ERP" {
+
+    rectangle "1. Module IAM & Multi-Tenancy" <<iam>> as M1 {
+        [Authentification SSO & JWT RSA-256]
+        [Gestion des Rôles & Permissions (RBAC)]
+        [Isolation Multi-Tenant (tenant_id)]
+        [Séparation des Campus (Guéliz / Targa)]
+    }
+
+    rectangle "2. Planification & Solveur Logistique" <<plan>> as M2 {
+        [Gestion des Espaces & Salles (Amphis/Labos)]
+        [Solveur CP-SAT Google OR-Tools]
+        [Règle BR-GEO-01 : Transit 45 min Guéliz-Targa]
+        [Diffusion Calendrier iCal & Sync Mobile]
+    }
+
+    rectangle "3. Pédagogie, Assiduité & Cahier de Texte" <<att>> as M3 {
+        [Projection QR Code Tournant (15s HMAC)]
+        [Émargement Mobile & Détection Anti-Fraude]
+        [Cahier de Texte Numérique Immédiat (BR-NOT-06)]
+        [Dépôt & Validation Justificatifs d'Absence]
+    }
+
+    rectangle "4. Évaluations & Délibérations Zéro Excel" <<eval>> as M4 {
+        [Saisie Matricielle des Notes (CC / TP / Exam)]
+        [Moteur de Calcul Délibération Pondérée]
+        [Application Règle Éliminatoire < 7.00/20]
+        [Scellement Cryptographique du PV (SHA-256)]
+    }
+
+    rectangle "5. Projets de Fin d'Études (PFE 5A) & IA" <<pfe>> as M5 {
+        [Dépôt Sujet & Livrables Mémoire (MinIO)]
+        [Vectorisation Sémantique Locale (Ollama Llama 3.2)]
+        [Matching Cosinus Mémoires & Jurys (> 0.70)]
+        [Règle BR-PFE-07 : Exclusion Encadrant du Jury]
+    }
+
+    rectangle "6. Scolarité, Attestations & Finance" <<fin>> as M6 {
+        [Inscriptions & Unicité CNE/MASSAR]
+        [Attestations avec QR 2D-Doc Vérifiable]
+        [Échéanciers & Suivi Règlements]
+        [Règle BR-FIN-09 : Verrouillage Impayés > 10 jours]
+    }
+
+    rectangle "7. Sécurité & Audit Légal CNDP" <<sec>> as M7 {
+        [Journal Immuable audit_logs (Append-Only)]
+        [Conformité Loi Marocaine 09-08 (CNDP)]
+        [Chiffrement Données au Repos (AES-256)]
+        [Contrôle Intégrité & Signatures HMAC]
+    }
+}
+
+' Liaisons Acteurs vers Modules
+ActEtud --> M3 : Scan QR / Cahier cours
+ActEtud --> M4 : Consultation notes
+ActEtud --> M5 : Dépôt mémoire PFE
+ActEtud --> M6 : Téléchargement attestations
+
+ActProf --> M2 : Déclaration disponibilités
+ActProf --> M3 : Projection QR & Cahier de texte
+ActProf --> M4 : Saisie des notes
+ActProf --> M5 : Encadrement PFE
+
+ActDept --> M2 : Paramétrage planning
+ActDept --> M4 : Lancement délibération
+ActDept --> M5 : Validation jurys IA
+
+ActDir --> M4 : Signature électronique PV
+ActScol --> M6 : Inscriptions & 2D-Doc
+ActFin --> M6 : Facturation & Déblocage
+ActAdmin --> M1 : Gestion globale
+ActAdmin --> M7 : Registre légal CNDP
+
+@enduml

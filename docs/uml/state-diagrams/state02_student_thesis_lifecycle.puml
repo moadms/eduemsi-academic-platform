@@ -1,0 +1,63 @@
+@startuml state02_student_thesis_lifecycle
+title Machine à États d'un Projet de Fin d'Études (PFE 5ème Année)
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+[*] --> PROPOSED : Étudiant soumet la fiche de sujet PFE
+
+state PROPOSED {
+    PROPOSED : Titre, problématique, entreprise d'accueil
+    PROPOSED : En attente d'évaluation de faisabilité
+}
+
+PROPOSED --> REJECTED : Sujet non conforme aux standards ingénieur
+REJECTED --> PROPOSED : Révision et nouvelle soumission
+
+PROPOSED --> APPROVED : Validation par la commission pédagogique
+
+APPROVED --> ASSIGNED : Désignation de l'encadrant académique EMSI
+
+state ASSIGNED {
+    ASSIGNED : Signature convention tripartite
+    ASSIGNED : Démarrage du stage
+}
+
+ASSIGNED --> IN_PROGRESS : Validation du jalon 1 (Cadrage & Spécifications)
+
+state IN_PROGRESS {
+    IN_PROGRESS : Réunions régulières d'avancement
+    IN_PROGRESS : Dépôt des livrables intermédiaires
+}
+
+IN_PROGRESS --> REPORT_SUBMITTED : Téléversement du mémoire final PDF sur MinIO\n[Vérification anti-plagiat effectuée]
+
+state REPORT_SUBMITTED {
+    REPORT_SUBMITTED : Calcul de l'embedding sémantique par Ollama Llama 3.2
+    REPORT_SUBMITTED : Calcul des similarités avec les profils des jurys
+}
+
+REPORT_SUBMITTED --> JURY_ASSIGNED : Affectation automatique du Président et du Rapporteur\n[Score similarité >= 0.70 & Règle BR-PFE-07 respectée]
+
+state JURY_ASSIGNED {
+    JURY_ASSIGNED : Date, heure et salle de soutenance fixées
+    JURY_ASSIGNED : Convocations iCal expédiées
+}
+
+JURY_ASSIGNED --> DEFENDED_PASSED : Soutenance tenue & Note finale >= 12.00/20
+
+state DEFENDED_PASSED {
+    DEFENDED_PASSED : PV de soutenance signé par le jury
+    DEFENDED_PASSED : Dépôt de la version finale corrigée
+    DEFENDED_PASSED : Crédits académiques de 5A validés
+}
+
+JURY_ASSIGNED --> DEFENDED_REJECTED : Note finale < 12.00/20 ou Plagiat avéré
+
+state DEFENDED_REJECTED {
+    DEFENDED_REJECTED : Réorientation vers session de rattrapage d'automne
+}
+
+DEFENDED_PASSED --> [*]
+DEFENDED_REJECTED --> [*]
+
+@enduml

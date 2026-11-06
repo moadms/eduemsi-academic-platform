@@ -1,0 +1,1252 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-50">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Backlog Officiel — EMSI Campus ERP (Univora)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        emsi: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: #000 !important; }
+            .print-break { page-break-before: always; }
+            .shadow-sm, .shadow-md, .shadow-lg { box-shadow: none !important; }
+            .border { border-color: #cbd5e1 !important; }
+        }
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-full font-sans text-slate-800 antialiased flex flex-col bg-slate-50/50">
+
+    <!-- ==================================================================== -->
+    <!-- TOP NAVIGATION & BRANDING BAR -->
+    <!-- ==================================================================== -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand / Logo -->
+                <div class="flex items-center gap-4">
+                    <img src="assets/emsi_logo.png" alt="Logo EMSI" class="h-12 w-auto object-contain hover:scale-105 transition-transform">
+                    <div class="border-l border-slate-200 pl-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-black uppercase tracking-wider text-emsi-800 bg-emsi-50 px-2 py-0.5 rounded border border-emsi-200">
+                                ERP Académique
+                            </span>
+                            <span class="text-xs font-bold text-slate-400">|</span>
+                            <span class="text-xs font-semibold text-slate-500">Marrakech (Guéliz & Targa)</span>
+                        </div>
+                        <h1 class="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                            Product Backlog Général <span class="text-emsi-700 font-mono text-sm font-bold bg-slate-100 px-2 py-0.5 rounded">Univora v1.0</span>
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Actions & Metadata -->
+                <div class="flex items-center gap-3 no-print">
+                    <div class="hidden md:flex flex-col text-right">
+                        <span class="text-xs font-bold text-slate-700">5A Ingénierie D2SI</span>
+                        <span class="text-[11px] text-slate-500 font-mono">Agile Scrum + XP • 144 SP</span>
+                    </div>
+                    <button onclick="window.print()" class="px-3.5 py-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs hover:border-slate-400 transition-all">
+                        <i class="fa-solid fa-print text-slate-500"></i>
+                        <span>Imprimer / PDF</span>
+                    </button>
+                    <button onclick="exportToCSV()" class="px-3.5 py-2 bg-emsi-700 hover:bg-emsi-800 text-white rounded-lg text-xs font-bold flex items-center gap-2 shadow-xs transition-all">
+                        <i class="fa-solid fa-file-csv"></i>
+                        <span>Exporter CSV</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==================================================================== -->
+    <!-- MAIN HERO / CONTEXT HEADER -->
+    <!-- ==================================================================== -->
+    <div class="bg-gradient-to-b from-emsi-950 via-slate-900 to-slate-900 text-white py-8 px-4 sm:px-6 lg:px-8 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div>
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-black uppercase tracking-wider bg-emsi-500/20 text-emsi-300 border border-emsi-500/40">
+                            Baseline Scrum Officielle
+                        </span>
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                            <i class="fa-solid fa-users-gear mr-1 text-emsi-400"></i> Équipe de 6 Ingénieurs (3 Binômes XP)
+                        </span>
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                            <i class="fa-solid fa-calendar-days mr-1 text-emsi-400"></i> 5 Sprints de 2 Semaines
+                        </span>
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                            <i class="fa-solid fa-shield-halved mr-1 text-emsi-400"></i> ISO 29148 & IEEE 830
+                        </span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                        Backlog de Réalisation Produit — Plateforme EMSI Campus
+                    </h2>
+                    <p class="text-slate-300 text-sm mt-2 max-w-3xl leading-relaxed">
+                        Ensemble exhaustif et priorisé des <strong>24 User Stories</strong> opérationnelles répondant aux irritants terrain de l'EMSI Marrakech : solveur multi-sites Gueliz/Targa (45 min), éradication des tableurs Excel pour les notes, cahier de texte mobile post-cours par push instantané, et matching IA des soutenances PFE via Ollama.
+                    </p>
+                </div>
+
+                <!-- Quick Stats Badge Box -->
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-white/5 border border-white/10 p-4 rounded-xl backdrop-blur-xs">
+                    <div class="text-center px-2">
+                        <span class="block text-2xl font-black text-white font-mono" id="stat-total-us">24</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-400">User Stories</span>
+                    </div>
+                    <div class="text-center px-2 border-l border-white/10">
+                        <span class="block text-2xl font-black text-emsi-400 font-mono" id="stat-total-sp">144</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-400">Story Points</span>
+                    </div>
+                    <div class="text-center px-2 border-l border-white/10">
+                        <span class="block text-2xl font-black text-amber-400 font-mono">28.8</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-400">Vélocité / Sprint</span>
+                    </div>
+                    <div class="text-center px-2 border-l border-white/10">
+                        <span class="block text-2xl font-black text-emerald-400 font-mono">8</span>
+                        <span class="text-[10px] uppercase font-bold text-slate-400">Epics Métiers</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- INTERACTIVE CONTROL & FILTER PANEL -->
+    <!-- ==================================================================== -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-4 z-20 w-full no-print">
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-sm">
+            <!-- Search & Primary View Toggle -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 pb-3 border-b border-slate-100">
+                <!-- Search Bar -->
+                <div class="relative flex-1">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                    <input type="text" id="searchInput" oninput="filterBacklog()" placeholder="Rechercher par identifiant, mot-clé, persona, critère Gherkin..." class="w-full pl-9 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emsi-600 focus:bg-white transition-all">
+                </div>
+
+                <!-- View Switcher -->
+                <div class="flex items-center gap-1 bg-slate-100 p-1 rounded-lg border border-slate-200 text-xs font-bold">
+                    <button onclick="switchView('table')" id="btn-view-table" class="px-3 py-1.5 rounded-md bg-white text-slate-800 shadow-xs flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-table-list text-emsi-700"></i>
+                        <span>Vue Tabulaire</span>
+                    </button>
+                    <button onclick="switchView('cards')" id="btn-view-cards" class="px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-grip text-slate-500"></i>
+                        <span>Vue Cartes Détaillées</span>
+                    </button>
+                    <button onclick="switchView('kanban')" id="btn-view-kanban" class="px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-all">
+                        <i class="fa-solid fa-chart-column text-slate-500"></i>
+                        <span>Feuille de Route (Sprints)</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Granular Filters -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3">
+                <!-- Epic Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Epic Métier</label>
+                    <select id="epicFilter" onchange="filterBacklog()" class="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emsi-600">
+                        <option value="ALL">Tous les 8 Epics</option>
+                        <option value="SOCLE">Epic 1 : Architecture & Sécurité</option>
+                        <option value="PLAN">Epic 2 : Planification & Multi-Campus</option>
+                        <option value="PEDAG">Epic 3 : Pédagogie & Cahier de Texte</option>
+                        <option value="EVAL">Epic 4 : Évaluations "Zéro Excel"</option>
+                        <option value="PFE">Epic 5 : PFE & Matching IA</option>
+                        <option value="FIN">Epic 6 : Trésorerie & Impayés</option>
+                        <option value="RH">Epic 7 : RH & Vacations</option>
+                        <option value="LOG">Epic 8 : Matériel des Salles</option>
+                    </select>
+                </div>
+
+                <!-- MoSCoW Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Priorité MoSCoW</label>
+                    <select id="moscowFilter" onchange="filterBacklog()" class="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emsi-600">
+                        <option value="ALL">Toutes les priorités</option>
+                        <option value="MUST">MUST HAVE (Indispensable)</option>
+                        <option value="SHOULD">SHOULD HAVE (Important)</option>
+                        <option value="COULD">COULD HAVE (Confort)</option>
+                    </select>
+                </div>
+
+                <!-- Sprint Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Sprint Cible</label>
+                    <select id="sprintFilter" onchange="filterBacklog()" class="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emsi-600">
+                        <option value="ALL">Tous les Sprints (1 à 5)</option>
+                        <option value="1">Sprint 1 (Socle & DB Flyway)</option>
+                        <option value="2">Sprint 2 (OR-Tools, QR & Push)</option>
+                        <option value="3">Sprint 3 (Notes & Délibération)</option>
+                        <option value="4">Sprint 4 (PFE & IA Ollama)</option>
+                        <option value="5">Sprint 5 (Trésorerie & Matériel)</option>
+                    </select>
+                </div>
+
+                <!-- Team / Binôme XP Filter -->
+                <div>
+                    <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">Binôme XP Responsable</label>
+                    <select id="teamFilter" onchange="filterBacklog()" class="w-full bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold py-1.5 px-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emsi-600">
+                        <option value="ALL">Tous les 3 binômes</option>
+                        <option value="BINOME_1">Binôme 1 : Backend Spring & Sécurité</option>
+                        <option value="BINOME_2">Binôme 2 : Client Web React & Logistique</option>
+                        <option value="BINOME_3">Binôme 3 : Mobile Flutter & Moteur IA</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Active filters info counter -->
+            <div class="flex items-center justify-between text-xs text-slate-500 mt-3 pt-3 border-t border-slate-100">
+                <div>
+                    Affichage de <span id="filtered-count" class="font-bold text-slate-800">24</span> User Stories filtrées 
+                    (<span id="filtered-sp" class="font-bold text-emsi-700">144</span> Story Points au total).
+                </div>
+                <button onclick="resetFilters()" class="text-slate-500 hover:text-emsi-700 font-semibold text-[11px] flex items-center gap-1 transition-colors">
+                    <i class="fa-solid fa-arrow-rotate-left"></i> Réinitialiser les filtres
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- CONTENT CONTAINER -->
+    <!-- ==================================================================== -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full">
+
+        <!-- ================================================================ -->
+        <!-- VIEW 1 : TABULAR VIEW (Default) -->
+        <!-- ================================================================ -->
+        <div id="view-table" class="bg-white border border-slate-200 rounded-xl shadow-xs overflow-hidden">
+            <div class="overflow-x-auto custom-scroll">
+                <table class="w-full text-left border-collapse" id="backlogTable">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200 text-[11px] font-black uppercase tracking-wider text-slate-600">
+                            <th class="py-3 px-4 w-28">ID & Priorité</th>
+                            <th class="py-3 px-4 w-40">Epic & Module</th>
+                            <th class="py-3 px-4">Titre & Formulation User Story ("En tant que...")</th>
+                            <th class="py-3 px-3 w-28 text-center">Sprint</th>
+                            <th class="py-3 px-3 w-28 text-center">Binôme XP</th>
+                            <th class="py-3 px-3 w-20 text-center">SP</th>
+                            <th class="py-3 px-4 w-24 text-center no-print">Détail</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-xs" id="tableBody">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- VIEW 2 : CARDS VIEW -->
+        <!-- ================================================================ -->
+        <div id="view-cards" class="hidden grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Populated by JS -->
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- VIEW 3 : KANBAN SPRINT ROADMAP VIEW -->
+        <!-- ================================================================ -->
+        <div id="view-kanban" class="hidden space-y-6">
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-4" id="kanbanCols">
+                <!-- 5 Sprint Columns populated by JS -->
+            </div>
+        </div>
+
+        <!-- ================================================================ -->
+        <!-- METHODOLOGY & DoD SUMMARY FOOTER BANNER -->
+        <!-- ================================================================ -->
+        <div class="mt-10 bg-slate-900 text-white rounded-2xl p-6 sm:p-8 border border-slate-800 shadow-md">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Definition of Done -->
+                <div class="border-b lg:border-b-0 lg:border-r border-slate-800 pb-6 lg:pb-0 lg:pr-6">
+                    <div class="flex items-center gap-2 text-emsi-400 font-extrabold text-sm uppercase tracking-wider mb-3">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Definition of Done (DoD) Strict</span>
+                    </div>
+                    <ul class="text-xs text-slate-300 space-y-2">
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emsi-400 mt-0.5"></i>
+                            <span>Code conforme aux conventions Clean Code & vérifié par Pair Programming (XP).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emsi-400 mt-0.5"></i>
+                            <span>Tests unitaires & d'intégration passants (Couverture &ge; 75% via JUnit / Vitest).</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emsi-400 mt-0.5"></i>
+                            <span>Critères Gherkin (Given/When/Then) validés par des tests d'acceptation automatisés.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emsi-400 mt-0.5"></i>
+                            <span>Migration Flyway testée sans rupture et audit trail actif pour toute écriture.</span>
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <i class="fa-solid fa-check text-emsi-400 mt-0.5"></i>
+                            <span>Démo fonctionnelle validée en Sprint Review avec le tuteur académique.</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Répartition de l'équipe -->
+                <div class="border-b lg:border-b-0 lg:border-r border-slate-800 pb-6 lg:pb-0 lg:pr-6">
+                    <div class="flex items-center gap-2 text-amber-400 font-extrabold text-sm uppercase tracking-wider mb-3">
+                        <i class="fa-solid fa-people-arrows"></i>
+                        <span>Structure des 3 Binômes XP (6 Ingénieurs)</span>
+                    </div>
+                    <div class="space-y-2.5 text-xs text-slate-300">
+                        <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700">
+                            <strong class="text-white block font-mono text-[11px] text-amber-300">Binôme 1 : Backend & Sécurité (2 Ing.)</strong>
+                            <span>Java 21, Spring Boot 3, Spring Security JWT, Multi-tenant, Flyway PostgreSQL, Délibérations.</span>
+                        </div>
+                        <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700">
+                            <strong class="text-white block font-mono text-[11px] text-emerald-300">Binôme 2 : Web & Logistique (2 Ing.)</strong>
+                            <span>React 18, TypeScript, Tailwind CSS, Saisie des notes "Zéro Excel", Grilles d'emploi du temps.</span>
+                        </div>
+                        <div class="bg-slate-800/60 p-2.5 rounded-lg border border-slate-700">
+                            <strong class="text-white block font-mono text-[11px] text-cyan-300">Binôme 3 : Mobile & Moteur IA (2 Ing.)</strong>
+                            <span>Flutter 3, Push notifications FCM, QR code dynamique 15s, Solveur OR-Tools & Ollama LLM.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Engagement Qualité & Cadre Institutionnel -->
+                <div>
+                    <div class="flex items-center gap-2 text-emerald-400 font-extrabold text-sm uppercase tracking-wider mb-3">
+                        <i class="fa-solid fa-award"></i>
+                        <span>Validation & Engagement Officiel</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed mb-4">
+                        Ce Product Backlog a été élaboré selon les standards professionnels de l'ingénierie logicielle pour le projet d'intégration de 5ᵉ Année D2SI de l'EMSI Marrakech.
+                    </p>
+                    <div class="bg-white/5 border border-white/10 p-3 rounded-lg text-xs space-y-1">
+                        <div><strong class="text-white">École :</strong> École Marocaine des Sciences de l'Ingénieur</div>
+                        <div><strong class="text-white">Filière :</strong> 5A D2SI (Data & Systèmes d'Information)</div>
+                        <div><strong class="text-white">Date de Validation :</strong> Novembre 2026</div>
+                        <div><strong class="text-white">Statut :</strong> Baseline Approuvée pour Implémentation</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ==================================================================== -->
+    <!-- MODAL POPUP FOR DETAILED USER STORY VIEW -->
+    <!-- ==================================================================== -->
+    <div id="usModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto custom-scroll shadow-2xl border border-slate-200">
+            <div class="p-6 border-b border-slate-100 flex items-start justify-between">
+                <div>
+                    <div class="flex items-center gap-2 mb-1" id="modalBadges"></div>
+                    <h3 class="text-lg font-black text-slate-900" id="modalTitle"></h3>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 text-xs" id="modalContent"></div>
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end">
+                <button onclick="closeModal()" class="px-4 py-2 bg-slate-800 text-white rounded-lg font-bold hover:bg-slate-900 transition-colors">
+                    Fermer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- JAVASCRIPT DATA & LOGIC ENGINE -->
+    <!-- ==================================================================== -->
+    <script>
+        // 24 Exhaustive User Stories Data
+        const userStories = [
+            // EPIC 1: SOCLE & SÉCURITÉ
+            {
+                id: "US-SEC-01",
+                epic: "SOCLE",
+                epicName: "Architecture & Sécurité",
+                title: "Authentification Sécurisée Multi-Rôles JWT & RBAC",
+                persona: "Tout utilisateur de la plateforme (Étudiant, Enseignant, Chef de Filière, Admin)",
+                want: "me connecter avec mes identifiants académiques et recevoir un token JWT sécurisé",
+                benefit: "accéder uniquement aux fonctionnalités et données associées à mon rôle sans risque d'escalade de privilège",
+                given: "un utilisateur tentant de s'authentifier avec son email @emsi.ma et son mot de passe",
+                when: "les identifiants sont validés par Spring Security et hachés via Argon2id / BCrypt (coût 12)",
+                then: "le système délivre un token JWT signé (HMAC-SHA256) encapsulant tenant_id, user_id et la liste stricte des autorités autorisées",
+                sp: 5,
+                moscow: "MUST",
+                sprint: 1,
+                team: "BINOME_1",
+                teamName: "Binôme 1 (Backend)",
+                ref: "FR-001 • BR-SEC-12 • NFR-004"
+            },
+            {
+                id: "US-SEC-02",
+                epic: "SOCLE",
+                epicName: "Architecture & Sécurité",
+                title: "Isolation Logique Multi-Tenant & Cloisonnement des Campus",
+                persona: "Super Administrateur Technique",
+                want: "que chaque requête API résolve automatiquement le tenant_id depuis le token JWT authentifié",
+                benefit: "garantir une séparation hermétique des données entre les campus (Gueliz, Targa, Casablanca) sans risque de fuite",
+                given: "une requête REST HTTP entrante sur n'importe quel endpoint métier",
+                when: "le filtre Hibernate 6 (@TenantId) applique la contrainte multi-tenant à l'exécution de la requête SQL",
+                then: "aucune donnée appartenant à un autre tenant ou campus non autorisé ne peut être lue ou modifiée",
+                sp: 8,
+                moscow: "MUST",
+                sprint: 1,
+                team: "BINOME_1",
+                teamName: "Binôme 1 (Backend)",
+                ref: "FR-021 • NFR-008"
+            },
+            {
+                id: "US-SEC-03",
+                epic: "SOCLE",
+                epicName: "Architecture & Sécurité",
+                title: "Journalisation Immuable d'Audit (Conformité Loi 09-08 CNDP)",
+                persona: "Délégué à la Protection des Données (DPO) & Direction",
+                want: "enregistrer automatiquement chaque modification de note, attribution de rôle ou levée de verrou financier",
+                benefit: "fournir une traçabilité inaltérable exigée par la loi marocaine CNDP et prévenir toute contestation",
+                given: "un utilisateur effectuant une modification sur une note délibérée ou un compte étudiant",
+                when: "l'intercepteur AOP AuditLogAspect intercepte l'appel de service",
+                then: "une entrée immuable est insérée dans la table audit_logs avec user_id, action, timestamp, IP, anciennes et nouvelles valeurs",
+                sp: 3,
+                moscow: "MUST",
+                sprint: 1,
+                team: "BINOME_1",
+                teamName: "Binôme 1 (Backend)",
+                ref: "FR-020 • BR-SEC-11 • NFR-005"
+            },
+
+            // EPIC 2: PLANIFICATION & MULTI-CAMPUS
+            {
+                id: "US-EDT-01",
+                epic: "PLAN",
+                epicName: "Planification & Multi-Campus",
+                title: "Moteur de Planification Automatique sous Contraintes (OR-Tools)",
+                persona: "Responsable de la Planification & Logistique",
+                want: "générer automatiquement l'emploi du temps hebdomadaire d'une filière via le solveur CP-SAT",
+                benefit: "supprimer 100% des chevauchements d'enseignants, de groupes et de salles spécialisées",
+                given: "un ensemble de promotions (1A à 5A), de salles de cours/TP et de contraintes d'enseignants",
+                when: "le planificateur lance la génération de planning pour le semestre",
+                then: "le solveur produit en moins de 180s un emploi du temps valide sans aucun conflit de réservation stricte",
+                sp: 13,
+                moscow: "MUST",
+                sprint: 2,
+                team: "BINOME_3",
+                teamName: "Binôme 3 (Mobile/IA)",
+                ref: "FR-004 • BR-PLAN-13 • NFR-001"
+            },
+            {
+                id: "US-EDT-02",
+                epic: "PLAN",
+                epicName: "Planification & Multi-Campus",
+                title: "Contrainte de Battement Inter-Campus Obligatoire (45 min Gueliz ⇄ Targa)",
+                persona: "Enseignant intervenant sur les sites de Marrakech",
+                want: "que le solveur impose un créneau de transition de 45 minutes entre deux cours consécutifs dispensés sur des sites distincts",
+                benefit: "éliminer les retards chroniques et le stress des trajets routiers entre Gueliz et Targa",
+                given: "un enseignant terminant un cours à 10h15 sur le campus de Gueliz",
+                when: "le solveur d'emploi du temps positionne sa séance suivante sur le campus de Targa",
+                then: "l'heure de début minimale autorisée à Targa doit être fixée à 11h00 au plus tôt (45 min de battement respecté)",
+                sp: 5,
+                moscow: "MUST",
+                sprint: 2,
+                team: "BINOME_3",
+                teamName: "Binôme 3 (Mobile/IA)",
+                ref: "FR-005 • BR-GEO-01 • AC-003"
+            },
+            {
+                id: "US-EDT-03",
+                epic: "PLAN",
+                epicName: "Planification & Multi-Campus",
+                title: "Grille Visuelle Interactive d'EDT avec Drag-and-Drop",
+                persona: "Planificateur & Chef de Département",
+                want: "visualiser l'emploi du temps sous forme de calendrier hebdomadaire réactif et déplacer les séances par glisser-déposer",
+                benefit: "ajuster manuellement les créneaux avec détection visuelle immédiate des conflits résiduels",
+                given: "un emploi du temps affiché sur le tableau de bord web React",
+                when: "le gestionnaire déplace un cours sur un créneau où la salle ou l'enseignant est indisponible",
+                then: "le créneau cible s'allume en rouge et une alerte modale explicite bloque l'assignation non conforme",
+                sp: 8,
+                moscow: "MUST",
+                sprint: 2,
+                team: "BINOME_2",
+                teamName: "Binôme 2 (Web/Logistique)",
+                ref: "FR-004 • NFR-007"
+            },
+            {
+                id: "US-EDT-04",
+                epic: "PLAN",
+                epicName: "Planification & Multi-Campus",
+                title: "Déclaration des Disponibilités & Préférences des Enseignants Vacataires",
+                persona: "Enseignant Vacataire",
+                want: "renseigner mes créneaux horaires disponibles (soirs de semaine, samedis) depuis mon espace personnel",
+                benefit: "empêcher que l'école me planifie sur des horaires où j'exerce mon activité professionnelle principale",
+                given: "un professeur vacataire déclarant sa matrice de disponibilité hebdomadaire",
+                when: "le profil est enregistré et validé par le chef de département",
+                then: "le solveur OR-Tools intègre ces indisponibilités comme contraintes dures incontournables",
+                sp: 5,
+                moscow: "SHOULD",
+                sprint: 2,
+                team: "BINOME_2",
+                teamName: "Binôme 2 (Web/Logistique)",
+                ref: "FR-004 • BR-PLAN-13"
+            },
+
+            // EPIC 3: PÉDAGOGIE & CAHIER DE TEXTE
+            {
+                id: "US-ATT-01",
+                epic: "PEDAG",
+                epicName: "Pédagogie & Cahier de Texte",
+                title: "Émargement Numérique Étudiant par QR Code Dynamique (15s Anti-Fraude)",
+                persona: "Élève-Ingénieur & Enseignant",
+                want: "émarger ma présence en scannant depuis mon smartphone un QR code éphémère projeté par l'enseignant",
+                benefit: "enregistrer les présences en moins de 15 secondes sans triche ni transfert de photo de QR code",
+                given: "un enseignant projetant un QR code renouvelé dynamiquement toutes les 15 secondes via token chiffré HMAC",
+                when: "l'étudiant scanne le QR code avec son application mobile Flutter vérifiée (device_id unique)",
+                then: "la présence est instantanément validée en base, et toute tentative ultérieure avec le même token expiré est rejetée",
+                sp: 8,
+                moscow: "MUST",
+                sprint: 2,
+                team: "BINOME_3",
+                teamName: "Binôme 3 (Mobile/IA)",
+                ref: "FR-006 • FR-007 • AC-001 • AC-002"
+            },
+            {
+                id: "US-ATT-02",
+                epic: "PEDAG",
+                epicName: "Pédagogie & Cahier de Texte",
+                title: "Dépôt et Validation Numérique des Justificatifs d'Absence",
+                persona: "Élève-Ingénieur & Service Scolarité",
+                want: "téléverser un certificat médical ou justificatif officiel scanné depuis mon smartphone dans les 48 heures",
+                benefit: "régulariser mes absences sans perte de justificatif papier physique",
+                given: "un étudiant ayant une absence signalée non justifiée",
+                when: "l'étudiant dépose son justificatif PDF/image et que le responsable scolarité clique sur 'Valider'",
+                then: "l'absence passe en statut 'JUSTIFIÉE' et le compteur de blâmes académiques est réajusté",
+                sp: 3,
+                moscow: "SHOULD",
+                sprint: 3,
+                team: "BINOME_2",
+                teamName: "Binôme 2 (Web/Logistique)",
+                ref: "FR-008 • BR-ATT-03"
+            },
+            {
+                id: "US-TXT-01",
+                epic: "PEDAG",
+                epicName: "Pédagogie & Cahier de Texte",
+                title: "Notification Push Post-Séance & Saisie Éclair du Cahier de Texte (< 60s)",
+                persona: "Enseignant",
+                want: "recevoir une notification push prioritaire dès la sonnerie de fin de cours ouvrant un formulaire pré-rempli",
+                benefit: "renseigner l'avancement pédagogique, le chapitre et les devoirs immédiatement sans oublier",
+                given: "une séance planifiée de cours arrivant à son heure de fin officielle",
+                when: "le service Firebase Cloud Messaging déclenche la notification push sur le mobile de l'enseignant",
+                then: "l'enseignant valide en moins de 60s son rapport ; la séance est archivée comme 'DOCUMENTÉE' pour la filière",
+                sp: 5,
+                moscow: "MUST",
+                sprint: 2,
+                team: "BINOME_3",
+                teamName: "Binôme 3 (Mobile/IA)",
+                ref: "FR-009 • BR-NOT-06 • AC-004"
+            },
+            {
+                id: "US-TXT-02",
+                epic: "PEDAG",
+                epicName: "Pédagogie & Cahier de Texte",
+                title: "Tableau de Bord du Taux de Couverture des Syllabus par Filière",
+                persona: "Directeur Pédagogique & Chef de Filière",
+                want: "visualiser une jauge d'avancement réel en pourcentage des chapitres dispensés par module et par classe",
+                benefit: "détecter les retards de programme à mi-semestre avant les semaines d'examens",
+                given: "les rapports de séance saisis par les enseignants dans le cahier de texte",
+                when: "le chef de filière consulte la vue de suivi du semestre",
+                then: "le système affiche les modules à risque ayant moins de 70% d'avancement par rapport au calendrier cible",
+                sp: 5,
+                moscow: "SHOULD",
+                sprint: 3,
+                team: "BINOME_2",
+                teamName: "Binôme 2 (Web/Logistique)",
+                ref: "FR-009 • AC-004"
+            },
+
+            // EPIC 4: ÉVALUATIONS "ZÉRO EXCEL"
+            {
+                id: "US-GRD-01",
+                epic: "EVAL",
+                epicName: "Évaluations & Zéro Excel",
+                title: "Grille Web Interactive de Saisie des Notes avec Sauvegarde Automatique",
+                persona: "Enseignant",
+                want: "saisir les notes de CC, TP et examens directement sur un tableau web sécurisé avec validation au clavier",
+                benefit: "bannir définitivement les tableurs Excel, les erreurs de copier-coller et les pertes de données",
+                given: "un enseignant accédant à sa classe pour l'élément constitutif de module",
+                when: "il entre les notes de 0.00 à 20.00 avec navigation rapide par flèches et 'Entrée'",
+                then: "le système sauvegarde automatiquement les notes toutes les 15s et refuse toute valeur hors bornes (< 0 ou > 20)",
+                sp: 8,
+                moscow: "MUST",
+                sprint: 3,
+                team: "BINOME_2",
+                teamName: "Binôme 2 (Web/Logistique)",
+                ref: "FR-010 • BR-NOT-15 • NFR-002"
+            },
+            {
+                id: "US-GRD-02",
+                epic: "EVAL",
+                epicName: "Évaluations & Zéro Excel",
+                title: "Moteur de Délibération Automatique avec Règle Éliminatoire (< 7.00/20)",
+                persona: "Chef de Filière & Jury de Délibération",
+                want: "lancer le calcul des délibérations semestrielles appliquant les coefficients et la note éliminatoire en un clic",
+                benefit: "réduire le temps d'édition des résultats de 10 jours à moins de 24 heures sans erreur humaine",
+                given: "un étudiant avec une moyenne de module mathématiquement égale à 12.50 mais un élément d'examen noté 06.50",
+                when: "le moteur de délibération exécute l'algorithme d'évaluation des seuils académiques",
+                then: "le module est obligatoirement déclaré 'NON VALIDÉ - RATTRAPAGE' en raison de la note éliminatoire < 7.00/20",
+                sp: 8,
+                moscow: "MUST",
+                sprint: 3,
+                team: "BINOME_1",
+                teamName: "Binôme 1 (Backend)",
+                ref: "FR-011 • FR-012 • BR-DELIB-04 • AC-005"
+            },
+            {
+                id: "US-GRD-03",
+                epic: "EVAL",
+                epicName: "Évaluations & Zéro Excel",
+                title: "Génération Numérique Sécurisée du PV de Délibération et Relevés",
+                persona: "Direction des Études & Membres du Jury",
+                want: "produire le Procès-Verbal officiel du jury en PDF scellé avec signatures électroniques et hachage SHA-256",
+                benefit: "garantir l'inviolabilité légale des notes et archiver numériquement les résultats",
+                given: "une session de délibération clôturée et approuvée par le président du jury",
+                when: "le service de génération de rapport produit le PDF",
+                then: "le document intègre le tableau récapitulatif, les mentions d'admission et l'empreinte cryptographique infalsifiable",
+                sp: 5,
+                moscow: "MUST",
+                sprint: 3,
+                team: "BINOME_1",
+                teamName: "Binôme 1 (Backend)",
+                ref: "FR-013 • BR-SEC-11"
+            },
+            {
+                id: "US-GRD-04",
+                epic: "EVAL",
+                epicName: "Évaluations & Zéro Excel",
+                title: "Publication Instantanée des Bulletins sur l'Espace Étudiant Mobile",
+                persona: "Élève-Ingénieur",
+                want: "consulter mes notes officielles, moyennes de modules et classements dès la publication du PV par l'école",
+                benefit: "accéder à mes résultats en temps réel sur smartphone sans déplacement physique au guichet",
+                given: "la publication officielle des notes par le chef de département",
+                when: "l'étudiant ouvre son application mobile Flutter onglet 'Résultats'",
+                then: "les notes s'affichent instantanément avec indicateurs de validation (Vert: Validé, Orange: Rattrapage)",
+                sp: 3,
+                moscow: "MUST",
+                sprint: 3,
+                team: "BINOME_3",
+                teamName: "Binôme 3 (Mobile/IA)",
+                ref: "FR-011 • NFR-001"
+            },
+
+            // EPIC 5: PFE & MATCHING IA
+            {
+                id: "US-PFE-01",
+                epic: "PFE",
+                epicName: "Projets de Fin d'Études & IA",
+                title: "Dépôt Centralisé de Fiche PFE et Workflow de Validation Académique",
+                persona: "Élève-Ingénieur de 5A & Responsable PFE",
+                want: "déposer mon sujet de PFE (problématique, entreprise d'accueil, stack technique) pour validation en ligne",
+                benefit: "éviter les sujets hors périmètre ingénieur et suivre l'avancement des conventions",
+                given: "un étudiant de 5A soumettant une proposition de PFE",
+                when: "le coordinateur des stages examine la proposition sur le portail web",
+                then: "le sujet est soit 'APPROUVÉ', soit retourné pour révision avec annotations pédagogiques",
+                sp: 5,
+                moscow: "MUST",
+                sprint: 4,
+                team: "BINOME_2",
+                teamName: "Binôme 2 (Web/Logistique)",
+                ref: "FR-014 • BR-PFE-07"
+            },
+            {
+                id: "US-PFE-02",
+                epic: "PFE",
+                epicName: "Projets de Fin d'Études & IA",
+                title: "Espace Téléchargement des Templates Officiels EMSI (Word, LaTeX, PPT)",
+                persona: "Élève-Ingénieur (2A à 5A)",
+                want: "télécharger directement les gabarits officiels de mémoires et diaporamas conformes à la charte EMSI",
+                benefit: "garantir 100% de conformité typographique et structurelle dès la première version du rapport",
+                given: "un étudiant accédant à la section 'Ressources & Guides de Rédaction'",
+                when: "il sélectionne son niveau d'études (PFE 5A ou Stage 3A/4A)",
+                then: "le système lui fournit les packages Word (.docx) et LaTeX (.tex) avec la page de garde réglementaire de l'école",
+                sp: 2,
+                moscow: "MUST",
+                sprint: 4,
+                team: "BINOME_2",
+                teamName: "Binôme 2 (Web/Logistique)",
+                ref: "FR-014 • BR-PFE-01"
+            },
+            {
+                id: "US-PFE-03",
+                epic: "PFE",
+                epicName: "Projets de Fin d'Études & IA",
+                title: "Matching IA Local (Ollama / Llama 3) des Jurys selon l'Expertise Technique",
+                persona: "Chef de Département & Responsable PFE",
+                want: "que le modèle d'IA local analyse le texte du mémoire et recommande des enseignants jurys ayant la même spécialité",
+                benefit: "en finir avec les jurys non spécialistes (ex: évaluateur non-spécialiste sur un sujet Cloud/DevOps ou IA)",
+                given: "un sujet de PFE portant sur 'Microservices Spring Boot, Kubernetes et Détection de Fraude'",
+                when: "le moteur IA local Ollama génère les embeddings et calcule la similarité cosinus avec les profils enseignants",
+                then: "le système propose un top 3 d'enseignants experts du domaine avec un score de pertinence transparent (> 0.70)",
+                sp: 13,
+                moscow: "MUST",
+                sprint: 4,
+                team: "BINOME_3",
+                teamName: "Binôme 3 (Mobile/IA)",
+                ref: "FR-015 • BR-PFE-08 • NFR-006 • AC-009"
+            },
+            {
+                id: "US-PFE-04",
+                epic: "PFE",
+                epicName: "Projets de Fin d'Études & IA",
+                title: "Planification Automatique des Créneaux de Soutenance sans Conflit",
+                persona: "Coordinateur des Soutenances",
+                want: "ordonnancer les soutenances de juin en affectant salles, créneaux horaires et jurys disponibles",
+                benefit: "générer un planning de soutenances fluide sans vacataire en double-réservation",
+                given: "120 binômes d'étudiants de 5A admissibles à la soutenance de PFE",
+                when: "le solveur calcule la grille horaire sur les salles de réunion de Gueliz et Targa",
+                then: "les invitations synchronisées iCalendar (.ics) sont transmises avec le lien vers le dossier de mémoire dématérialisé",
+                sp: 8,
+                moscow: "SHOULD",
+                sprint: 4,
+                team: "BINOME_3",
+                teamName: "Binôme 3 (Mobile/IA)",
+                ref: "FR-016 • BR-PFE-07"
+            },
+
+            // EPIC 6: TRÉSORERIE & IMPAYÉS
+            {
+                id: "US-FIN-01",
+                epic: "FIN",
+                epicName: "Trésorerie & Scolarité",
+                title: "Gestion des Échéanciers de Frais et Enregistrement des Règlements",
+                persona: "Agent Financier & Comptable",
+                want: "configurer le plan de règlement annuel par étudiant (comptant, 3 tranches ou 10 mensualités) et saisir les encaissements",
+                benefit: "disposer d'une vision comptable temps réel des montants encaissés et restants dus",
+                given: "un parent d'étudiant effectuant un virement bancaire pour les frais de scolarité",
+                when: "l'agent financier saisit la référence du reçu et le montant en dirhams (MAD)",
+                then: "le solde débiteur de l'étudiant est immédiatement diminué et un reçu électronique certifié lui est transmis",
+                sp: 5,
+                moscow: "MUST",
+                sprint: 5,
+                team: "BINOME_1",
+                teamName: "Binôme 1 (Backend)",
+                ref: "FR-017 • BR-FIN-10"
+            },
+            {
+                id: "US-FIN-02",
+                epic: "FIN",
+                epicName: "Trésorerie & Scolarité",
+                title: "Détection des Impayés (> 10j) et Verrou Administratif des Attestations",
+                persona: "Système & Service Administratif",
+                want: "bloquer automatiquement la génération des attestations de scolarité et relevés pour les étudiants en impayé",
+                benefit: "sécuriser le recouvrement financier sans pénaliser la présence physique de l'étudiant en cours",
+                given: "un compte étudiant présentant une mensualité échue non réglée depuis plus de 10 jours ouvrés",
+                when: "l'étudiant clique sur 'Télécharger mon attestation de scolarité' sur le portail ou mobile",
+                then: "l'accès au document est bloqué avec mention explicite invitant à régulariser sa situation auprès du service financier",
+                sp: 5,
+                moscow: "MUST",
+                sprint: 5,
+                team: "BINOME_1",
+                teamName: "Binôme 1 (Backend)",
+                ref: "FR-018 • BR-FIN-09 • AC-006"
+            },
+            {
+                id: "US-FIN-03",
+                epic: "FIN",
+                epicName: "Trésorerie & Scolarité",
+                title: "Relances Multicanales Automatisées aux Familles (SMS / Email)",
+                persona: "Responsable Trésorerie",
+                want: "déclencher des scénarios de relances automatisés 5 jours avant l'échéance et à J+3 après retard",
+                benefit: "réduire de 40% le taux de retard de paiement sans surcharger l'équipe comptable d'appels téléphoniques",
+                given: "un lot d'échéances arrivant à terme à la fin de la semaine en cours",
+                when: "le batch nocturne identifie les soldes non soldés",
+                then: "des notifications SMS et emails courtois sont automatiquement expédiés aux tuteurs financiers légaux",
+                sp: 3,
+                moscow: "COULD",
+                sprint: 5,
+                team: "BINOME_2",
+                teamName: "Binôme 2 (Web/Logistique)",
+                ref: "FR-017 • BR-FIN-10"
+            },
+
+            // EPIC 7: GESTION RH & VACATIONS
+            {
+                id: "US-RH-01",
+                epic: "RH",
+                epicName: "Gestion RH & Vacations",
+                title: "Décompte Mensuel Automatisé des Heures Effectuées par Vacataire",
+                persona: "Service RH & Enseignant Vacataire",
+                want: "cumuler automatiquement les heures de cours réellement émargées et documentées au cahier de texte",
+                benefit: "supprimer les contestations sur le décompte des vacations et ne payer que les heures réellement tenues",
+                given: "la fin du mois civil universitaire",
+                when: "le service RH génère l'état d'assiduité enseignante",
+                then: "le système consolide les heures de cours validées (zéro heure comptabilisée pour les séances annulées sans rattrapage)",
+                sp: 5,
+                moscow: "SHOULD",
+                sprint: 5,
+                team: "BINOME_1",
+                teamName: "Binôme 1 (Backend)",
+                ref: "FR-009 • BR-NOT-06"
+            },
+            {
+                id: "US-RH-02",
+                epic: "RH",
+                epicName: "Gestion RH & Vacations",
+                title: "Bordereau Récapitulatif d'Ordre de Paiement des Vacations",
+                persona: "Responsable de Filière & Directeur Financier",
+                want: "valider en un clic le bordereau mensuel des vacations par enseignant avant envoi en virement bancaire",
+                benefit: "accélérer le paiement des intervenants extérieurs et fidéliser les experts de haut niveau",
+                given: "l'état d'heures calculé pour l'ensemble des 45 vacataires de Marrakech",
+                when: "le chef de filière signe électroniquement le bordereau de validation",
+                then: "le document d'ordre de virement bancaire est exporté au format comptable sécurisé",
+                sp: 3,
+                moscow: "SHOULD",
+                sprint: 5,
+                team: "BINOME_1",
+                teamName: "Binôme 1 (Backend)",
+                ref: "FR-017"
+            },
+
+            // EPIC 8: MATÉRIEL DES SALLES & LOGISTIQUE
+            {
+                id: "US-LOG-01",
+                epic: "LOG",
+                epicName: "Matériel des Salles & Logistique",
+                title: "Inventaire des Équipements par Salle & Prise en Compte dans l'EDT",
+                persona: "Gestionnaire du Parc Informatique & Planificateur",
+                want: "connaître le nombre exact de PC opérationnels, présence de cartes GPU et état du projecteur de chaque salle",
+                benefit: "garantir qu'un cours d'IA ou de Big Data n'est jamais affecté dans une salle dépourvue de matériel adapté",
+                given: "un module de TP de Deep Learning nécessitant 30 postes avec GPU",
+                when: "le planificateur recherche une salle disponible sur Gueliz ou Targa",
+                then: "seules les salles dont l'inventaire valide confirme 30+ machines opérationnelles avec GPU sont sélectionnables",
+                sp: 5,
+                moscow: "SHOULD",
+                sprint: 5,
+                team: "BINOME_2",
+                teamName: "Binôme 2 (Web/Logistique)",
+                ref: "FR-004 • NFR-008"
+            },
+            {
+                id: "US-LOG-02",
+                epic: "LOG",
+                epicName: "Matériel des Salles & Logistique",
+                title: "Signalement Mobile Immédiat des Pannes Matérielles avec Photo & Ticketing",
+                persona: "Enseignant & Délégué de Classe",
+                want: "signaler une défaillance (vidéoprojecteur HS, 4 PC non alimentés) en 30 secondes avec photo depuis mon mobile",
+                benefit: "déclencher une intervention de maintenance rapide avant le cours suivant",
+                given: "une panne matérielle constatée en salle 204 du campus de Gueliz",
+                when: "l'enseignant scanne le QR code de la salle et soumet le ticket d'incident avec une photo",
+                then: "l'équipe technique du campus reçoit une alerte push et le statut de la salle est temporairement mis à jour",
+                sp: 5,
+                moscow: "SHOULD",
+                sprint: 5,
+                team: "BINOME_3",
+                teamName: "Binôme 3 (Mobile/IA)",
+                ref: "FR-004"
+            }
+        ];
+
+        // State & DOM elements
+        let currentFilter = {
+            search: "",
+            epic: "ALL",
+            moscow: "ALL",
+            sprint: "ALL",
+            team: "ALL"
+        };
+        let currentView = "table";
+
+        function getEpicBadgeClass(epic) {
+            switch(epic) {
+                case "SOCLE": return "bg-purple-100 text-purple-800 border-purple-200";
+                case "PLAN": return "bg-blue-100 text-blue-800 border-blue-200";
+                case "PEDAG": return "bg-emerald-100 text-emerald-800 border-emerald-200";
+                case "EVAL": return "bg-amber-100 text-amber-800 border-amber-200";
+                case "PFE": return "bg-indigo-100 text-indigo-800 border-indigo-200";
+                case "FIN": return "bg-rose-100 text-rose-800 border-rose-200";
+                case "RH": return "bg-orange-100 text-orange-800 border-orange-200";
+                case "LOG": return "bg-teal-100 text-teal-800 border-teal-200";
+                default: return "bg-slate-100 text-slate-800 border-slate-200";
+            }
+        }
+
+        function getMoscowBadgeClass(m) {
+            switch(m) {
+                case "MUST": return "bg-emerald-600 text-white";
+                case "SHOULD": return "bg-blue-600 text-white";
+                case "COULD": return "bg-slate-500 text-white";
+                default: return "bg-slate-400 text-white";
+            }
+        }
+
+        function getTeamBadge(team) {
+            switch(team) {
+                case "BINOME_1": return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">Binôme 1 (Back)</span>`;
+                case "BINOME_2": return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">Binôme 2 (Web)</span>`;
+                case "BINOME_3": return `<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-cyan-50 text-cyan-800 border border-cyan-200">Binôme 3 (Mob/IA)</span>`;
+                default: return "";
+            }
+        }
+
+        function renderTable(stories) {
+            const tbody = document.getElementById("tableBody");
+            if (stories.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-12 text-center text-slate-400 text-sm italic">Aucune User Story ne correspond aux critères de recherche.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = stories.map(s => `
+                <tr class="hover:bg-slate-50/80 transition-colors cursor-pointer group" onclick="openModal('${s.id}')">
+                    <td class="py-3 px-4 font-mono font-bold text-slate-900 align-top">
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-xs font-black text-slate-800">${s.id}</span>
+                        </div>
+                        <span class="inline-block mt-1 px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase tracking-wide ${getMoscowBadgeClass(s.moscow)}">
+                            ${s.moscow}
+                        </span>
+                    </td>
+                    <td class="py-3 px-4 align-top">
+                        <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold border ${getEpicBadgeClass(s.epic)} mb-1">
+                            ${s.epicName}
+                        </span>
+                        <div class="text-[10px] text-slate-400 font-mono">${s.ref}</div>
+                    </td>
+                    <td class="py-3 px-4 align-top">
+                        <div class="font-bold text-slate-900 group-hover:text-emsi-700 transition-colors text-xs mb-1">
+                            ${s.title}
+                        </div>
+                        <div class="text-[11px] text-slate-600 leading-snug">
+                            <span class="text-slate-400 font-semibold">En tant que</span> <strong class="text-slate-700">${s.persona}</strong>, 
+                            <span class="text-slate-400 font-semibold">je veux</span> ${s.want}, 
+                            <span class="text-slate-400 font-semibold">afin de</span> <span class="italic text-slate-700">${s.benefit}</span>.
+                        </div>
+                    </td>
+                    <td class="py-3 px-3 text-center align-top">
+                        <span class="inline-flex items-center justify-center px-2 py-1 rounded bg-slate-100 text-slate-800 font-mono font-bold text-xs">
+                            Sprint ${s.sprint}
+                        </span>
+                    </td>
+                    <td class="py-3 px-3 text-center align-top">
+                        ${getTeamBadge(s.team)}
+                    </td>
+                    <td class="py-3 px-3 text-center align-top font-mono font-black text-slate-900 text-xs">
+                        <span class="inline-block px-2 py-0.5 rounded-full bg-slate-100 text-slate-800">${s.sp} SP</span>
+                    </td>
+                    <td class="py-3 px-4 text-center align-top no-print">
+                        <button class="p-1.5 text-slate-400 group-hover:text-emsi-700 hover:bg-slate-100 rounded-lg transition-all" title="Voir critères Gherkin">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join("");
+        }
+
+        function renderCards(stories) {
+            const container = document.getElementById("view-cards");
+            if (stories.length === 0) {
+                container.innerHTML = `<div class="col-span-2 py-12 text-center text-slate-400 text-sm italic">Aucune User Story ne correspond aux critères de recherche.</div>`;
+                return;
+            }
+
+            container.innerHTML = stories.map(s => `
+                <div class="bg-white border border-slate-200 rounded-xl p-5 shadow-xs hover:shadow-sm hover:border-emsi-300 transition-all flex flex-col justify-between cursor-pointer" onclick="openModal('${s.id}')">
+                    <div>
+                        <!-- Card Header -->
+                        <div class="flex items-start justify-between gap-2 mb-2">
+                            <div class="flex flex-wrap items-center gap-1.5">
+                                <span class="font-mono font-black text-xs text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">${s.id}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${getEpicBadgeClass(s.epic)}">${s.epicName}</span>
+                                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${getMoscowBadgeClass(s.moscow)}">${s.moscow}</span>
+                            </div>
+                            <span class="font-mono font-black text-xs bg-emsi-50 text-emsi-800 px-2.5 py-1 rounded-full border border-emsi-200 shrink-0">
+                                ${s.sp} SP
+                            </span>
+                        </div>
+
+                        <!-- Card Title -->
+                        <h4 class="font-extrabold text-sm text-slate-900 mb-2">${s.title}</h4>
+
+                        <!-- Persona & Story text -->
+                        <div class="bg-slate-50 p-3 rounded-lg border border-slate-100 text-xs text-slate-700 mb-3 space-y-1">
+                            <div><strong class="text-slate-900">En tant que :</strong> ${s.persona}</div>
+                            <div><strong class="text-slate-900">Je veux :</strong> ${s.want}</div>
+                            <div><strong class="text-slate-900">Afin de :</strong> <span class="italic text-slate-600">${s.benefit}</span></div>
+                        </div>
+
+                        <!-- Gherkin Snippet -->
+                        <div class="bg-slate-950 text-slate-200 p-3 rounded-lg font-mono text-[10px] leading-relaxed mb-3">
+                            <div class="text-emsi-400 font-bold mb-1">// Critère d'Acceptation Formel (Gherkin)</div>
+                            <div><span class="text-amber-400 font-bold">GIVEN</span> ${s.given}</div>
+                            <div><span class="text-blue-400 font-bold">WHEN</span> ${s.when}</div>
+                            <div><span class="text-emerald-400 font-bold">THEN</span> ${s.then}</div>
+                        </div>
+                    </div>
+
+                    <!-- Card Footer -->
+                    <div class="flex items-center justify-between text-[11px] text-slate-500 pt-3 border-t border-slate-100 mt-2">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-700"><i class="fa-solid fa-clock-rotate-left mr-1"></i>Sprint ${s.sprint}</span>
+                            <span>•</span>
+                            ${getTeamBadge(s.team)}
+                        </div>
+                        <span class="text-slate-400 font-mono text-[10px]">${s.ref}</span>
+                    </div>
+                </div>
+            `).join("");
+        }
+
+        function renderKanban(stories) {
+            const container = document.getElementById("kanbanCols");
+            const sprints = [1, 2, 3, 4, 5];
+            const sprintTitles = {
+                1: "Sprint 1 : Socle & DB Flyway",
+                2: "Sprint 2 : OR-Tools & Pédagogie",
+                3: "Sprint 3 : Zéro Excel & Délibérations",
+                4: "Sprint 4 : Soutenances PFE & IA",
+                5: "Sprint 5 : Trésorerie & Matériel"
+            };
+
+            container.innerHTML = sprints.map(spNum => {
+                const spStories = stories.filter(s => s.sprint === spNum);
+                const totalSp = spStories.reduce((acc, curr) => acc + curr.sp, 0);
+
+                return `
+                    <div class="bg-slate-100/70 rounded-xl p-3 border border-slate-200 flex flex-col min-h-[500px]">
+                        <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-200">
+                            <div>
+                                <span class="font-extrabold text-xs text-slate-900 block">${sprintTitles[spNum]}</span>
+                                <span class="text-[10px] text-slate-500 font-semibold">${spStories.length} Stories</span>
+                            </div>
+                            <span class="font-mono font-bold text-xs bg-white border border-slate-200 px-2 py-0.5 rounded text-emsi-800">
+                                ${totalSp} SP
+                            </span>
+                        </div>
+
+                        <div class="space-y-2.5 flex-1 overflow-y-auto">
+                            ${spStories.map(s => `
+                                <div class="bg-white p-3 rounded-lg border border-slate-200 shadow-2xs hover:border-emsi-400 hover:shadow-xs transition-all cursor-pointer" onclick="openModal('${s.id}')">
+                                    <div class="flex items-center justify-between gap-1 mb-1.5">
+                                        <span class="font-mono font-bold text-[10px] text-slate-800">${s.id}</span>
+                                        <span class="px-1.5 py-0.5 rounded text-[8px] font-extrabold ${getMoscowBadgeClass(s.moscow)}">${s.moscow}</span>
+                                    </div>
+                                    <div class="font-bold text-slate-900 text-[11px] leading-tight mb-2">${s.title}</div>
+                                    <div class="flex items-center justify-between text-[10px] text-slate-500 pt-1.5 border-t border-slate-100">
+                                        <span class="font-mono font-bold text-slate-700">${s.sp} SP</span>
+                                        <span class="text-[9px]">${s.teamName.split(' ')[0]}</span>
+                                    </div>
+                                </div>
+                            `).join("")}
+                        </div>
+                    </div>
+                `;
+            }).join("");
+        }
+
+        function filterBacklog() {
+            const search = document.getElementById("searchInput").value.toLowerCase();
+            const epic = document.getElementById("epicFilter").value;
+            const moscow = document.getElementById("moscowFilter").value;
+            const sprint = document.getElementById("sprintFilter").value;
+            const team = document.getElementById("teamFilter").value;
+
+            const filtered = userStories.filter(s => {
+                const matchSearch = (
+                    s.id.toLowerCase().includes(search) ||
+                    s.title.toLowerCase().includes(search) ||
+                    s.persona.toLowerCase().includes(search) ||
+                    s.want.toLowerCase().includes(search) ||
+                    s.benefit.toLowerCase().includes(search) ||
+                    s.given.toLowerCase().includes(search) ||
+                    s.ref.toLowerCase().includes(search)
+                );
+
+                const matchEpic = (epic === "ALL" || s.epic === epic);
+                const matchMoscow = (moscow === "ALL" || s.moscow === moscow);
+                const matchSprint = (sprint === "ALL" || s.sprint.toString() === sprint);
+                const matchTeam = (team === "ALL" || s.team === team);
+
+                return matchSearch && matchEpic && matchMoscow && matchSprint && matchTeam;
+            });
+
+            // Update stats
+            document.getElementById("filtered-count").innerText = filtered.length;
+            const totalSP = filtered.reduce((acc, curr) => acc + curr.sp, 0);
+            document.getElementById("filtered-sp").innerText = totalSP;
+
+            // Re-render active view
+            if (currentView === "table") renderTable(filtered);
+            if (currentView === "cards") renderCards(filtered);
+            if (currentView === "kanban") renderKanban(filtered);
+        }
+
+        function switchView(view) {
+            currentView = view;
+            const vTable = document.getElementById("view-table");
+            const vCards = document.getElementById("view-cards");
+            const vKanban = document.getElementById("view-kanban");
+
+            const btnTable = document.getElementById("btn-view-table");
+            const btnCards = document.getElementById("btn-view-cards");
+            const btnKanban = document.getElementById("btn-view-kanban");
+
+            // Reset tabs styling
+            [btnTable, btnCards, btnKanban].forEach(b => {
+                b.className = "px-3 py-1.5 rounded-md text-slate-600 hover:text-slate-900 flex items-center gap-1.5 transition-all";
+            });
+
+            vTable.classList.add("hidden");
+            vCards.classList.add("hidden");
+            vKanban.classList.add("hidden");
+
+            if (view === "table") {
+                vTable.classList.remove("hidden");
+                btnTable.className = "px-3 py-1.5 rounded-md bg-white text-slate-800 shadow-xs flex items-center gap-1.5 transition-all font-bold";
+            } else if (view === "cards") {
+                vCards.classList.remove("hidden");
+                btnCards.className = "px-3 py-1.5 rounded-md bg-white text-slate-800 shadow-xs flex items-center gap-1.5 transition-all font-bold";
+            } else if (view === "kanban") {
+                vKanban.classList.remove("hidden");
+                btnKanban.className = "px-3 py-1.5 rounded-md bg-white text-slate-800 shadow-xs flex items-center gap-1.5 transition-all font-bold";
+            }
+
+            filterBacklog();
+        }
+
+        function resetFilters() {
+            document.getElementById("searchInput").value = "";
+            document.getElementById("epicFilter").value = "ALL";
+            document.getElementById("moscowFilter").value = "ALL";
+            document.getElementById("sprintFilter").value = "ALL";
+            document.getElementById("teamFilter").value = "ALL";
+            filterBacklog();
+        }
+
+        function openModal(usId) {
+            const story = userStories.find(s => s.id === usId);
+            if (!story) return;
+
+            document.getElementById("modalBadges").innerHTML = `
+                <span class="font-mono font-black text-xs text-slate-900 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">${story.id}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${getEpicBadgeClass(story.epic)}">${story.epicName}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase ${getMoscowBadgeClass(story.moscow)}">${story.moscow}</span>
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-700">${story.sp} Story Points</span>
+            `;
+            document.getElementById("modalTitle").innerText = story.title;
+
+            document.getElementById("modalContent").innerHTML = `
+                <!-- Formulation Agile Standard -->
+                <div class="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-2">
+                    <div class="font-bold text-slate-900 text-xs uppercase tracking-wider text-emsi-800">Spécification Agile (Persona & Objectif)</div>
+                    <div><strong class="text-slate-900">En tant que :</strong> ${story.persona}</div>
+                    <div><strong class="text-slate-900">Je veux :</strong> ${story.want}</div>
+                    <div><strong class="text-slate-900">Afin de :</strong> <span class="text-slate-700 italic">${story.benefit}</span></div>
+                </div>
+
+                <!-- Critères d'Acceptation Gherkin -->
+                <div class="bg-slate-950 text-slate-100 p-4 rounded-xl font-mono text-xs leading-relaxed border border-slate-800 space-y-1.5">
+                    <div class="text-emsi-400 font-bold text-[11px] mb-2">// Critère d'Acceptation Formel (Gherkin Automatisable)</div>
+                    <div><span class="text-amber-400 font-bold">GIVEN (Étant donné)</span> ${story.given}</div>
+                    <div><span class="text-blue-400 font-bold">WHEN (Lorsque)</span> ${story.when}</div>
+                    <div><span class="text-emerald-400 font-bold">THEN (Alors)</span> ${story.then}</div>
+                </div>
+
+                <!-- Métadonnées & Traçabilité -->
+                <div class="grid grid-cols-2 gap-3 text-xs pt-2">
+                    <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                        <strong class="text-slate-900 block mb-1">Attribution & Cadre de Travail :</strong>
+                        <div class="text-slate-600 space-y-0.5">
+                            <div>• Sprint cible : <strong>Sprint ${story.sprint}</strong> (2 semaines)</div>
+                            <div>• Responsable : <strong>${story.teamName}</strong></div>
+                            <div>• Estimation : <strong>${story.sp} SP (Fibonacci)</strong></div>
+                        </div>
+                    </div>
+                    <div class="p-2.5 bg-slate-50 border border-slate-200 rounded-lg">
+                        <strong class="text-slate-900 block mb-1">Traçabilité Exigences :</strong>
+                        <div class="text-slate-600 space-y-0.5">
+                            <div>• Référence CdCF : <strong>${story.ref}</strong></div>
+                            <div>• Règle de Gestion : <strong>Priorité ${story.moscow}</strong></div>
+                            <div>• Validation : <strong>JUnit 5 / Test E2E</strong></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById("usModal").classList.remove("hidden");
+        }
+
+        function closeModal() {
+            document.getElementById("usModal").classList.add("hidden");
+        }
+
+        function exportToCSV() {
+            let csv = "ID;Epic;Titre;Persona;Besoin;Bénéfice;Priorité;Sprint;SP;Binôme;Références\n";
+            userStories.forEach(s => {
+                csv += `"${s.id}";"${s.epicName}";"${s.title}";"${s.persona}";"${s.want}";"${s.benefit}";"${s.moscow}";"Sprint ${s.sprint}";"${s.sp}";"${s.teamName}";"${s.ref}"\n`;
+            });
+
+            const blob = new Blob(["\uFEFF" + csv], { type: "text/csv;charset=utf-8;" });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = "Product_Backlog_EMSI_Campus.csv";
+            link.click();
+        }
+
+        // Close modal on Escape
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Escape") closeModal();
+        });
+
+        // Initial Render
+        document.addEventListener("DOMContentLoaded", () => {
+            filterBacklog();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cahier des Charges Fonctionnel & Technique — EMSI Campus ERP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        emsi: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            dark: '#022c22'
+                        },
+                        navy: {
+                            800: '#0f172a',
+                            900: '#020617',
+                            950: '#010409'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .badge-must {
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        .badge-should {
+            background-color: rgba(245, 158, 11, 0.15);
+            color: #f59e0b;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+        .badge-could {
+            background-color: rgba(59, 130, 246, 0.15);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        @media print {
+            .no-print { display: none !important; }
+            body { background: white !important; color: black !important; }
+            .print-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body class="bg-navy-950 text-slate-200 font-sans antialiased selection:bg-emsi-500 selection:text-white">
+
+    <!-- Top Bar -->
+    <header class="no-print sticky top-0 z-50 backdrop-blur-md bg-navy-900/90 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-4">
+                <img src="assets/emsi_logo.png" alt="Logo EMSI" class="h-10 w-auto bg-white p-1 rounded-lg shadow-sm">
+                <div>
+                    <h1 class="font-bold text-sm sm:text-base text-white leading-tight">EMSI Campus — Cahier des Charges Officiel</h1>
+                    <p class="text-xs text-slate-400">Projet de Fin d'Études • 5ᵉ Année D2SI • Version 1.0</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="window.print()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition">
+                    <i data-lucide="printer" class="w-4 h-4 text-emerald-400"></i>
+                    Imprimer / PDF
+                </button>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-950 text-emerald-400 border border-emerald-500/40">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    Baseline Validée
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 flex gap-8">
+
+        <!-- Sidebar / Navigation -->
+        <aside class="no-print hidden lg:block w-72 shrink-0">
+            <div class="sticky top-24 space-y-4 text-xs">
+                <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                    <div class="font-bold text-slate-200 uppercase tracking-wider mb-3 flex items-center gap-2">
+                        <i data-lucide="list-ordered" class="w-4 h-4 text-emerald-400"></i> Sommaire Exécutif
+                    </div>
+                    <nav class="space-y-1.5 font-medium text-slate-400">
+                        <a href="#garde" class="block hover:text-emerald-400 py-1 transition">1. Page de Garde & Métadonnées</a>
+                        <a href="#contexte" class="block hover:text-emerald-400 py-1 transition">2. Contexte & Réalité EMSI</a>
+                        <a href="#objectifs" class="block hover:text-emerald-400 py-1 transition">3. Objectifs & KPIs</a>
+                        <a href="#acteurs" class="block hover:text-emerald-400 py-1 transition">4. Acteurs & Matrice RACI</a>
+                        <a href="#processus" class="block hover:text-emerald-400 py-1 transition">5. Processus & Règles Métier</a>
+                        <a href="#exigences" class="block text-emerald-400 font-semibold py-1 transition">6. Exigences Détaillées (REQ)</a>
+                        <a href="#architecture" class="block hover:text-emerald-400 py-1 transition">7. Architecture & Technologies</a>
+                        <a href="#donnees" class="block hover:text-emerald-400 py-1 transition">8. Modèle de Données</a>
+                        <a href="#planning" class="block hover:text-emerald-400 py-1 transition">9. Planning & Méthode Agile</a>
+                        <a href="#risques" class="block hover:text-emerald-400 py-1 transition">10. Risques & Traçabilité</a>
+                    </nav>
+                </div>
+
+                <div class="p-4 rounded-xl bg-emerald-950/30 border border-emerald-500/20 text-slate-300">
+                    <div class="font-bold text-emerald-400 flex items-center gap-1.5 mb-1">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i> Spécification Certifiée
+                    </div>
+                    <p class="text-[11px] leading-relaxed text-slate-400">
+                        Conforme à la méthodologie <strong>cahier-des-charges-pro</strong> et aux normes IEEE 830 / ISO 29148.
+                    </p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 min-w-0 space-y-12">
+
+            <!-- 1. Page de Garde -->
+            <section id="garde" class="p-8 sm:p-12 rounded-3xl bg-gradient-to-br from-navy-900 via-slate-900 to-navy-950 border border-slate-800 shadow-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-96 h-96 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 pb-8 border-b border-slate-800">
+                    <div class="bg-white p-3 rounded-2xl shadow-lg shadow-black/40">
+                        <img src="assets/emsi_logo.png" alt="Logo Officiel EMSI" class="h-16 w-auto">
+                    </div>
+                    <div class="text-left sm:text-right">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
+                            DOCUMENT CONTRACTUEL N° CDCF-EMSI-2026-V1
+                        </span>
+                        <div class="text-xs text-slate-400 mt-2">École Marocaine des Sciences de l'Ingénieur</div>
+                    </div>
+                </div>
+
+                <div class="mt-8">
+                    <div class="text-xs font-bold uppercase tracking-widest text-emerald-400 mb-2">Dossier de Spécification des Exigences Logiciel (SRS)</div>
+                    <h2 class="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
+                        Système d'Information & ERP Académique EMSI Campus
+                    </h2>
+                    <p class="mt-4 text-base sm:text-lg text-slate-300 leading-relaxed max-w-3xl">
+                        Plateforme Web & Mobile unifiée pour la résolution intégrale des contraintes de planification multi-sites (Gueliz & Targa), saisie directe des notes, cahier de texte automatique, affectation IA des soutenances PFE, gestion des ressources matérielles et trésorerie scolarité.
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10 pt-8 border-t border-slate-800 text-xs">
+                    <div>
+                        <span class="text-slate-500 uppercase tracking-wider block font-semibold">Promotion</span>
+                        <span class="font-bold text-white text-sm">5ᵉ Année D2SI</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 uppercase tracking-wider block font-semibold">Sites Pilotes</span>
+                        <span class="font-bold text-white text-sm">Marrakech Gueliz & Targa</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 uppercase tracking-wider block font-semibold">Technologies</span>
+                        <span class="font-bold text-emerald-400 text-sm">Spring Boot • React • Flutter • Ollama</span>
+                    </div>
+                    <div>
+                        <span class="text-slate-500 uppercase tracking-wider block font-semibold">Date de Validation</span>
+                        <span class="font-bold text-white text-sm">Octobre 2026</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. Contexte & Réalité EMSI -->
+            <section id="contexte" class="space-y-6">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <i data-lucide="map-pin" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-white">2. Contexte, Problématique & Analyse Terrain</h3>
+                        <p class="text-xs text-slate-400">Les points de rupture opérationnels observés à l'EMSI Marrakech</p>
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm mb-3">1</div>
+                        <h4 class="font-bold text-white text-base mb-2">Multi-Sites Gueliz & Targa</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            À Marrakech, l'école opère sur <strong>deux campus distants de 6 à 7 km</strong>. Les professeurs vacataires et permanents enchaînent des cours sur les deux sites. L'absence de temps tampon dans le planning engendre des retards constants et des salles inoccupées.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm mb-3">2</div>
+                        <h4 class="font-bold text-white text-base mb-2">Fin du tableur Excel pour les Notes</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            La saisie manuelle des notes sur Excel provoque des erreurs de formules, retarde les délibérations officielles et crée des pertes d'historique. L'ERP impose une saisie web/tablette directe avec vérification automatique des seuils éliminatoires (< 7.00).
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                        <div class="w-9 h-9 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm mb-3">3</div>
+                        <h4 class="font-bold text-white text-base mb-2">Oubli des Rapports de Séance</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Les enseignants oublient fréquemment de consigner le cahier de texte à la fin du cours. Le système déclenche une <strong>notification push automatique</strong> sur leur smartphone dès la sonnerie pour forcer la saisie du contenu et des devoirs en moins de 60s.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. Acteurs & Matrice RACI -->
+            <section id="acteurs" class="space-y-6">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <i data-lucide="users" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-white">3. Profils Utilisateurs & Matrice RACI</h3>
+                        <p class="text-xs text-slate-400">Responsabilités précises des 10 profils de la communauté EMSI</p>
+                    </div>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="font-bold text-emerald-400 text-sm mb-1">Responsable Filière</div>
+                        <p class="text-slate-400">Gère les profs, valide les emplois du temps de sa filière (D2SI, IIR, etc.), supervise les jurys PFE et délibère les résultats.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="font-bold text-cyan-400 text-sm mb-1">Responsable Planning</div>
+                        <p class="text-slate-400">Gère les capacités des salles, exécute le solveur OR-Tools et affecte les surveillants aux examens.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="font-bold text-indigo-400 text-sm mb-1">Enseignants (Perm. / Vac.)</div>
+                        <p class="text-slate-400">Émargement numérique, remplissage obligatoire du cahier de texte post-séance, saisie des notes et jurys PFE.</p>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-900/80 border border-slate-800">
+                        <div class="font-bold text-amber-400 text-sm mb-1">Élève-Ingénieur</div>
+                        <p class="text-slate-400">Consultation EDT live, scan de présence QR code, téléchargement templates PFE officiels et suivi scolarité.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. Exigences Fonctionnelles Détaillées (REQ-XXX) -->
+            <section id="exigences" class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            <i data-lucide="check-square" class="w-6 h-6"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">4. Exigences Fonctionnelles Détaillées (Spécification IEEE 830)</h3>
+                            <p class="text-xs text-slate-400">Formulation atomique, testable et priorisée selon MoSCoW</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-xs">
+                        <span class="px-2 py-0.5 rounded badge-must font-semibold">MUST</span>
+                        <span class="px-2 py-0.5 rounded badge-should font-semibold">SHOULD</span>
+                        <span class="px-2 py-0.5 rounded badge-could font-semibold">COULD</span>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+
+                    <!-- REQ-EDT-01 -->
+                    <div class="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+                            <div>
+                                <span class="text-xs font-mono text-emerald-400 font-bold">REQ-EDT-01</span>
+                                <h4 class="text-base font-bold text-white mt-0.5">Planification Automatisée Multi-Sites (Gueliz & Targa) & Salles Spécialisées</h4>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold badge-must self-start sm:self-auto">MUST HAVE</span>
+                        </div>
+                        <div class="mt-4 grid md:grid-cols-2 gap-4 text-xs text-slate-300">
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Description & Comportement :</strong>
+                                Le système génère automatiquement l'emploi du temps via OR-Tools en respectant strictement : (1) Le battement minimal de 45 minutes entre une séance à Gueliz et une à Targa pour un même professeur, (2) L'attribution des TP informatiques aux salles dotées de PC et GPUs fonctionnels, (3) Les créneaux restreints des vacataires (soirs/samedis).
+                            </div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Critères d'Acceptation :</strong>
+                                <ul class="list-disc list-inside space-y-1 text-slate-400">
+                                    <li>Zéro conflit matériel ou physique (prof/groupe/salle).</li>
+                                    <li>Alerte immédiate en cas de contrainte insoluble avec proposition d'arbitrage.</li>
+                                    <li>Export instantané vers l'application mobile Flutter de tous les étudiants et profs.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REQ-RAP-01 -->
+                    <div class="p-6 rounded-2xl bg-slate-900/70 border border-emerald-500/30 hover:border-emerald-500/50 transition">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+                            <div>
+                                <span class="text-xs font-mono text-emerald-400 font-bold">REQ-RAP-01</span>
+                                <h4 class="text-base font-bold text-white mt-0.5">Notification Push de Fin de Cours & Saisie Obligatoire du Cahier de Texte</h4>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold badge-must self-start sm:self-auto">MUST HAVE</span>
+                        </div>
+                        <div class="mt-4 grid md:grid-cols-2 gap-4 text-xs text-slate-300">
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Description & Comportement :</strong>
+                                Dès la fin officielle d'une séance de cours, le système envoie une notification push urgente sur le smartphone de l'enseignant. Un formulaire mobile en 3 champs s'ouvre : Chapitre abordé, Objectif atteint, Devoirs/travaux demandés. Si non rempli après 30 min, relance automatique et alerte au chef de filière.
+                            </div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Critères d'Acceptation :</strong>
+                                <ul class="list-disc list-inside space-y-1 text-slate-400">
+                                    <li>Saisie réalisable en moins de 60 secondes sur mobile.</li>
+                                    <li>Mise à jour immédiate du cahier de texte consultable par les élèves.</li>
+                                    <li>Conditionne la validation des heures de vacation de l'enseignant.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REQ-NOT-01 -->
+                    <div class="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+                            <div>
+                                <span class="text-xs font-mono text-emerald-400 font-bold">REQ-NOT-01</span>
+                                <h4 class="text-base font-bold text-white mt-0.5">Saisie Directe des Notes en Ligne & Délibérations sans Fichiers Excel</h4>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold badge-must self-start sm:self-auto">MUST HAVE</span>
+                        </div>
+                        <div class="mt-4 grid md:grid-cols-2 gap-4 text-xs text-slate-300">
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Description & Comportement :</strong>
+                                Les enseignants saisissent les notes (CC, TP, Examens) sur une grille interactive web/tablette avec sauvegarde temps réel. Le système applique les formules de pondération officielles et signale en rouge toute note éliminatoire (&lt; 7.00/20.00). L'algorithme de délibération calcule automatiquement les admissions et rattrapages.
+                            </div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Critères d'Acceptation :</strong>
+                                <ul class="list-disc list-inside space-y-1 text-slate-400">
+                                    <li>Éradication à 100% de la circulation de tableurs Excel manuels.</li>
+                                    <li>Génération en un clic du Procès-Verbal (PV) de délibération officiel.</li>
+                                    <li>Traçabilité immuable (Audit Log) de chaque saisie ou rectification de note.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REQ-SOUT-01, 02, 03 -->
+                    <div class="p-6 rounded-2xl bg-slate-900/70 border border-cyan-500/30 hover:border-cyan-500/50 transition">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+                            <div>
+                                <span class="text-xs font-mono text-cyan-400 font-bold">REQ-SOUT-01 / 02 / 03</span>
+                                <h4 class="text-base font-bold text-white mt-0.5">Soutenances (2A à 5A), Templates EMSI & Moteur IA d'Affectation des Jurys</h4>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold badge-must self-start sm:self-auto">MUST HAVE</span>
+                        </div>
+                        <div class="mt-4 grid md:grid-cols-2 gap-4 text-xs text-slate-300">
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Description & Comportement :</strong>
+                                Le module gère l'ensemble des stages et PFE :<br>
+                                1. Téléchargement des <strong>templates officiels EMSI</strong> (Rapport Word/LaTeX et Diaporama PowerPoint).<br>
+                                2. Dépôt obligatoire de la convention signée et de l'attestation de stage avant clôture de la soutenance.<br>
+                                3. <strong>Moteur IA (Ollama) :</strong> Analyse le sujet (ex: Plateforme SaaS en Java/Spring Boot) et apparie automatiquement un encadrant et des membres de jurys spécialistes de cette techno, tout en équilibrant les quotas d'encadrement.
+                            </div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Critères d'Acceptation :</strong>
+                                <ul class="list-disc list-inside space-y-1 text-slate-400">
+                                    <li>Recommandation transparente avec score explicatif (% match compétence + quota).</li>
+                                    <li>Le responsable de filière garde la validation finale en un clic.</li>
+                                    <li>Grille d'évaluation multicritère en direct pendant la soutenance.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REQ-MAT-01 & REQ-MAT-02 -->
+                    <div class="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+                            <div>
+                                <span class="text-xs font-mono text-amber-400 font-bold">REQ-MAT-01 / 02</span>
+                                <h4 class="text-base font-bold text-white mt-0.5">Gestion du Matériel des Salles & Ticketing des Pannes (PC, Vidéoprojecteurs)</h4>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold badge-should self-start sm:self-auto">SHOULD HAVE</span>
+                        </div>
+                        <div class="mt-4 grid md:grid-cols-2 gap-4 text-xs text-slate-300">
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Description & Comportement :</strong>
+                                Cartographie de chaque salle (tables, chaises, nombre de PC opérationnels, vidéoprojecteur). En cas de panne constatée pendant le cours, l'enseignant ou le délégué ouvre un ticket d'incident depuis l'application mobile avec photo. L'équipe support technique de Gueliz ou Targa intervient et met à jour le statut.
+                            </div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Critères d'Acceptation :</strong>
+                                <ul class="list-disc list-inside space-y-1 text-slate-400">
+                                    <li>Le planificateur sait en temps réel quelles salles sont 100% opérationnelles.</li>
+                                    <li>Historique de fiabilité du matériel pour les futurs réinvestissements.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- REQ-PAI-01 & REQ-PAI-02 -->
+                    <div class="p-6 rounded-2xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-800">
+                            <div>
+                                <span class="text-xs font-mono text-indigo-400 font-bold">REQ-PAI-01 / 02</span>
+                                <h4 class="text-base font-bold text-white mt-0.5">Suivi de la Scolarité, Relance des Parents & Verrou Financier Automatique</h4>
+                            </div>
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold badge-must self-start sm:self-auto">MUST HAVE</span>
+                        </div>
+                        <div class="mt-4 grid md:grid-cols-2 gap-4 text-xs text-slate-300">
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Description & Comportement :</strong>
+                                Suivi des échéances de scolarité (mensualités, acomptes). Les retards sont identifiés automatiquement pour permettre aux services financiers de relancer les familles. Tout impayé persistant active un verrou bloquant le téléchargement des attestations scolaires et bulletins officiels sans pénaliser l'accès aux cours.
+                            </div>
+                            <div>
+                                <strong class="text-slate-200 block mb-1">Critères d'Acceptation :</strong>
+                                <ul class="list-disc list-inside space-y-1 text-slate-400">
+                                    <li>Délivrance de documents soumise à la vérification du solde financier.</li>
+                                    <li>Déverrouillage instantané dès saisie du règlement bancaire.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- 5. Architecture Technique & Justifications -->
+            <section id="architecture" class="space-y-6">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <i data-lucide="cpu" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-white">5. Architecture Technique Retenue & Justifications</h3>
+                        <p class="text-xs text-slate-400">Des choix d'ingénierie taillés pour la robustesse et la scalabilité</p>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-xs text-left text-slate-300">
+                            <thead class="bg-navy-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
+                                <tr>
+                                    <th class="py-3 px-4">Composant</th>
+                                    <th class="py-3 px-4">Technologie Retenue</th>
+                                    <th class="py-3 px-4">Pourquoi ce choix ? (Bénéfice PFE & Soutenance)</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-800">
+                                <tr>
+                                    <td class="py-3 px-4 font-bold text-white">Backend</td>
+                                    <td class="py-3 px-4 text-emerald-400 font-semibold">Java 21 + Spring Boot 3</td>
+                                    <td class="py-3 px-4 text-slate-300">Standard d'entreprise pour les systèmes critiques. Typage fort, Spring Data JPA, gestion native du multi-tenant avec Hibernate 6 et threads virtuels (Project Loom).</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-bold text-white">Frontend Web</td>
+                                    <td class="py-3 px-4 text-cyan-400 font-semibold">React + TypeScript + Vite + Tailwind</td>
+                                    <td class="py-3 px-4 text-slate-300">Build ultra-rapide, composants réactifs, zéro latence d'affichage et design system aux normes officielles de l'EMSI.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-bold text-white">Application Mobile</td>
+                                    <td class="py-3 px-4 text-indigo-400 font-semibold">Flutter + Dart</td>
+                                    <td class="py-3 px-4 text-slate-300">Code unique pour iOS et Android, rendu graphique natif à 60 fps, intégration matérielle fluide (caméra pour scan QR et géolocalisation anti-fraude).</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-bold text-white">Base de Données</td>
+                                    <td class="py-3 px-4 text-amber-400 font-semibold">PostgreSQL 15+ & Flyway</td>
+                                    <td class="py-3 px-4 text-slate-300">Support natif du format JSONB pour les compétences IA, conformité ACID totale et gestion des migrations de schémas sans interruption.</td>
+                                </tr>
+                                <tr>
+                                    <td class="py-3 px-4 font-bold text-white">Moteur IA PFE</td>
+                                    <td class="py-3 px-4 text-rose-400 font-semibold">Ollama Local (Llama3 / Mistral)</td>
+                                    <td class="py-3 px-4 text-slate-300">Respect absolu du secret des sujets en entreprise (aucune fuite vers des clouds tiers), coût d'exploitation nul et indépendance réseau.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. Planning Agile & Organisation -->
+            <section id="planning" class="space-y-6">
+                <div class="flex items-center gap-3">
+                    <div class="p-2.5 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-bold text-white">6. Planning Directeur & Répartition Agile (5 Sprints de 2 Semaines)</h3>
+                        <p class="text-xs text-slate-400">Organisation de l'équipe des 6 ingénieurs D2SI</p>
+                    </div>
+                </div>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                    <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                        <div class="text-emerald-400 font-bold mb-1">Binôme 1 : Core Backend & Multi-Tenant</div>
+                        <div class="text-slate-400">2 Ingénieurs</div>
+                        <p class="text-slate-300 mt-2">Architecture Spring Boot, Sécurité JWT Zéro-Trust, Schéma PostgreSQL Flyway V1, Algorithmes de délibération des notes et API REST.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                        <div class="text-cyan-400 font-bold mb-1">Binôme 2 : Client Web & Planning</div>
+                        <div class="text-slate-400">2 Ingénieurs</div>
+                        <p class="text-slate-300 mt-2">Dashboard React TypeScript, Grille d'emploi du temps interactive, Saisie des notes sans Excel, Suivi des impayés et gestion matériel.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                        <div class="text-indigo-400 font-bold mb-1">Binôme 3 : Mobile Flutter & IA Ollama</div>
+                        <div class="text-slate-400">2 Ingénieurs</div>
+                        <p class="text-slate-300 mt-2">Application Flutter (Scan QR, Notifications Push, Cahier de texte post-séance) et intégration du serveur d'inférence Ollama pour les PFE.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer -->
+    <footer class="no-print mt-20 py-8 bg-navy-900 border-t border-slate-800 text-center text-xs text-slate-500">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center gap-2">
+                <img src="assets/emsi_logo.png" alt="Logo EMSI" class="h-6 w-auto bg-white p-0.5 rounded">
+                <span>© 2026 EMSI Campus ERP — Tous droits réservés.</span>
+            </div>
+            <div>Projet d'Ingénierie Informatique D2SI • Conforme Norme IEEE 830</div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

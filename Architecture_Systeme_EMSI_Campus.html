@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Architecture Système & Conception Technique — EMSI Campus ERP (Univora)</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 18mm 15mm 20mm 15mm;
+            @bottom-right {
+                content: "Page " counter(page) " / " counter(pages);
+                font-family: 'Segoe UI', Arial, sans-serif;
+                font-size: 9pt;
+                color: #64748b;
+            }
+        }
+        
+        * {
+            box-sizing: border-box;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.55;
+            color: #1e293b;
+            background: #ffffff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .page-break {
+            page-break-before: always;
+        }
+
+        /* En-tête et Pied de Page d'impression */
+        .print-header {
+            border-bottom: 2px solid #00843d;
+            padding-bottom: 8px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .print-header-left {
+            font-size: 8.5pt;
+            font-weight: 600;
+            color: #00843d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .print-header-right {
+            font-size: 8pt;
+            color: #64748b;
+        }
+
+        /* Page de Garde */
+        .cover-page {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 30px 10px;
+            page-break-after: always;
+        }
+        .cover-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #00843d;
+            padding-bottom: 20px;
+        }
+        .cover-logo {
+            max-height: 80px;
+        }
+        .cover-inst {
+            text-align: right;
+            font-size: 11pt;
+            font-weight: 700;
+            color: #00843d;
+            line-height: 1.3;
+        }
+        .cover-inst span {
+            font-size: 9pt;
+            font-weight: 400;
+            color: #475569;
+            display: block;
+        }
+
+        .cover-body {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .cover-badge {
+            display: inline-block;
+            background: #e8f5e9;
+            color: #005a2b;
+            font-size: 10pt;
+            font-weight: 700;
+            padding: 6px 16px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            border: 1px solid #c8e6c9;
+        }
+        .cover-title {
+            font-size: 26pt;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.25;
+            margin-bottom: 15px;
+        }
+        .cover-subtitle {
+            font-size: 14pt;
+            color: #00843d;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+        .cover-desc {
+            font-size: 10.5pt;
+            color: #475569;
+            max-width: 650px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .cover-footer {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .meta-box h4 {
+            margin: 0 0 8px 0;
+            font-size: 9.5pt;
+            color: #00843d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .meta-box p {
+            margin: 0;
+            font-size: 9.5pt;
+            color: #1e293b;
+            line-height: 1.5;
+        }
+
+        /* Typographie de contenu */
+        h1 {
+            color: #00843d;
+            font-size: 18pt;
+            font-weight: 700;
+            border-left: 6px solid #00843d;
+            padding-left: 12px;
+            margin-top: 0;
+            margin-bottom: 18px;
+        }
+        h2 {
+            color: #0f172a;
+            font-size: 13pt;
+            font-weight: 600;
+            margin-top: 22px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 6px;
+        }
+        h3 {
+            color: #005a2b;
+            font-size: 11pt;
+            font-weight: 600;
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+
+        p, li {
+            text-align: justify;
+            margin-bottom: 10px;
+        }
+
+        /* Cartes & Blocs d'informations */
+        .info-card {
+            background: #f8fafc;
+            border-left: 4px solid #00843d;
+            padding: 12px 16px;
+            border-radius: 0 8px 8px 0;
+            margin: 15px 0;
+            font-size: 9.5pt;
+        }
+        .info-card.warning {
+            border-left-color: #f59e0b;
+            background: #fffbeb;
+        }
+        .info-card.danger {
+            border-left-color: #dc2626;
+            background: #fef2f2;
+        }
+
+        /* Tableaux */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0 22px 0;
+            font-size: 9pt;
+        }
+        th {
+            background: #00843d;
+            color: #ffffff;
+            font-weight: 600;
+            text-align: left;
+            padding: 8px 10px;
+            border: 1px solid #00843d;
+        }
+        td {
+            padding: 7px 10px;
+            border: 1px solid #cbd5e1;
+            vertical-align: top;
+        }
+        tr:nth-child(even) td {
+            background: #f8fafc;
+        }
+
+        /* Insertion d'Images de Diagrammes */
+        .diagram-container {
+            margin: 18px 0 25px 0;
+            text-align: center;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+            page-break-inside: avoid;
+        }
+        .diagram-container img {
+            max-width: 100%;
+            max-height: 480px;
+            height: auto;
+            border-radius: 4px;
+            display: block;
+            margin: 0 auto;
+        }
+        .diagram-caption {
+            margin-top: 8px;
+            font-size: 8.5pt;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Badges de statut */
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 8pt;
+            font-weight: 600;
+        }
+        .badge-success { background: #dcfce7; color: #166534; }
+        .badge-danger { background: #fee2e2; color: #991b1b; }
+        .badge-info { background: #e0f2fe; color: #075985; }
+    </style>
+</head>
+<body>
+
+    <!-- PAGE DE GARDE -->
+    <div class="cover-page">
+        <div class="cover-header">
+            <img src="assets/emsi_logo.png" alt="Logo EMSI" class="cover-logo">
+            <div class="cover-inst">
+                ÉCOLE MAROCAINE DES SCIENCES DE L'INGÉNIEUR
+                <span>Campus Marrakech (Guéliz & Targa) — Pôle D2SI / IIR</span>
+            </div>
+        </div>
+
+        <div class="cover-body">
+            <div class="cover-badge">Dossier d'Architecture Système & Spécifications Techniques</div>
+            <h1 class="cover-title">EMSI CAMPUS ERP<br/>(PLATEFORME UNIVORA)</h1>
+            <div class="cover-subtitle">Architecture en Couches, Modèle C4, Schémas UML 2.5.1, ERD Relationnel & Moteur IA Local</div>
+            <p class="cover-desc">
+                Ce document d'ingénierie formel décrit l'architecture globale, la topologie de déploiement en conteneurs, le modèle de domaine, la modélisation UML exhaustive et les invariants critiques (Transit inter-campus de 45 min, QR code dynamique 15s, Délibération Zéro Excel et Inférence IA souveraine).
+            </p>
+        </div>
+
+        <div class="cover-footer">
+            <div class="meta-box">
+                <h4>Encadrement Académique & Jury</h4>
+                <p><strong>Encadrante Académique :</strong> Pr. ZGANDRI</p>
+                <p><strong>Président du Jury :</strong> Pr. AIT OUNEJJAR Lahoussaine</p>
+                <p><strong>Année Universitaire :</strong> 2025 / 2026</p>
+            </div>
+            <div class="meta-box">
+                <h4>Auteurs & Réf. Normalisation</h4>
+                <p><strong>Auteurs :</strong> Élèves-Ingénieurs 5A D2SI / IIR</p>
+                <p><strong>Normes :</strong> ISO/IEC/IEEE 42010:2022, OMG UML 2.5.1</p>
+                <p><strong>Sécurité :</strong> OWASP ASVS v4.0, Loi marocaine 09-08 (CNDP)</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 1 : ARCHITECTURE GLOBALE EN 5 COUCHES -->
+    <div class="page-break">
+        <div class="print-header">
+            <div class="print-header-left">EMSI Campus ERP — Architecture Système</div>
+            <div class="print-header-right">Pr. ZGANDRI | Pr. AIT OUNEJJAR</div>
+        </div>
+
+        <h1>1. Vue d'Ensemble & Architecture Globale en 5 Couches</h1>
+        <p>
+            Le système <strong>EMSI Campus ERP (Univora)</strong> est articulé autour d'une architecture moderne, modulaire et hautement sécurisée, structurée en cinq niveaux d'abstraction étanches garantissant maintenabilité, résilience et évolutivité multi-campus :
+        </p>
+
+        <div class="diagram-container">
+            <img src="assets/diagram_2_system_architecture_5layers.png" alt="Architecture Globale en 5 Couches">
+            <div class="diagram-caption">Figure 1.1 : Vue Globale de l'Architecture Système en 5 Couches (Présentation, Passerelle, Métier, Persistance, Transverse)</div>
+        </div>
+
+        <div class="info-card">
+            <strong>Description des 5 Couches :</strong>
+            <ul>
+                <li><strong>Couche Présentation :</strong> Portail Web Next.js 15 (React 19 / TypeScript) et Application Mobile Flutter 3.24 (Dart 3) avec base locale Isar offline-first.</li>
+                <li><strong>Couche Passerelle & Sécurité :</strong> Nginx Reverse Proxy gérant la terminaison TLS 1.3, la limitation de débit (rate limiting) et l'isolation réseau.</li>
+                <li><strong>Couche Métier Applicative :</strong> Monolithe modulaire Spring Boot 3.3 (Java 21 LTS) orchestrant les modules de scolarité, assiduité, délibérations et PFE.</li>
+                <li><strong>Couche Persistance & Cache :</strong> PostgreSQL 16 (avec extension pgvector), Cache In-Memory Redis 7.2 (tokens 15s) et Stockage Objet MinIO S3.</li>
+                <li><strong>Couche Services Transverses :</strong> Moteur de contraintes Google OR-Tools (CP-SAT), Moteur IA local Ollama (Llama 3.2 souverain) et Journalisation immuable CNDP.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- PAGE 2 : MODÈLE C4 COMPOSANTS & MONOLITHE MODULAIRE -->
+    <div class="page-break">
+        <div class="print-header">
+            <div class="print-header-left">EMSI Campus ERP — Architecture Système</div>
+            <div class="print-header-right">Pr. ZGANDRI | Pr. AIT OUNEJJAR</div>
+        </div>
+
+        <h1>2. Architecture Interne des Sous-Systèmes (C4 Niveau 3)</h1>
+        <p>
+            Le cœur applicatif Spring Boot applique les principes de l'<strong>Architecture Hexagonale (Clean Architecture)</strong>. Les composants communiquent par interfaces découplées et événements applicatifs asynchrones.
+        </p>
+
+        <div class="diagram-container">
+            <img src="assets/diagrams/comp01_backend_subsystems.png" alt="Diagramme de Composants Backend">
+            <div class="diagram-caption">Figure 2.1 : Diagramme de Composants UML — Sous-systèmes Spring Boot, OR-Tools, Ollama et Stockages</div>
+        </div>
+
+        <h2>2.1. Isolation des Responsabilités et Flux</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Module Backend</th>
+                    <th>Responsabilité Métier</th>
+                    <th>Invariants / Dépendances</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>Module Planning</strong></td>
+                    <td>Génération des emplois du temps sans collision horaire</td>
+                    <td>Règle <code>BR-GEO-01</code> : 45 min de battement Guéliz &harr; Targa via solveur OR-Tools.</td>
+                </tr>
+                <tr>
+                    <td><strong>Module Assiduité</strong></td>
+                    <td>Émargement par QR code dynamique tournant</td>
+                    <td>Règle <code>BR-ATT-02</code> : Rotation du jeton HMAC toutes les 15s stocké en Redis TTL.</td>
+                </tr>
+                <tr>
+                    <td><strong>Module Délibération</strong></td>
+                    <td>Calcul "Zéro Excel" des moyennes et scellement des PV</td>
+                    <td>Règle <code>BR-DELIB-04</code> : Note éliminatoire $< 7.00/20$ déclenchant le rattrapage.</td>
+                </tr>
+                <tr>
+                    <td><strong>Module PFE & IA</strong></td>
+                    <td>Matching sémantique des mémoires avec les jurys</td>
+                    <td>Règle <code>BR-PFE-08</code> : Similarité cosinus $> 0.70$ via Llama 3.2 local sur Ollama.</td>
+                </tr>
+                <tr>
+                    <td><strong>Module Audit CNDP</strong></td>
+                    <td>Traçabilité légale inaltérable des notes et accès</td>
+                    <td>Règle <code>BR-SEC-11</code> : Table <code>audit_logs</code> append-only conforme Loi 09-08.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- PAGE 3 : TOPOLOGIE DE DÉPLOIEMENT & CONTENEURISATION -->
+    <div class="page-break">
+        <div class="print-header">
+            <div class="print-header-left">EMSI Campus ERP — Architecture Système</div>
+            <div class="print-header-right">Pr. ZGANDRI | Pr. AIT OUNEJJAR</div>
+        </div>
+
+        <h1>3. Topologie Physique de Déploiement Conteneurisé (Docker)</h1>
+        <p>
+            La plateforme est conteneurisée via <strong>Docker et Docker Compose</strong>, garantissant un cloisonnement strict entre la zone démilitarisée (DMZ), le réseau backend applicatif et le VLAN isolé des bases de données :
+        </p>
+
+        <div class="diagram-container">
+            <img src="assets/diagrams/dep01_physical_deployment.png" alt="Diagramme de Déploiement Physique">
+            <div class="diagram-caption">Figure 3.1 : Diagramme de Déploiement UML — Topologie Réseau, Conteneurs Applicatifs et Réplication PostgreSQL</div>
+        </div>
+
+        <div class="info-card warning">
+            <strong>Exigence de Souveraineté & Isolation Réseau :</strong>
+            Le serveur hébergeant le service Ollama est connecté au réseau local interne du campus. Aucune connexion entrante ou sortante vers des clouds publics tiers (OpenAI, AWS) n'est autorisée par la politique de firewall, garantissant l'étanchéité des mémoires de PFE soumis à accord de confidentialité (NDA).
+        </div>
+    </div>
+
+    <!-- PAGE 4 : MODÈLE DE DOMAINE & DONNÉES RELATIONNELLES -->
+    <div class="page-break">
+        <div class="print-header">
+            <div class="print-header-left">EMSI Campus ERP — Architecture Système</div>
+            <div class="print-header-right">Pr. ZGANDRI | Pr. AIT OUNEJJAR</div>
+        </div>
+
+        <h1>4. Modèle de Domaine Métier & Schéma Relationnel</h1>
+        <p>
+            Le modèle de données PostgreSQL 16 est normalisé en <strong>3ème Forme Normale (3NF)</strong> avec des clés primaires synthétiques UUID et une colonne discriminateur <code>tenant_id</code> assurant l'évolutivité multi-campus et multi-tenant.
+        </p>
+
+        <div class="diagram-container">
+            <img src="assets/diagrams/cd01_domain_model.png" alt="Modèle de Domaine UML">
+            <div class="diagram-caption">Figure 4.1 : Diagramme de Classes UML — Modèle de Domaine Complet (Entités, Invariants, Associations)</div>
+        </div>
+
+        <div class="diagram-container">
+            <img src="assets/diagrams/erd_global_schema.png" alt="Schéma Relationnel ERD">
+            <div class="diagram-caption">Figure 4.2 : Schéma Entité-Association (ERD) — Tables Relationnelles et Clés Étrangères</div>
+        </div>
+    </div>
+
+    <!-- PAGE 5 : PROTOCOLES DYNAMIQUES & SÉQUENCES CLÉS -->
+    <div class="page-break">
+        <div class="print-header">
+            <div class="print-header-left">EMSI Campus ERP — Architecture Système</div>
+            <div class="print-header-right">Pr. ZGANDRI | Pr. AIT OUNEJJAR</div>
+        </div>
+
+        <h1>5. Protocoles Dynamiques & Diagrammes de Séquence</h1>
+        
+        <h2>5.1. Émargement par QR Code Dynamique Tournant (15 secondes)</h2>
+        <p>
+            Le protocole d'assiduité éradique la fraude par partage de capture d'écran grâce à un jeton HMAC éphémère régénéré toutes les 15 secondes et contrôlé par Redis :
+        </p>
+        <div class="diagram-container">
+            <img src="assets/diagrams/seq01_qr_attendance_15s.png" alt="Séquence Émargement QR Code">
+            <div class="diagram-caption">Figure 5.1 : Diagramme de Séquence — Rotation du Token 15s, Scan Mobile et Broadcast WebSocket</div>
+        </div>
+
+        <h2>5.2. Moteur de Délibération "Zéro Excel" & Note Éliminatoire (< 7.00/20)</h2>
+        <div class="diagram-container">
+            <img src="assets/diagrams/seq02_zero_excel_deliberation.png" alt="Séquence Délibération Zéro Excel">
+            <div class="diagram-caption">Figure 5.2 : Diagramme de Séquence — Calcul Automatisé, Seuil Éliminatoire et Scellement Cryptographique du PV</div>
+        </div>
+    </div>
+
+    <!-- PAGE 6 : MATCHING IA PFE & RÉSUMÉ DES ADR -->
+    <div class="page-break">
+        <div class="print-header">
+            <div class="print-header-left">EMSI Campus ERP — Architecture Système</div>
+            <div class="print-header-right">Pr. ZGANDRI | Pr. AIT OUNEJJAR</div>
+        </div>
+
+        <h1>6. Intelligence Artificielle Locale & Décisions d'Architecture (ADR)</h1>
+        
+        <h2>6.1. Affectation des Jurys PFE par Similarité Vectorielle (Ollama)</h2>
+        <div class="diagram-container">
+            <img src="assets/diagrams/seq03_pfe_matching_ollama.png" alt="Séquence Matching IA PFE">
+            <div class="diagram-caption">Figure 6.1 : Diagramme de Séquence — Vectorisation Llama 3.2 et Affectation des Jurys sans Conflit d'Encadrement</div>
+        </div>
+
+        <h2>6.2. Synthèse des Décisions Fondatrices d'Architecture (ADRs)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ADR ID</th>
+                    <th>Décision Validée</th>
+                    <th>Alternative Rejetée</th>
+                    <th>Motivation & Justification Technique</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>ADR-001</strong></td>
+                    <td>Monolithe Modulaire Spring Boot 3.3</td>
+                    <td>Microservices distribués complets</td>
+                    <td>Cohérence transactionnelle ACID absolue pour les délibérations et simplicité d'exploitation on-premise.</td>
+                </tr>
+                <tr>
+                    <td><strong>ADR-002</strong></td>
+                    <td>Google OR-Tools CP-SAT</td>
+                    <td>Algorithmes génétiques ad-hoc</td>
+                    <td>Garantie mathématique de respect des 45 min de transit entre Guéliz et Targa (BR-GEO-01).</td>
+                </tr>
+                <tr>
+                    <td><strong>ADR-003</strong></td>
+                    <td>Ollama / Llama 3.2 on-premise</td>
+                    <td>API Cloud OpenAI GPT-4o</td>
+                    <td>Souveraineté des données académiques et conformité totale avec la loi marocaine 09-08 / CNDP.</td>
+                </tr>
+                <tr>
+                    <td><strong>ADR-004</strong></td>
+                    <td>Multi-Tenancy avec Discriminateur</td>
+                    <td>Base de données par tenant</td>
+                    <td>Mutualisation des coûts d'infrastructure et support de la trajectoire SaaS pour le réseau EMSI.</td>
+                </tr>
+                <tr>
+                    <td><strong>ADR-005</strong></td>
+                    <td>Flutter 3.24 / Dart 3 Mobile</td>
+                    <td>React Native</td>
+                    <td>Accès direct caméra sans latence de pont (bridge) et support offline-first Isar pour les étudiants.</td>
+                </tr>
+                <tr>
+                    <td><strong>ADR-006</strong></td>
+                    <td>Migrations Versionnées Flyway</td>
+                    <td>Hibernate DDL Auto Update</td>
+                    <td>Déterminisme des schémas SQL en production et protection contre toute perte accidentelle de notes.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div style="margin-top: 40px; text-align: center; border-top: 2px solid #00843d; padding-top: 15px;">
+            <p style="font-size: 9.5pt; color: #475569; margin: 0;">
+                Document technique validé sous la direction académique de <strong>Pr. ZGANDRI</strong> et la présidence de jury de <strong>Pr. AIT OUNEJJAR Lahoussaine</strong>.<br/>
+                École Marocaine des Sciences de l'Ingénieur — Promotion 2026.
+            </p>
+        </div>
+    </div>
+
+</body>
+</html>

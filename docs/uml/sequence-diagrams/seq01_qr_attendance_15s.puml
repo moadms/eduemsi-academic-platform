@@ -1,0 +1,59 @@
+@startuml seq01_qr_attendance_15s
+title Protocole Dynamique d'Émargement par QR Code Éphémère (15 secondes)
+autonumber
+skinparam responseMessageBelowArrow true
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+actor "Enseignant\n(Vidéoprojecteur)" as Prof
+actor "Étudiant\n(App Mobile)" as Student
+boundary "Passerelle API\n(Nginx / Gateway)" as Gateway
+control "AttendanceService\n(Spring Boot)" as Service
+database "Cache Redis\n(TTL 15s)" as Redis
+database "PostgreSQL\n(Persistance)" as DB
+participant "Broker WebSocket\n(STOMP)" as WS
+
+== Phase 1 : Génération et Rotation du QR Code (Toutes les 15s) ==
+loop Toutes les 15 secondes pendant la séance
+    Prof -> Gateway: GET /api/v1/seances/{id}/qr-token
+    Gateway -> Service: generateRotatingToken(seanceId)
+    Service -> Service: computeHMAC(seanceId, timestamp, secretKey)
+    Service -> Redis: SETEX "qr:seance:{id}" 15 token_value
+    Redis --> Service: OK
+    Service --> Gateway: 200 OK (QR Payload + Epoch)
+    Gateway --> Prof: Affiche nouveau QR Code
+end
+
+== Phase 2 : Scan Mobile et Émargement Étudiant ==
+Student -> Student: Ouvre caméra et scanne le QR code
+Student -> Gateway: POST /api/v1/attendance/scan\n{seanceId, token, studentId, deviceId, clientTime}
+Gateway -> Service: validateAndRecordScan(scanDTO)
+
+critical Validation Anti-Fraude & Vérification Temporelle
+    Service -> Redis: GET "qr:seance:{id}"
+    Redis --> Service: currentActiveToken
+
+    alt Jeton Expiré ou Invalide (t > 15s)
+        Service --> Gateway: 400 Bad Request ("QR_CODE_EXPIRED")
+        Gateway --> Student: Écran Rouge : "Code expiré, veuillez rescanner"
+    else Jeton Valide
+        Service -> Redis: GET "device:{deviceId}:seance:{id}"
+        Redis --> Service: existingDeviceUsage
+
+        alt Détection de Collocation / Fraude Device
+            Service --> Gateway: 403 Forbidden ("DEVICE_ALREADY_USED")
+            Gateway --> Student: Alerte Sécurité : "Terminal déjà utilisé pour un autre étudiant"
+        else Validation Réussie
+            Service -> Redis: SETEX "device:{deviceId}:seance:{id}" 7200 studentId
+            Service -> DB: INSERT INTO attendances (student_id, seance_id, scan_time, status)\nVALUES (?, ?, NOW(), 'PRESENT')
+            DB --> Service: 1 row affected
+            
+            Service -> WS: convertAndSend("/topic/seance/" + id + "/roster", studentName)
+            WS --> Prof: Mise à jour temps réel : "Étudiant X émargé (+1)"
+            
+            Service --> Gateway: 200 OK ("ATTENDANCE_CONFIRMED")
+            Gateway --> Student: Écran Vert : "Présence confirmée avec succès !"
+        end
+    end
+end
+@enduml

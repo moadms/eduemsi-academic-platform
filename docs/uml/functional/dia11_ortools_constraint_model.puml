@@ -1,0 +1,152 @@
+@startuml dia11_ortools_constraint_model
+!theme plain
+skinparam backgroundColor #F8FAFC
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam roundcorner 10
+skinparam shadowing false
+
+title <b>🔧 Modèle de Contraintes OR-Tools — Génération Emploi du Temps</b>\nUniVora ERP · Module Planning · EMSI 2024-2025
+
+skinparam class {
+  BackgroundColor #EFF6FF
+  BorderColor #2563EB
+  FontColor #1E3A5F
+  AttributeFontColor #374151
+  AttributeFontSize 10
+  StereotypeFontColor #6366F1
+}
+
+class "🎯 Objectif Optimisation" as OBJECTIVE <<Objective Function>> {
+  + minimize(total_penalty_score)
+  --
+  penalty_late_slot : +10 (cours tardif)
+  penalty_gap : +5 (trou emploi du temps)
+  penalty_overload : +20 (> 6h/jour)
+  penalty_split_group : +15 (groupe divisé)
+  --
+  maximize(student_satisfaction_score)
+}
+
+class "📋 Variables de Décision" as VARS <<Decision Variables>> {
+  + assignment[i, j, k, t] : BoolVar
+  --
+  i : seance_id (1..N_seances)
+  j : salle_id (1..N_salles)
+  k : professeur_id (1..N_profs)
+  t : time_slot_id (1..N_slots)
+  --
+  assignment = 1 si seance_i affectée
+  à salle_j, prof_k, slot_t
+}
+
+class "🔒 Contraintes Dures" as HARD <<Hard Constraints>> {
+  + C1_unicite_seance()
+  + C2_prof_disponible()
+  + C3_salle_disponible()
+  + C4_capacite_salle()
+  + C5_no_double_booking()
+  + C6_campus_buffer()
+  + C7_prerequis_module()
+  --
+  <i>Toutes doivent être satisfaites</i>
+  <i>Violation = planning invalide</i>
+}
+
+class "🟡 Contraintes Souples" as SOFT <<Soft Constraints (Penalized)>> {
+  + S1_prefer_morning_slots()
+  + S2_avoid_friday_afternoon()
+  + S3_group_consecutive_td()
+  + S4_balance_daily_load()
+  + S5_minimize_room_changes()
+  + S6_prof_preferences()
+  --
+  <i>Violation = pénalité ajoutée</i>
+  <i>Objectif: minimiser pénalités</i>
+}
+
+class "📐 Contrainte C1 — Unicité" as C1 <<Constraint Detail>> {
+  for each seance_i:
+  sum(assignment[i,j,k,t]) == 1
+  ∀ j, k, t
+  --
+  <i>Chaque séance planifiée</i>
+  <i>exactement une fois</i>
+}
+
+class "👨‍🏫 Contrainte C2 — Prof Dispo" as C2 <<Constraint Detail>> {
+  for each (k, t):
+  sum(assignment[i,j,k,t]) ≤ 1
+  ∀ i, j
+  --
+  <i>Un prof ne peut être</i>
+  <i>dans 2 salles en même temps</i>
+}
+
+class "🏫 Contrainte C3 — Salle Dispo" as C3 <<Constraint Detail>> {
+  for each (j, t):
+  sum(assignment[i,j,k,t]) ≤ 1
+  ∀ i, k
+  --
+  <i>Une salle ne peut accueillir</i>
+  <i>2 séances simultanément</i>
+}
+
+class "🚌 Contrainte C6 — Buffer Campus" as C6 <<Constraint Detail>> {
+  RULE-GEO-01 : if campus(salle_t1) ≠ campus(salle_t2)
+  then gap(t1, t2) ≥ 45min
+  --
+  Guéliz → Targa : buffer_required = 3 slots
+  Targa → Guéliz : buffer_required = 3 slots
+  --
+  <i>Implémenté comme AddNoOverlap2D</i>
+  <i>avec contrainte de gap minimum</i>
+}
+
+class "⚙️ Paramètres Solver" as SOLVER <<OR-Tools CP-SAT>> {
+  + time_limit : 300s (5 min)
+  + num_workers : 8 (parallel search)
+  + search_strategy : PORTFOLIO_DECIMATE
+  --
+  + solution_callback : onSolutionFound()
+  + status : OPTIMAL | FEASIBLE | INFEASIBLE
+  --
+  response_time_target : < 60s pour S1-S2
+}
+
+class "📊 Métriques de Qualité" as METRICS <<Output Quality>> {
+  + score_satisfaction : 0-100
+  + nb_contraintes_dures : 100% satisfaites
+  + nb_creneaux_libres : minimisé
+  + distribution_horaire : écart-type < 0.5h
+  + taux_utilisation_salles : ≥ 75%
+}
+
+OBJECTIVE --> VARS : optimise
+VARS --> HARD : respecte (obligatoire)
+VARS --> SOFT : minimise pénalités
+HARD <|-- C1
+HARD <|-- C2
+HARD <|-- C3
+HARD <|-- C6
+SOLVER --> VARS : résout
+SOLVER --> METRICS : produit
+VARS --> METRICS : génère
+
+note bottom of C6 #FEF3C7
+  <b>RULE-GEO-01 (Critique) :</b>
+  Distance Guéliz ↔ Targa ≈ 12km
+  Temps trajet en taxi : ~25-35min
+  Buffer obligatoire : 45min
+  Impacte ~15% des séances
+end note
+
+note right of SOLVER #DCFCE7
+  <b>Performance observée :</b>
+  200 séances, 3 filières :
+  Solution optimale en ~45s
+  Améliorée si chaud-démarrage
+  (solution précédente utilisée)
+end note
+
+@enduml

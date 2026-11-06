@@ -1,0 +1,50 @@
+@startuml state01_seance_lifecycle
+title Machine à États d'une Séance de Cours et Cahier de Texte
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+[*] --> PLANNED : Planification validée par OR-Tools
+
+state PLANNED {
+    PLANNED : Heure de début et salle assignées
+    PLANNED : Pas d'émargement actif
+}
+
+PLANNED --> CANCELLED : Professeur absent justifié / Force majeure
+CANCELLED --> RESCHEDULED : Rattrapage replanifié
+RESCHEDULED --> PLANNED : Nouveau créneau validé
+
+PLANNED --> IN_PROGRESS_QR_ACTIVE : Lancement de la séance par l'enseignant\n[Heure >= T_début - 10 min]
+
+state IN_PROGRESS_QR_ACTIVE {
+    IN_PROGRESS_QR_ACTIVE : Émission du QR Code dynamique (15s)
+    IN_PROGRESS_QR_ACTIVE : Réception des émargements mobiles
+    IN_PROGRESS_QR_ACTIVE : Synchronisation Redis
+}
+
+IN_PROGRESS_QR_ACTIVE --> IN_PROGRESS_QR_ACTIVE : Rotation du jeton HMAC toutes les 15s
+
+IN_PROGRESS_QR_ACTIVE --> COMPLETED_PENDING_TEXTBOOK : Clôture de l'émargement\n[Heure >= T_fin] / Clic "Fin de Séance"
+
+state COMPLETED_PENDING_TEXTBOOK {
+    COMPLETED_PENDING_TEXTBOOK : Émargements verrouillés
+    COMPLETED_PENDING_TEXTBOOK : Notification push FCM envoyée à l'enseignant
+    COMPLETED_PENDING_TEXTBOOK : En attente de saisie du cahier de texte (délai max 24h)
+}
+
+COMPLETED_PENDING_TEXTBOOK --> ANOMALIE_PEDAGOGIQUE : Délai > 24h sans saisie\n[Alerte Chef de Département]
+
+ANOMALIE_PEDAGOGIQUE --> COMPLETED_DOCUMENTED : Saisie tardive avec justification
+
+COMPLETED_PENDING_TEXTBOOK --> COMPLETED_DOCUMENTED : Enseignant renseigne cours & devoirs\n[Validation cahier de texte]
+
+state COMPLETED_DOCUMENTED {
+    COMPLETED_DOCUMENTED : Séance certifiée et archivée
+    COMPLETED_DOCUMENTED : Heures comptabilisées pour la paie vacataire
+    COMPLETED_DOCUMENTED : Ressources partagées aux étudiants
+}
+
+COMPLETED_DOCUMENTED --> [*]
+CANCELLED --> [*]
+
+@enduml

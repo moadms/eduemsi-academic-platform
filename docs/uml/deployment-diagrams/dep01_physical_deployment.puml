@@ -1,0 +1,84 @@
+@startuml dep01_physical_deployment
+title Diagramme de Déploiement Physique & Conteneurisation (Docker Infrastructure)
+skinparam nodeStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+cloud "Réseau Public & Campus EMSI" {
+    node "Poste Client / Navigateur" as ClientPC {
+        artifact "Portail Web SPA\n(Next.js Client)" as ArtifactWeb
+    }
+    node "Smartphone Enseignant / Étudiant" as MobileDevice {
+        artifact "Application Mobile\n(Flutter APK / IPA)" as ArtifactMobile
+    }
+}
+
+node "Zone Démilitarisée (DMZ - Serveur Frontal)" as DMZNode {
+    node "Conteneur Docker: Reverse Proxy" as ContainerNginx {
+        component "Nginx 1.25\n(SSL Termination, Certificat Let's Encrypt / Wildcard)" as NginxService
+    }
+    node "Conteneur Docker: Web SSR" as ContainerNext {
+        component "Node.js 24\n(Next.js App Server)" as NextServer
+    }
+}
+
+node "Réseau Privé Sécurisé (VLAN Backend - Cluster Applicatif)" as AppVLAN {
+    node "Conteneur Docker: Core Backend 1" as ContainerSpring1 {
+        component "Spring Boot 3.3 (JVM 21)\n(EMSI Campus Core API)" as SpringBoot1
+    }
+    node "Conteneur Docker: Core Backend 2" as ContainerSpring2 {
+        component "Spring Boot 3.3 (JVM 21)\n(EMSI Campus Core API)" as SpringBoot2
+    }
+    node "Conteneur Docker: Planning Solver" as ContainerORTools {
+        component "Python 3.11 / FastAPI\n(Google OR-Tools CP-SAT Worker)" as ORToolsWorker
+    }
+    node "Serveur GPU Local Campus (IA Souveraine)" as GPUNode {
+        node "Conteneur Docker: Ollama Service" as ContainerOllama {
+            component "Ollama Daemon\n(Modèle Llama 3.2 3B & Nomic-Embed)" as OllamaService
+        }
+    }
+}
+
+node "Zone Persistance & Données (VLAN Base de Données Isolé)" as DataVLAN {
+    node "Conteneur Docker: Cache & Messaging" as ContainerRedis {
+        database "Redis 7.2 Cluster\n(RAM 16 GB - Persistance AOF/RDB)" as RedisDB
+    }
+    node "Serveur Base de Données Primaire" as PrimaryDBNode {
+        database "PostgreSQL 16 Enterprise\n(Stockage SSD NVMe, pgvector, WAL)" as PostgresPrimary
+    }
+    node "Serveur Base de Données Réplique (Lecture Seule)" as ReplicaDBNode {
+        database "PostgreSQL 16 Read-Replica\n(Streaming Replication synchrone)" as PostgresReplica
+    }
+    node "Conteneur Docker: Stockage Objet" as ContainerMinIO {
+        database "MinIO S3 Cluster\n(Stockage Mémoires & Archives)" as MinIODB
+    }
+}
+
+' Flux Réseau
+ArtifactWeb --> NginxService : HTTPS (Port 443)
+ArtifactMobile --> NginxService : HTTPS / WSS (Port 443)
+
+NginxService --> NextServer : HTTP (Port 3000)
+NginxService --> SpringBoot1 : HTTP Round-Robin (Port 8080)
+NginxService --> SpringBoot2 : HTTP Round-Robin (Port 8080)
+
+SpringBoot1 --> ORToolsWorker : gRPC / HTTP (Port 50051)
+SpringBoot2 --> ORToolsWorker : gRPC / HTTP (Port 50051)
+
+SpringBoot1 --> OllamaService : HTTP (Port 11434)
+SpringBoot2 --> OllamaService : HTTP (Port 11434)
+
+SpringBoot1 --> RedisDB : TCP (Port 6379)
+SpringBoot2 --> RedisDB : TCP (Port 6379)
+
+SpringBoot1 --> PostgresPrimary : JDBC (Port 5432 - Écritures/Lectures)
+SpringBoot2 --> PostgresPrimary : JDBC (Port 5432 - Écritures/Lectures)
+SpringBoot1 --> PostgresReplica : JDBC (Port 5433 - Requêtes Analytiques)
+SpringBoot2 --> PostgresReplica : JDBC (Port 5433 - Requêtes Analytiques)
+
+PostgresPrimary .right.> PostgresReplica : Streaming Replication (Port 5432)
+
+SpringBoot1 --> MinIODB : S3 API (Port 9000)
+SpringBoot2 --> MinIODB : S3 API (Port 9000)
+
+@enduml

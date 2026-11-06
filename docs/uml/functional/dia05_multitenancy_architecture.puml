@@ -1,0 +1,143 @@
+@startuml dia05_multitenancy_architecture
+!theme plain
+skinparam backgroundColor #F8FAFC
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam roundcorner 12
+skinparam shadowing false
+
+title <b>🏢 Architecture Multi-Tenant — Isolation & Partage des Données</b>\nUniVora ERP · Infrastructure · EMSI 2024-2025
+
+' ============================
+' INTERNET / CLIENTS
+' ============================
+package "🌐 Clients (Internet)" #EFF6FF {
+  [🖥️ Web App\nNext.js] as WEB
+  [📱 App Mobile\nFlutter iOS] as IOS
+  [📱 App Mobile\nFlutter Android] as ANDROID
+  [🔌 API Tierce\n(Ministère)] as APIEXT
+}
+
+' ============================
+' CDN & GATEWAY
+' ============================
+package "🔀 Entrée & Routage" #FFF7ED {
+  [🌍 Cloudflare CDN\n+ DDoS Protection] as CDN
+  [🚪 API Gateway\nKong / Nginx] as GW
+  [🔐 Auth Service\nKeycloak OIDC] as AUTH
+}
+
+' ============================
+' TENANT ROUTING
+' ============================
+package "🏷️ Résolution Tenant" #F0FDF4 {
+  [📋 Tenant Resolver\n(Header / Subdomain)] as TRES
+  note right of TRES #FEF3C7
+    Résolution par :
+    • Sous-domaine : guéliz.univora.ma
+    • Header : X-Tenant-ID: targa
+    • JWT claim : tenant_id
+  end note
+  [📊 Tenant Registry\n(Config Service)] as TREG
+}
+
+' ============================
+' APPLICATION LAYER
+' ============================
+package "⚙️ Application — NestJS Microservices" #EEF2FF {
+  [👤 Service\nÉtudiant] as SVC_ETU
+  [📅 Service\nEmploi du Temps] as SVC_EDT
+  [✅ Service\nPrésence] as SVC_PRES
+  [⚖️ Service\nDélibération] as SVC_DELIB
+  [🎓 Service\nPFE] as SVC_PFE
+  [💰 Service\nFinance] as SVC_FIN
+  [📢 Service\nNotification] as SVC_NOTIF
+}
+
+' ============================
+' DATA ISOLATION STRATEGIES
+' ============================
+package "🗄️ Couche Données — Stratégie Multi-Tenant" #FDF4FF {
+  
+  package "Tenant: GUÉLIZ 🏫" #DBEAFE {
+    database "PostgreSQL\nSchema: guéliz" as PG_GUE
+    [🔒 Row-Level Security\nRLS Policy] as RLS_GUE
+    storage "Fichiers S3\nbucket: guéliz/" as S3_GUE
+  }
+  
+  package "Tenant: TARGA 🏫" #DCFCE7 {
+    database "PostgreSQL\nSchema: targa" as PG_TAR
+    [🔒 Row-Level Security\nRLS Policy] as RLS_TAR
+    storage "Fichiers S3\nbucket: targa/" as S3_TAR
+  }
+  
+  package "Données Partagées 🌐" #FEF3C7 {
+    database "Schema: public\n(Référentiels communs)" as PG_SHARED
+    [📚 Référentiels\nFilieres, Modules] as REF
+  }
+}
+
+' ============================
+' INFRASTRUCTURE PARTAGÉE
+' ============================
+package "🔧 Infrastructure Partagée" #F1F5F9 {
+  [🔴 Redis Cache\n(namespaced par tenant)] as REDIS
+  [📨 RabbitMQ\n(vhost par tenant)] as MQ
+  [🔍 Elasticsearch\n(index par tenant)] as ES
+  [📊 Prometheus\n+ Grafana] as MONIT
+}
+
+' ============================
+' CONNEXIONS
+' ============================
+WEB --> CDN
+IOS --> CDN
+ANDROID --> CDN
+APIEXT --> GW
+
+CDN --> GW
+GW --> AUTH : Valider JWT
+GW --> TRES : Résoudre tenant_id
+TRES --> TREG : Lookup config tenant
+
+AUTH --> TRES
+TRES --> SVC_ETU
+TRES --> SVC_EDT
+TRES --> SVC_PRES
+TRES --> SVC_DELIB
+TRES --> SVC_PFE
+TRES --> SVC_FIN
+
+SVC_ETU --> RLS_GUE : tenant=guéliz
+SVC_ETU --> RLS_TAR : tenant=targa
+RLS_GUE --> PG_GUE
+RLS_TAR --> PG_TAR
+
+SVC_EDT --> REDIS : Cache\n(key: {tenant}:schedule:*)
+SVC_NOTIF --> MQ : Events\n(vhost: {tenant})
+SVC_PRES --> ES : Logs\n(index: {tenant}-logs)
+
+PG_GUE --> PG_SHARED : JOIN référentiels
+PG_TAR --> PG_SHARED : JOIN référentiels
+
+SVC_FIN --> S3_GUE
+SVC_PFE --> S3_TAR
+
+SVC_EDT --> MONIT
+SVC_PRES --> MONIT
+
+note bottom of RLS_GUE #FEF2F2
+  <b>Row-Level Security (RLS) :</b>
+  CREATE POLICY tenant_isolation ON presences
+  USING (tenant_id = current_setting('app.tenant_id'))
+  — Isolation garantie au niveau PostgreSQL
+end note
+
+note bottom of REDIS #FFFBEB
+  <b>Namespacing Redis :</b>
+  guéliz:schedule:2025-01-15
+  targa:users:sessions:*
+  Isolation par préfixe de clé
+end note
+
+@enduml

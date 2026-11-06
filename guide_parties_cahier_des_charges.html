@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMSI Campus ERP — Décryptage des Parties du Cahier des Charges</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-main: #090d16;
+            --bg-card: #111827;
+            --bg-card-subtle: #162032;
+            --border: #1f293d;
+            --border-highlight: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --primary: #059669;
+            --primary-light: #10b981;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-amber: #f59e0b;
+            --accent-rose: #f43f5e;
+            --accent-cyan: #06b6d4;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding-bottom: 80px;
+        }
+
+        /* Top Sticky Navbar */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: rgba(9, 13, 22, 0.88);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            padding: 14px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .nav-logo {
+            height: 38px;
+            background: #ffffff;
+            padding: 4px 10px;
+            border-radius: 8px;
+            object-fit: contain;
+        }
+        .nav-title {
+            font-size: 17px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 6px;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--primary-light);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .nav-links {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+        .nav-links a:hover {
+            color: var(--primary-light);
+        }
+
+        /* Hero */
+        .hero {
+            padding: 48px 32px 28px;
+            max-width: 1350px;
+            margin: 0 auto;
+        }
+        .hero-badge-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+            flex-wrap: wrap;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .hero-badge.highlight {
+            border-color: rgba(16, 185, 129, 0.4);
+            color: var(--primary-light);
+            background: rgba(16, 185, 129, 0.08);
+        }
+        .hero h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            line-height: 1.25;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #ffffff 40%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero p {
+            font-size: 15.5px;
+            color: var(--text-secondary);
+            max-width: 900px;
+            margin-bottom: 24px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1350px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        /* Section Block */
+        .part-block {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px 28px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .part-block:hover {
+            border-color: var(--border-highlight);
+        }
+        .part-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+        }
+        .part-num {
+            font-size: 12px;
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .part-title {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-primary);
+            letter-spacing: -0.4px;
+            margin-top: 4px;
+        }
+        .part-pages {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .badge-prelim { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-core { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-tech { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-project { background: rgba(139, 92, 246, 0.15); color: #c084fc; border: 1px solid rgba(139, 92, 246, 0.3); }
+        .badge-legal { background: rgba(244, 63, 94, 0.15); color: #f43f5e; border: 1px solid rgba(244, 63, 94, 0.3); }
+
+        .part-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 1024px) {
+            .part-grid { grid-template-columns: 1fr; }
+        }
+
+        .sub-box {
+            background: #0d1320;
+            border: 1px solid #1a2333;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .sub-box-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .sub-box-content {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .pitch-box {
+            margin-top: 14px;
+            background: rgba(16, 185, 129, 0.05);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #34d399;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .pitch-box strong { color: #ffffff; }
+
+        /* Summary Quick Nav */
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 10px;
+        }
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        .summary-table th, .summary-table td {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+        .summary-table th {
+            background: var(--bg-card-subtle);
+            color: var(--text-primary);
+            font-weight: 700;
+        }
+        .summary-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            border-top: 1px solid var(--border);
+            padding-top: 30px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+        .footer strong { color: var(--primary-light); }
+    </style>
+</head>
+<body>
+
+    <!-- TOP NAVBAR -->
+    <nav class="navbar">
+        <div class="nav-brand">
+            <img src="assets/emsi_logo.png" alt="Logo EMSI" class="nav-logo">
+            <div class="nav-title">
+                EMSI Campus ERP
+                <span class="nav-tag">Analyse du Cahier des Charges</span>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#tableau-recap">Tableau Récapitulatif</a></li>
+            <li><a href="#prelim">Pages Préliminaires</a></li>
+            <li><a href="#sec-1-3">Sections 1 à 3 (Métier)</a></li>
+            <li><a href="#sec-4-5">Sections 4 & 5 (Technique)</a></li>
+            <li><a href="#sec-6-7">Sections 6 & 7 (Agile & Tests)</a></li>
+            <li><a href="#sec-8-10">Sections 8 à 10 (Risques & CNDP)</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-badge-bar">
+            <span class="hero-badge highlight">📑 Décryptage des 10 Sections + Pages Préliminaires</span>
+            <span class="hero-badge">🎓 Référence : Cahier des Charges Officiel (24 Pages)</span>
+            <span class="hero-badge">📍 EMSI Marrakech (Gueliz & Targa)</span>
+        </div>
+        <h1>Guide d'Explication : Rôle de Chaque Partie du Cahier des Charges</h1>
+        <p>Ce guide détaille précisément la raison d'être de chaque section du cahier des charges, son rôle contractuel et juridique, son contenu spécifique pour le projet EMSI Campus ERP, ce que l'équipe doit implémenter, et comment le présenter oralement avec impact devant le client ou le professeur.</p>
+    </header>
+
+    <main class="container">
+
+        <!-- ==================================================================== -->
+        <!-- TABLEAU RECAPITULATIF SYNTHETIQUE                                    -->
+        <!-- ==================================================================== -->
+        <section id="tableau-recap">
+            <div class="summary-card">
+                <h2 style="font-size: 18px; font-weight: 800; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                    <span>🗺️</span> Vue d'Ensemble & Rôles des Parties (Les 24 Pages)
+                </h2>
+                <table class="summary-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 140px;">Partie / Page</th>
+                            <th style="width: 220px;">Intitulé Officiel</th>
+                            <th>Rôle Stratégique & Contractuel</th>
+                            <th style="width: 180px;">Bénéfice Client / EMSI</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Page 1</strong></td>
+                            <td>Page de Garde Officielle</td>
+                            <td>Identification formelle du projet, affiliation institutionnelle (EMSI Marrakech, D2SI/IIR), équipe et encadrants.</td>
+                            <td>Crédibilité institutionnelle.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Page i</strong></td>
+                            <td>Page des Signatures</td>
+                            <td>Engagement juridique et contractuel mutuel entre les 6 élèves-ingénieurs et les professeurs encadrants.</td>
+                            <td>Validation formelle du périmètre.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pages ii à vi</strong></td>
+                            <td>Abréviations & Tables</td>
+                            <td>Levée d'ambiguïté technique (glossaire acronymes) et navigation interactive (TOC dynamique cliquable).</td>
+                            <td>Clarté et accessibilité immédiate.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pages 1–2 (Sec 1)</strong></td>
+                            <td>1 Introduction & Portée</td>
+                            <td>Pose le diagnostic du terrain (multi-sites Gueliz/Targa), quantifie les objectifs (SLA) et fixe le périmètre exclu.</td>
+                            <td>Évite le dérapage de scope (Scope Creep).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pages 2–3 (Sec 2)</strong></td>
+                            <td>2 Parties Prenantes & Acteurs</td>
+                            <td>Définit les 7 profils utilisateurs et leurs frontières d'accès (RBAC).</td>
+                            <td>Cloisonnement strict des responsabilités.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pages 3–6 (Sec 3)</strong></td>
+                            <td>3 Besoins Fonctionnels</td>
+                            <td>Spécifie les règles métier : Transit 45 min, QR rotatif 15s, Zéro Excel, Soutenances IA, Verrou financier.</td>
+                            <td>Contrat précis des fonctionnalités livrées.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Page 6 (Sec 4)</strong></td>
+                            <td>4 Besoins Non Fonctionnels</td>
+                            <td>Fixe les standards d'excellence : temps de réponse &lt; 2s, support 1 000 connexions, disponibilité 99.5%, sécurité TLS 1.3.</td>
+                            <td>Garantie de qualité de service (QoS).</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pages 6–11 (Sec 5)</strong></td>
+                            <td>5 Architecture Technique</td>
+                            <td>Définit les 5 couches logiques, les flux de données et la justification de Spring Boot 3, Flutter, OR-Tools et Ollama.</td>
+                            <td>Solidité, scalabilité et maintenabilité.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pages 12–13 (Sec 6)</strong></td>
+                            <td>6 Planification & Pénalités</td>
+                            <td>Découpe le travail en Sprints Scrum + XP et stipule les clauses contractuelles de retard (1%/jour ouvré).</td>
+                            <td>Transparence et respect des délais.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pages 13–15 (Sec 7)</strong></td>
+                            <td>7 Tests, Recette & Livrables</td>
+                            <td>Définit la méthodologie TDD, les scénarios de test et la liste des 6 livrables formels exigibles.</td>
+                            <td>Zéro régression, livraison sans surprise.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Pages 15–16 (Sec 8)</strong></td>
+                            <td>8 Analyse des Risques</td>
+                            <td>Anticipe les blocages (pannes, résistance au changement, pics d'examens) avec plans de mitigation.</td>
+                            <td>Résilience opérationnelle.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Page 16 (Sec 9)</strong></td>
+                            <td>9 Contraintes CNDP 09-08</td>
+                            <td>Garantit la conformité avec la loi marocaine de protection des données personnelles et traçabilité des notes.</td>
+                            <td>Sécurité juridique totale de l'école.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Page 17 (Sec 10)</strong></td>
+                            <td>10 Conclusion & Perspectives</td>
+                            <td>Bilan de la valeur ajoutée et transition vers la phase de conception et de modélisation Sprint 0.</td>
+                            <td>Alignement final avant développement.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- DETAILS PAR SECTION : PAGES PRELIMINAIRES                            -->
+        <!-- ==================================================================== -->
+        <section id="prelim">
+            <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 16px; color: #60a5fa; display: flex; align-items: center; gap: 8px;">
+                <span>📄</span> I. Les Pages Préliminaires (Pages 1 à vi)
+            </h2>
+
+            <!-- PAGE DE GARDE & SIGNATURES -->
+            <div class="part-block" style="margin-bottom: 20px;">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-prelim">Cadre Formel</span>
+                        <h3 class="part-title">Page de Garde & Page des Signatures (Pages 1 & i)</h3>
+                    </div>
+                    <div class="part-pages">Pages 1 & i</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            La page de garde et la page des signatures constituent l'<strong>engagement officiel</strong> du document. Elles formalisent qui porte le projet, sous quelle autorité académique, et scellent l'accord entre le client/l'école et l'équipe de développement.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Logo officiel EMSI, intitulé de la filière <strong>D2SI / IIR</strong>, cadre arrondi officiel, mention des encadrants (<strong>Pr. ESSABBAR Driss</strong> et <strong>Pr. AIT OUNEJJAR Lahoussaine</strong>), les 6 étudiants-ingénieurs et les lignes de signatures formelles datées à Marrakech.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Fixe la date de démarrage contractuelle et la responsabilité partagée des 6 ingénieurs devant le jury.
+                        </div>
+                    </div>
+                </div>
+                <div class="pitch-box">
+                    <span>💡</span> <strong>Phrase d'explication orale :</strong> "La page des signatures ne constitue pas une simple formalité : elle engage contractuellement notre équipe sur le périmètre et la qualité des livrables décrits dans ce document."
+                </div>
+            </div>
+
+            <!-- ABREVIATIONS & TABLES -->
+            <div class="part-block">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-prelim">Navigation & Clarté</span>
+                        <h3 class="part-title">Liste des Abréviations & Tables des Figures / Matières (Pages ii à vi)</h3>
+                    </div>
+                    <div class="part-pages">Pages ii à vi</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Établir un <strong>langage commun sans ambiguïté</strong> entre profanes et spécialistes (CNDP, OR-Tools, JWT, RBAC) et fournir une <strong>table des matières interactive</strong> pour permettre au lecteur de sauter directement à la section désirée.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Un tableau à 2 colonnes avec 15 acronymes métiers et technologiques, la liste des 5 figures et 2 tableaux, et une Table des Matières dynamique sur 2 pages avec pointillés LaTeX et ancres de navigation directes.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Harmonise le vocabulaire utilisé dans les tickets Jira et les messages de commit Git (`feat(rbac)`, `fix(cndp)`).
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- DETAILS PAR SECTION : SECTIONS 1 A 3 (METIER)                        -->
+        <!-- ==================================================================== -->
+        <section id="sec-1-3">
+            <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 16px; color: #34d399; display: flex; align-items: center; gap: 8px;">
+                <span>🎯</span> II. Le Cœur Métier (Sections 1 à 3)
+            </h2>
+
+            <!-- SECTION 1 : INTRODUCTION -->
+            <div class="part-block" style="margin-bottom: 20px;">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-core">Cadrage & Périmètre</span>
+                        <h3 class="part-title">Section 1 : Introduction, Problématique, Objectifs et Portée</h3>
+                    </div>
+                    <div class="part-pages">Pages 1 & 2</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Expliquer <strong>POURQUOI</strong> le projet existe. Elle expose les souffrances actuelles de l'école, définit des objectifs chiffrés vérifiables et trace une frontière étanche sur ce qui est inclus et <strong>exclu</strong> du projet.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Conflit géographique Gueliz ↔ Targa, perte de temps avec les fichiers Excel, temps de réponse visé &lt; 2s, support de 1 000 connexions. Exclusion explicite du paiement bancaire par TPE direct (maintenu par virement/chèque).
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Protège l'équipe contre les demandes imprévues du client (si le client demande un module de transport de bus, on lui montre la Section 1.4 qui l'exclut).
+                        </div>
+                    </div>
+                </div>
+                <div class="pitch-box">
+                    <span>💡</span> <strong>Phrase d'explication orale :</strong> "La Section 1 ancre notre projet dans la réalité de l'EMSI Marrakech : elle fixe des cibles quantifiées et garantit que nous nous concentrons à 100% sur les priorités académiques et logistiques."
+                </div>
+            </div>
+
+            <!-- SECTION 2 : ACTEURS -->
+            <div class="part-block" style="margin-bottom: 20px;">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-core">Gouvernance RBAC</span>
+                        <h3 class="part-title">Section 2 : Parties Prenantes et Acteurs du Système</h3>
+                    </div>
+                    <div class="part-pages">Pages 2 & 3</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Identifier <strong>QUI</strong> utilise le système et définir leurs prérogatives pour construire la matrice des autorisations de sécurité (Role-Based Access Control).
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            7 profils hermétiques : Super Admin, Responsable Filière (D2SI, IIR...), Responsable Planification, Enseignant (permanent & vacataire), Étudiant, Service Scolarité et Service Financier.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Guide direct pour configurer `@PreAuthorize("hasRole('RESPONSABLE_FILIERE')")` dans Spring Boot et les gardes de routes dans React et Flutter.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 3 : BESOINS FONCTIONNELS -->
+            <div class="part-block">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-core">Spécifications Métier</span>
+                        <h3 class="part-title">Section 3 : Besoins Fonctionnels Détaillés (Tableau 1 & Figure 2)</h3>
+                    </div>
+                    <div class="part-pages">Pages 3 à 6</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            C'est la <strong>section la plus importante du cahier des charges</strong>. Elle détaille chaque cas d'usage, les interactions, les règles de calcul et les conditions de succès de chaque fonctionnalité.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Tableau 1 (Matrice Acteurs/Fonctions), règle des 45 min de transit Gueliz↔Targa, QR code rotatif 15s, notification push fin de cours pour cahier de texte, zéro Excel avec seuil éliminatoire &lt; 7/20, matching IA des jurys PFE et verrou administratif.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Sert de base directe pour la rédaction de l'ensemble des User Stories et des tests d'acceptation du Product Backlog.
+                        </div>
+                    </div>
+                </div>
+                <div class="pitch-box">
+                    <span>💡</span> <strong>Phrase d'explication orale :</strong> "La Section 3 traduit les besoins de la direction et des professeurs en spécifications atomiques et testables : aucun développement n'est fait au hasard, tout répond à une règle métier documentée."
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- DETAILS PAR SECTION : SECTIONS 4 & 5 (TECHNIQUE)                     -->
+        <!-- ==================================================================== -->
+        <section id="sec-4-5">
+            <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 16px; color: #fbbf24; display: flex; align-items: center; gap: 8px;">
+                <span>⚙️</span> III. L'Ingénierie & L'Architecture Technique (Sections 4 & 5)
+            </h2>
+
+            <!-- SECTION 4 : NON FONCTIONNELS -->
+            <div class="part-block" style="margin-bottom: 20px;">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-tech">Qualité de Service</span>
+                        <h3 class="part-title">Section 4 : Besoins Non Fonctionnels (SLA & Sécurité)</h3>
+                    </div>
+                    <div class="part-pages">Page 6</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Définir les critères de <strong>performance, robustesse, sécurité et scalabilité</strong>. Une application peut répondre à tous les besoins fonctionnels mais échouer si elle met 15 secondes à charger ou plante lors des délibérations.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Temps de réponse &lt; 2s (et &lt; 300ms pour l'EDT en cache Redis), disponibilité 99.5%, support de 1 000 utilisateurs simultanés, tokens JWT avec BCrypt, communications chiffrées TLS 1.3 et isolation multi-tenant.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Oblige les développeurs à optimiser les requêtes SQL (indexes, jointures) et à tester la charge du serveur avant livraison.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 5 : ARCHITECTURE TECHNIQUE -->
+            <div class="part-block">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-tech">Design Système</span>
+                        <h3 class="part-title">Section 5 : Architecture Technique & Justification des Choix</h3>
+                    </div>
+                    <div class="part-pages">Pages 6 à 11</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Donner la <strong>vue d'ensemble technique</strong> du système, décrire les 5 couches logiques, les flux de données et justifier rigoureusement pourquoi chaque technologie a été retenue.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Présentation React/Flutter, Métier Spring Boot 3, PostgreSQL 16 (40 tables), Solveur OR-Tools CP-SAT pour la planification &lt; 3 min, et Ollama Llama 3.2 local pour le matching PFE 100% souverain.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Plan directeur de l'architecture logicielle : empêche les développeurs de créer des dépendances cycliques ou de court-circuiter les couches.
+                        </div>
+                    </div>
+                </div>
+                <div class="pitch-box">
+                    <span>💡</span> <strong>Phrase d'explication orale :</strong> "La Section 5 démontre notre maturité d'ingénierie : nous n'avons pas choisi des technologies par mode, mais pour leur adéquation mathématique (OR-Tools pour le NP-complet) et leur souveraineté (Ollama en local)."
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- DETAILS PAR SECTION : SECTIONS 6 & 7 (GESTION ET TESTS)              -->
+        <!-- ==================================================================== -->
+        <section id="sec-6-7">
+            <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 16px; color: #c084fc; display: flex; align-items: center; gap: 8px;">
+                <span>🚀</span> IV. Méthodologie Agile, Tests & Livrables (Sections 6 & 7)
+            </h2>
+
+            <!-- SECTION 6 : PLANIFICATION -->
+            <div class="part-block" style="margin-bottom: 20px;">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-project">Organisation Agile</span>
+                        <h3 class="part-title">Section 6 : Planification du Projet & Pénalités Contractuelles</h3>
+                    </div>
+                    <div class="part-pages">Pages 12 & 13</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Découper le projet dans le temps, définir les jalons et insérer une <strong>clause de pénalité de retard</strong> qui rassure le client sur notre sérieux et notre respect du calendrier.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Méthodologie hybride Scrum + XP (Sprints 0 à 4 sur 10 semaines), revue bimensuelle et clause contractuelle de pénalité de <strong>1 % par jour ouvré de retard</strong> (plafonnée à 10 %).
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Impose une cadence de livraison stricte : chaque fin de sprint donne lieu à une démo fonctionnelle testable.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 7 : TESTS & VALIDATION -->
+            <div class="part-block">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-project">Qualité Logicielle</span>
+                        <h3 class="part-title">Section 7 : Tests, Validation & Modalités de Livraison</h3>
+                    </div>
+                    <div class="part-pages">Pages 13 à 15</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Définir comment nous prouvons que le code fonctionne conformément aux exigences, et lister la liste exacte des <strong>livrables physiques et électroniques</strong> remis au client.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Approche TDD (Test-Driven Development), tests unitaires JUnit/Mockito, tests E2E Playwright, et la matrice des 6 livrables (Code source documenté, scripts Flyway, documentation API OpenAPI, manuels et PV de recette).
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Aucune PR n'est fusionnée dans Git si la couverture de tests est inférieure à 80% ou si la suite CI/CD échoue.
+                        </div>
+                    </div>
+                </div>
+                <div class="pitch-box">
+                    <span>💡</span> <strong>Phrase d'explication orale :</strong> "La Section 7 garantit au client qu'il ne recevra pas une 'boîte noire' : chaque fonctionnalité est accompagnée de ses tests automatisés et d'un procès-verbal de recette formalisé."
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================================================================== -->
+        <!-- DETAILS PAR SECTION : SECTIONS 8 A 10 (RISQUES, LOI & CONCLUSION)    -->
+        <!-- ==================================================================== -->
+        <section id="sec-8-10">
+            <h2 style="font-size: 20px; font-weight: 800; margin-bottom: 16px; color: #f43f5e; display: flex; align-items: center; gap: 8px;">
+                <span>🛡️</span> V. Sécurité Juridique, Risques & Conclusion (Sections 8 à 10)
+            </h2>
+
+            <!-- SECTION 8 : RISQUES -->
+            <div class="part-block" style="margin-bottom: 20px;">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-legal">Anticipation</span>
+                        <h3 class="part-title">Section 8 : Analyse des Risques et Plans de Mitigation</h3>
+                    </div>
+                    <div class="part-pages">Pages 15 & 16</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Prouver la maturité de l'équipe en identifiant à l'avance les événements imprévus pouvant compromettre le projet (techniques, organisationnels, humains) et prévoir des contre-mesures immédiates.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Tableau 2 : Risque de panne serveur (clustering Docker + Redis cache), risque de rejet des profs (sessions de formation express et UX simplifiée en 3 clics), surcharge lors des examens.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Définit les runbooks d'urgence et évite la panique en cas de défaillance pendant la démonstration.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION 9 : CONFORMITE CNDP -->
+            <div class="part-block" style="margin-bottom: 20px;">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-legal">Légalité Marocaine</span>
+                        <h3 class="part-title">Section 9 : Contraintes Légales & Réglementaires (Loi 09-08 CNDP)</h3>
+                    </div>
+                    <div class="part-pages">Page 16</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Protéger légalement l'EMSI et les étudiants. La gestion des notes, des absences et des paiements touche à des données personnelles hautement sensibles soumises à la législation nationale.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Conformité stricte à la <strong>Loi marocaine n° 09-08</strong> régie par la <strong>CNDP</strong> : hébergement souverain des données au Maroc, droit d'accès et d'oubli, et traçabilité inviolable des notes par table `audit_logs`.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Interdiction absolue d'envoyer des données étudiantes à des APIs cloud publiques externes (OpenAI/Google Cloud) : tout reste sur les serveurs locaux de l'école via Ollama.
+                        </div>
+                    </div>
+                </div>
+                <div class="pitch-box">
+                    <span>💡</span> <strong>Phrase d'explication orale :</strong> "La Section 9 blinde juridiquement l'EMSI : notre architecture respecte scrupuleusement la loi marocaine 09-08 de la CNDP et élimine tout risque de fuite de données hors du territoire."
+                </div>
+            </div>
+
+            <!-- SECTION 10 : CONCLUSION -->
+            <div class="part-block">
+                <div class="part-header">
+                    <div>
+                        <span class="part-num badge-legal">Clôture Stratégique</span>
+                        <h3 class="part-title">Section 10 : Conclusion Générale et Perspectives</h3>
+                    </div>
+                    <div class="part-pages">Page 17</div>
+                </div>
+                <div class="part-grid">
+                    <div class="sub-box">
+                        <div class="sub-box-title">🎯 Quel est son Rôle ?</div>
+                        <div class="sub-box-content">
+                            Résumer la valeur ajoutée institutionnelle du projet et acter la fin de la phase de cadrage pour donner le feu vert au développement effectif.
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">🏢 Ce qu'elle contient pour EMSI Campus ERP</div>
+                        <div class="sub-box-content">
+                            Synthèse de l'impact : passage d'une gestion manuelle dispersée à une plateforme intelligente unifiée, évolutive pour les autres campus du Maroc (Casablanca, Rabat).
+                        </div>
+                    </div>
+                    <div class="sub-box">
+                        <div class="sub-box-title">💻 Impact pour l'Équipe</div>
+                        <div class="sub-box-content">
+                            Clôture formelle de la phase d'analyse : l'équipe démarre immédiatement le Sprint 0.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <p>Document Pédagogique Interne — <strong>EMSI Campus ERP (Univora)</strong> • Conforme au Cahier des Charges Officiel</p>
+        <p style="margin-top: 6px;">École Marocaine des Sciences de l'Ingénieur Marrakech • Promotion 5e Année <strong>D2SI / IIR</strong> • Année Universitaire 2025–2026</p>
+    </footer>
+
+</body>
+</html>

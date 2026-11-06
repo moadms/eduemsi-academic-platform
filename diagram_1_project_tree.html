@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>EMSI Campus ERP - Structure du Projet</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: #0b0f19;
+            color: #f1f5f9;
+            padding: 32px 40px;
+            width: 1600px;
+            min-height: 1050px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #1e293b;
+            padding-bottom: 20px;
+            margin-bottom: 28px;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .logo-area img {
+            height: 52px;
+            background: #ffffff;
+            padding: 6px 12px;
+            border-radius: 8px;
+        }
+        .project-tag {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        .title {
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+        .subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 4px;
+        }
+        .badge-bar {
+            display: flex;
+            gap: 10px;
+        }
+        .badge {
+            background: #1e293b;
+            border: 1px solid #334155;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #cbd5e1;
+            font-weight: 600;
+        }
+        .badge strong { color: #34d399; }
+
+        /* Grid */
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr 1.1fr;
+            gap: 20px;
+        }
+        .col {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            background: #131d2f;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 18px 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+        }
+        .card.frontend::before { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .card.mobile::before { background: linear-gradient(90deg, #06b6d4, #22d3ee); }
+        .card.backend::before { background: linear-gradient(90deg, #10b981, #34d399); }
+        .card.optimizer::before { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .card.ai::before { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+        .card.db::before { background: linear-gradient(90deg, #ec4899, #f472b6); }
+        .card.infra::before { background: linear-gradient(90deg, #64748b, #94a3b8); }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        .card-name {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffffff;
+        }
+        .card-tag {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: #1e293b;
+            color: #94a3b8;
+        }
+
+        .tree {
+            font-family: "JetBrains Mono", "Cascadia Code", Consolas, monospace;
+            font-size: 11.5px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            background: #090d16;
+            padding: 12px 14px;
+            border-radius: 8px;
+            border: 1px solid #1a2436;
+        }
+        .folder { color: #38bdf8; font-weight: 700; }
+        .file { color: #e2e8f0; }
+        .comment { color: #64748b; font-style: italic; }
+        .accent { color: #34d399; font-weight: 600; }
+        .feature-list {
+            margin-top: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        .feature-pill {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: #94a3b8;
+            font-size: 10.5px;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .footer {
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #64748b;
+        }
+        .footer strong { color: #10b981; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div class="logo-area">
+            <img src="assets/emsi_logo.png" alt="Logo EMSI">
+            <div>
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 2px;">
+                    <span class="project-tag">Structure Monorepo</span>
+                    <span class="title">EMSI Campus ERP — Organisation Complète du Codebase</span>
+                </div>
+                <div class="subtitle">Architecture Modulaire 5e Année D2SI / IIR • Marrakech (Gueliz & Targa) • Prêt pour Déploiement SaaS</div>
+            </div>
+        </div>
+        <div class="badge-bar">
+            <div class="badge">Stack : <strong>Next.js + Flutter + Spring Boot</strong></div>
+            <div class="badge">Moteurs : <strong>OR-Tools + Ollama</strong></div>
+            <div class="badge">Tables SQL : <strong>40 Tables Flyway</strong></div>
+        </div>
+    </div>
+
+    <div class="grid-container">
+        <!-- COLONNE 1 : FRONTEND WEB & MOBILE -->
+        <div class="col">
+            <!-- FRONTEND WEB REACT / NEXT.JS -->
+            <div class="card frontend">
+                <div class="card-title">
+                    <div class="card-name">
+                        <span style="color:#60a5fa;">💻</span> 1. Frontend Web (React / Next.js 14)
+                    </div>
+                    <span class="card-tag">Portail Admin & Enseignant</span>
+                </div>
+                <div class="tree">
+<span class="folder">emsi-web/</span><br>
+├── <span class="folder">src/app/</span><br>
+│   ├── <span class="folder">(auth)/</span> <span class="comment"># Connexion JWT multi-rôles</span><br>
+│   ├── <span class="folder">admin/</span> <span class="comment"># Salles, filières, matériel TP</span><br>
+│   ├── <span class="folder">planning/</span> <span class="accent"># Matrice multi-sites Gueliz/Targa</span><br>
+│   ├── <span class="folder">deliberations/</span> <span class="accent"># Zéro Excel, calcul PV officiel</span><br>
+│   ├── <span class="folder">soutenances/</span> <span class="comment"># Dépôt, jury, templates EMSI</span><br>
+│   └── <span class="folder">finance/</span> <span class="comment"># Reliquats & verrou administratif</span><br>
+├── <span class="folder">src/components/</span> <span class="comment"># UI Tailwind & Shadcn (Grid, Modal)</span><br>
+└── <span class="folder">src/stores/</span> <span class="comment"># Zustand State (Auth, Tenant, Filters)</span>
+                </div>
+                <div class="feature-list">
+                    <span class="feature-pill">React 18</span>
+                    <span class="feature-pill">Next.js App Router</span>
+                    <span class="feature-pill">Tailwind CSS v4</span>
+                    <span class="feature-pill">Zustand</span>
+                    <span class="feature-pill">Lucide Icons</span>
+                </div>
+            </div>
+
+            <!-- MOBILE FLUTTER -->
+            <div class="card mobile">
+                <div class="card-title">
+                    <div class="card-name">
+                        <span style="color:#22d3ee;">📱</span> 2. Application Mobile (Flutter 3.x)
+                    </div>
+                    <span class="card-tag">Étudiants & Professeurs</span>
+                </div>
+                <div class="tree">
+<span class="folder">emsi-mobile/lib/</span><br>
+├── <span class="folder">core/</span> <span class="comment"># Intercepteurs Dio, Tokens sécurisés</span><br>
+├── <span class="folder">features/</span><br>
+│   ├── <span class="folder">timetable/</span> <span class="accent"># Emploi du temps temps réel</span><br>
+│   ├── <span class="folder">qr_attendance/</span> <span class="accent"># Scan QR dynamique 15s</span><br>
+│   ├── <span class="folder">session_report/</span> <span class="accent"># Push clôture cahier de texte</span><br>
+│   ├── <span class="folder">grades/</span> <span class="comment"># Consultation notes & moyennes</span><br>
+│   └── <span class="folder">thesis/</span> <span class="comment"># Téléchargement templates PFE</span><br>
+└── <span class="file">main.dart</span> <span class="comment"># Initialisation Firebase & Riverpod</span>
+                </div>
+                <div class="feature-list">
+                    <span class="feature-pill">Flutter 3.24</span>
+                    <span class="feature-pill">Riverpod</span>
+                    <span class="feature-pill">Firebase Cloud Messaging</span>
+                    <span class="feature-pill">Mobile Scanner</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLONNE 2 : BACKEND CORE SPRING BOOT 3 -->
+        <div class="col">
+            <!-- BACKEND SPRING BOOT 3 -->
+            <div class="card backend" style="height: 100%;">
+                <div class="card-title">
+                    <div class="card-name">
+                        <span style="color:#34d399;">⚙️</span> 3. Backend Cœur (Spring Boot 3.3 / Java 21)
+                    </div>
+                    <span class="card-tag">API REST & Règles Métier</span>
+                </div>
+                <div class="tree" style="font-size: 11px;">
+<span class="folder">emsi-backend/src/main/java/com/emsi/campus/</span><br>
+├── <span class="folder">config/</span> <span class="comment"># SecurityFilterChain, JWT, Multi-tenant Filter</span><br>
+├── <span class="folder">controllers/</span><br>
+│   ├── <span class="file">AuthController.java</span> <span class="comment"># Login, refresh token</span><br>
+│   ├── <span class="file">TimetableController.java</span> <span class="accent"># Appel OR-Tools solveur</span><br>
+│   ├── <span class="file">AttendanceController.java</span> <span class="accent"># Génération token QR</span><br>
+│   ├── <span class="file">GradeController.java</span> <span class="accent"># Saisie notes (Zéro Excel)</span><br>
+│   ├── <span class="file">DeliberationController.java</span> <span class="accent"># Calculs seuils</span><br>
+│   ├── <span class="file">ThesisController.java</span> <span class="accent"># Matching IA Ollama</span><br>
+│   └── <span class="file">BillingController.java</span> <span class="comment"># Verrou administratif</span><br>
+├── <span class="folder">services/</span> <span class="comment"># Logique métier pure (DeliberationService...)</span><br>
+├── <span class="folder">repositories/</span> <span class="comment"># Spring Data JPA avec TenantScope</span><br>
+└── <span class="folder">entities/</span> <span class="comment"># 40 Entités mappées (Room, Session, Grade...)</span>
+                </div>
+                <div class="feature-list" style="margin-top: 14px;">
+                    <span class="feature-pill">Spring Boot 3.3.4</span>
+                    <span class="feature-pill">Java 21 LTS</span>
+                    <span class="feature-pill">Spring Security 6</span>
+                    <span class="feature-pill">Flyway Migration</span>
+                    <span class="feature-pill">Hibernate 6</span>
+                    <span class="feature-pill">JWT / BCrypt</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- COLONNE 3 : IA, SOLVEUR, BASE DE DONNEES & INFRA -->
+        <div class="col">
+            <!-- MOTEURS DE CALCUL (OR-TOOLS + OLLAMA) -->
+            <div class="card optimizer">
+                <div class="card-title">
+                    <div class="card-name">
+                        <span style="color:#fbbf24;">⚡</span> 4. Moteur d'Optimisation & IA Locale
+                    </div>
+                    <span class="card-tag">OR-Tools & Ollama</span>
+                </div>
+                <div class="tree">
+<span class="folder">services-calcul/</span><br>
+├── <span class="folder">engine-ortools/</span> <span class="comment"># CP-SAT Solver (Java / Python)</span><br>
+│   ├── <span class="file">constraint_transit.py</span> <span class="accent"># Règle 45 min Gueliz↔Targa</span><br>
+│   ├── <span class="file">constraint_equipment.py</span> <span class="comment"># Vérif PC/GPU salles TP</span><br>
+│   └── <span class="file">solver_runner.py</span> <span class="comment"># Résolution EDT &lt; 3 min</span><br>
+└── <span class="folder">ai-matching/</span> <span class="comment"># Moteur IA local souverain</span><br>
+    ├── <span class="file">ollama_client.py</span> <span class="accent"># Extraction compétences PFE</span><br>
+    └── <span class="file">jury_matcher.py</span> <span class="accent"># Matching sémantique prof/sujet</span>
+                </div>
+            </div>
+
+            <!-- BASE DE DONNEES & MIGRATIONS -->
+            <div class="card db">
+                <div class="card-title">
+                    <div class="card-name">
+                        <span style="color:#f472b6;">🗄️</span> 5. Base de Données (PostgreSQL 16)
+                    </div>
+                    <span class="card-tag">40 Tables Partitionnées</span>
+                </div>
+                <div class="tree">
+<span class="folder">database/migrations/</span><br>
+├── <span class="file">V1__init_schema.sql</span> <span class="comment"># 40 tables multi-tenant</span><br>
+│   ├── <span class="comment">Module RBAC (users, roles, permissions)</span><br>
+│   ├── <span class="comment">Module Multi-sites (campus, rooms, equipment)</span><br>
+│   ├── <span class="comment">Module Pédagogie (fields, promos, modules)</span><br>
+│   ├── <span class="comment">Module Évaluation (grades, deliberations)</span><br>
+│   └── <span class="comment">Module Soutenances (thesis, pfe_templates)</span><br>
+└── <span class="file">V2__seed_marrakech_data.sql</span> <span class="comment"># Gueliz & Targa</span>
+                </div>
+            </div>
+
+            <!-- INFRASTRUCTURE DOCKER & CI/CD -->
+            <div class="card infra">
+                <div class="card-title">
+                    <div class="card-name">
+                        <span style="color:#94a3b8;">🐳</span> 6. Déploiement & DevOps
+                    </div>
+                    <span class="card-tag">Docker Compose</span>
+                </div>
+                <div class="tree">
+├── <span class="file">docker-compose.yml</span> <span class="comment"># PostgreSQL, Redis, Ollama, API</span><br>
+├── <span class="file">Dockerfile.backend</span> <span class="comment"># Multi-stage Eclipse Temurin 21</span><br>
+├── <span class="file">Dockerfile.web</span> <span class="comment"># Next.js standalone runner</span><br>
+└── <span class="folder">.github/workflows/</span> <span class="comment"># CI/CD (Tests TDD, Lint, Build)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <div>Projet : <strong>EMSI Campus ERP (Univora)</strong> • École Marocaine des Sciences de l'Ingénieur Marrakech</div>
+        <div>Conception & Architecture : <strong>Équipe Ingénieurs 5e Année D2SI / IIR</strong> (Année 2025–2026)</div>
+    </div>
+
+</body>
+</html>

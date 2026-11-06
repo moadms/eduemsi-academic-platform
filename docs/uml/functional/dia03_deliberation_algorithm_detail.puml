@@ -1,0 +1,143 @@
+@startuml dia03_deliberation_algorithm
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam roundcorner 10
+skinparam shadowing false
+skinparam activity {
+  BackgroundColor #EFF6FF
+  BorderColor #2563EB
+  FontColor #1E3A5F
+  ArrowColor #2563EB
+  DiamondBackgroundColor #FEF3C7
+  DiamondBorderColor #D97706
+  DiamondFontColor #92400E
+  StartColor #059669
+  EndColor #DC2626
+}
+skinparam swimlane {
+  BorderColor #CBD5E1
+  TitleFontColor #1E3A5F
+  TitleFontSize 13
+}
+
+title <b>⚖️ Algorithme de Délibération — Calcul Complet des Notes</b>\nUniVora ERP · Module Délibération · EMSI 2024-2025
+
+|#DBEAFE| Système de Délibération |
+start
+:Sélectionner Session Délibération\n(Semestre S, Filière F, Niveau N);
+
+|#DBEAFE| Système de Délibération |
+:Charger liste étudiants actifs\npour cette session;
+
+|#FFF7ED| Calcul par Étudiant |
+:Pour chaque étudiant E;
+:Charger toutes les notes\n(CC, TP, Examen, Rattrapage);
+
+|#F0FDF4| Calcul Notes Modules |
+split
+  :MODULE Théorique;
+  note right #FEF3C7
+    <b>Formule Note Module Théorique:</b>
+    NM = (CC × 0.4) + (Exam × 0.6)
+    Si rattrapage: NM = max(NM_orig, Rattrap × 0.6 + CC × 0.4)
+    —
+    CC : Contrôle Continu (20%)
+    Exam : Examen Final (60%)
+    Bonus max : +2 points
+  end note
+  :NM_theo = CC×0.4 + Exam×0.6;
+split again
+  :MODULE avec TP / Projet;
+  note right #FEF3C7
+    <b>Formule Note Module avec TP:</b>
+    NM = (CC × 0.3) + (TP × 0.2) + (Exam × 0.5)
+    Coefficients pondérés par filière
+  end note
+  :NM_tp = CC×0.3 + TP×0.2 + Exam×0.5;
+split again
+  :MODULE PFE / Stage;
+  note right #FEF3C7
+    <b>Formule PFE:</b>
+    NM_pfe = (Rapport × 0.4) + (Soutenance × 0.4)
+            + (Encadrant × 0.2)
+    Note jury = moyenne 3 examinateurs
+  end note
+  :NM_pfe = Rapport×0.4 + Soutenance×0.4\n+ Encadrant×0.2;
+end split
+
+|#FFF7ED| Calcul par Étudiant |
+:Appliquer règle ÉLIMINATOIRE\n——————————\nRULE-DELIB-04 : NM < 7.00/20 = ÉLIMINATOIRE;
+
+|#FEF2F2| Vérification Éliminatoires |
+if (Existe module NM < 7.00 ?) then (OUI ❌)
+  :Marquer module(s)\ncomme ÉLIMINATOIRE(S);
+  :Vérifier si rattrapage autorisé;
+  if (Rattrapage disponible ?) then (OUI)
+    :Session rattrapage planifiée;
+    :NM_rattrap = max(NM_orig, NM_ratt_calc);
+    if (NM_rattrap ≥ 7.00 ?) then (OUI ✅)
+      :Module validé après rattrapage;
+    else (NON ❌)
+      :Module définitivement NON VALIDÉ;
+      :Inscription année suivante requise;
+    endif
+  else (NON)
+    :Module bloquant — rattrapage impossible;
+    :Statut étudiant = REDOUBLANT;
+  endif
+else (NON ✅)
+  :Tous modules ≥ 7.00;
+endif
+
+|#F0FDF4| Calcul Moyenne Générale |
+:Calculer Moyenne Générale (MG)\n——————————\nMG = Σ(NM_i × Coeff_i) / Σ(Coeff_i);
+note right #DCFCE7
+  <b>Coefficients par filière (exemple GL):</b>
+  • Algo & Prog : Coeff 4
+  • BDD : Coeff 3
+  • Réseau : Coeff 3
+  • Math Disc : Coeff 2
+  • Soft Skills : Coeff 1
+  ————————
+  MG = Σ(NM × C) / Σ(C)
+end note
+
+|#FFF7ED| Calcul par Étudiant |
+:Appliquer règles de validation globale;
+
+|#FEF3C7| Décision Finale |
+if (MG ≥ 12.00/20 ?) then (NON)
+  if (MG ≥ 10.00/20 ?) then (NON)
+    if (MG ≥ 7.00/20 ?) then (OUI)
+      :⚠️ PASSABLE\nMG ∈ [7.00, 10.00[;
+      :Rattrapage requis;
+    else (NON)
+      :❌ ÉCHEC\nMG < 7.00;
+      :Redoublement;
+    endif
+  else (OUI)
+    :✅ ADMIS\nMG ∈ [10.00, 12.00[;
+  endif
+else (OUI)
+  if (MG ≥ 16.00/20 ?) then (OUI)
+    :🏆 TRÈS BIEN\nMG ≥ 16.00;
+  else
+    if (MG ≥ 14.00/20 ?) then (OUI)
+      :⭐ BIEN\nMG ∈ [14.00, 16.00[;
+    else
+      :✅ ASSEZ BIEN\nMG ∈ [12.00, 14.00[;
+    endif
+  endif
+endif
+
+|#DBEAFE| Système de Délibération |
+:Générer rapport délibération individuel\n(PV signé numériquement);
+:Envoyer relevé de notes\nvia notification push + email;
+:Mettre à jour statut étudiant\ndans base de données;
+:Archiver dans audit_logs\n(Loi 09-08 CNDP Maroc);
+
+stop
+
+@enduml

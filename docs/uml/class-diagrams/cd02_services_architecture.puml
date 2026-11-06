@@ -1,0 +1,115 @@
+@startuml cd02_services_architecture
+title Architecture Technique des Services & Contrôleurs (Spring Boot Core)
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+skinparam packageStyle rectangle
+
+package "Contrôleurs REST (Couche Présentation)" {
+    class AttendanceController {
+        - attendanceService: AttendanceService
+        + generateSessionQR(seanceId: UUID): ResponseEntity<QRPayloadDTO>
+        + scanAttendance(request: ScanRequestDTO): ResponseEntity<AttendanceResponseDTO>
+    }
+
+    class DeliberationController {
+        - deliberationService: DeliberationService
+        + runSemesterDeliberation(semesterId: UUID): ResponseEntity<DeliberationSummaryDTO>
+        + sealAndSignPV(delibId: UUID, signature: SignatureDTO): ResponseEntity<Resource>
+    }
+
+    class ScheduleController {
+        - scheduleService: ScheduleService
+        + optimizeSchedule(weekId: UUID): ResponseEntity<ScheduleResultDTO>
+        + getStudentTimetable(studentId: UUID): ResponseEntity<List<SeanceDTO>>
+    }
+
+    class ThesisAIController {
+        - thesisMatchService: ThesisMatchService
+        + matchJuryForThesis(thesisId: UUID): ResponseEntity<List<JuryRecommendationDTO>>
+    }
+}
+
+package "Services Métier Applicatifs (Couche Application)" {
+    interface AttendanceService {
+        + generateRotatingToken(seanceId: UUID): String
+        + validateAndRecordScan(dto: ScanRequestDTO): AttendanceResult
+        + notifyProfForTextbook(seanceId: UUID): void
+    }
+
+    class AttendanceServiceImpl implements AttendanceService {
+        - seanceRepo: SeanceRepository
+        - attendanceRepo: AttendanceRepository
+        - redisTokenStore: RedisTokenStore
+        - auditLogService: AuditLogService
+    }
+
+    interface DeliberationService {
+        + computeDeliberation(semesterId: UUID): DeliberationResult
+        + verifyEliminatoryGrades(grades: List<StudentGrade>): boolean
+        + generateSealedPV(delibId: UUID): byte[]
+    }
+
+    class DeliberationServiceImpl implements DeliberationService {
+        - gradeRepo: GradeRepository
+        - deliberationRepo: DeliberationRepository
+        - pdfReportService: PdfReportService
+    }
+
+    interface ThesisMatchService {
+        + computeSemanticSimilarity(thesisText: String, profProfile: String): double
+        + recommendJury(thesisId: UUID): List<Professor>
+    }
+
+    class ThesisMatchServiceImpl implements ThesisMatchService {
+        - ollamaClient: LocalOllamaClient
+        - thesisRepo: ThesisRepository
+        - profRepo: ProfessorRepository
+    }
+}
+
+package "Couche Infrastructure & Connecteurs" {
+    class RedisTokenStore {
+        - redissonClient: RedissonClient
+        + saveToken(key: String, token: String, ttlSeconds: long): void
+        + validateAndBurnToken(key: String, token: String): boolean
+    }
+
+    class LocalOllamaClient {
+        - restTemplate: RestTemplate
+        - ollamaBaseUrl: String = "http://localhost:11434"
+        + generateEmbedding(text: String): List<Float>
+    }
+
+    class ScheduleOptimizationEngine {
+        - orToolsSolver: CpSolver
+        + solveWithTransitConstraints(data: ScheduleData): ScheduleSolution
+    }
+}
+
+package "Couche Accès aux Données (Spring Data JPA)" {
+    interface SeanceRepository
+    interface AttendanceRepository
+    interface GradeRepository
+    interface DeliberationRepository
+    interface ThesisRepository
+    interface ProfessorRepository
+}
+
+AttendanceController --> AttendanceService
+DeliberationController --> DeliberationService
+ScheduleController --> ScheduleOptimizationEngine
+ThesisAIController --> ThesisMatchService
+
+AttendanceServiceImpl --> RedisTokenStore
+AttendanceServiceImpl --> SeanceRepository
+AttendanceServiceImpl --> AttendanceRepository
+
+DeliberationServiceImpl --> GradeRepository
+DeliberationServiceImpl --> DeliberationRepository
+
+ThesisMatchServiceImpl --> LocalOllamaClient
+ThesisMatchServiceImpl --> ThesisRepository
+ThesisMatchServiceImpl --> ProfessorRepository
+
+@enduml

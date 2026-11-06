@@ -1,0 +1,286 @@
+@startuml cd01_domain_model
+title Modèle de Domaine Métier (Domain Model) - EMSI Campus ERP
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam packageStyle rectangle
+skinparam defaultFontName "Segoe UI"
+skinparam roundcorner 5
+
+package "Gestion Campus & Établissement" {
+    class Campus {
+        - id: UUID
+        - code: String
+        - name: String
+        - address: String
+        - city: String
+        - transitBufferMinutes: Integer = 45
+        + calculateTransitTime(destination: Campus): Duration
+    }
+
+    class Room {
+        - id: UUID
+        - roomNumber: String
+        - capacity: Integer
+        - roomType: RoomType
+        - hasProjector: Boolean
+        + isAvailable(slot: TimeSlot): Boolean
+    }
+
+    enum RoomType {
+        AMPHITHEATER
+        TD_CLASSROOM
+        TP_LABORATORY
+        MEETING_ROOM
+    }
+}
+
+package "Structure Pédagogique" {
+    class Program {
+        - id: UUID
+        - code: String
+        - title: String
+        - department: String
+        - durationYears: Integer = 5
+    }
+
+    class Semester {
+        - id: UUID
+        - code: String
+        - academicYear: String
+        - startDate: LocalDate
+        - endDate: LocalDate
+    }
+
+    class Module {
+        - id: UUID
+        - code: String
+        - name: String
+        - totalHours: Integer
+        - coefficient: Double
+        - creditsECTS: Integer
+        + calculateModuleAverage(): Double
+    }
+
+    class ModuleElement {
+        - id: UUID
+        - code: String
+        - title: String
+        - coefficient: Double
+        - hoursLecture: Integer
+        - hoursTP: Integer
+        - hoursTD: Integer
+        + calculateElementAverage(): Double
+    }
+}
+
+package "Utilisateurs & Identités" {
+    abstract class User {
+        - id: UUID
+        - username: String
+        - email: String
+        - passwordHash: String
+        - firstName: String
+        - lastName: String
+        - phone: String
+        - active: Boolean
+        - mfaEnabled: Boolean
+        + authenticate(secret: String): Boolean
+    }
+
+    class Student {
+        - cneMassar: String
+        - cin: String
+        - enrollmentDate: LocalDate
+        - academicLevel: String
+        - financialLocked: Boolean
+        + canDownloadDocuments(): Boolean
+    }
+
+    class Professor {
+        - matricule: String
+        - specialty: String
+        - maxWeeklyHours: Integer
+        - isTenured: Boolean
+    }
+
+    class Group {
+        - id: UUID
+        - name: String
+        - capacity: Integer
+    }
+}
+
+package "Planification & Assiduité" {
+    class Seance {
+        - id: UUID
+        - startTime: LocalDateTime
+        - endTime: LocalDateTime
+        - status: SeanceStatus
+        - isExam: Boolean
+        + generateQRPayload(): String
+        + closeSeance(): void
+    }
+
+    enum SeanceStatus {
+        PLANNED
+        IN_PROGRESS
+        COMPLETED_PENDING_TEXTBOOK
+        COMPLETED_DOCUMENTED
+        CANCELLED
+    }
+
+    class Attendance {
+        - id: UUID
+        - scanTime: LocalDateTime
+        - status: AttendanceStatus
+        - deviceFingerprint: String
+        - isFlagged: Boolean
+    }
+
+    enum AttendanceStatus {
+        PRESENT
+        ABSENT_UNJUSTIFIED
+        ABSENT_JUSTIFIED
+        LATE
+    }
+
+    class Textbook {
+        - id: UUID
+        - summary: String
+        - homeworkGiven: String
+        - submittedAt: LocalDateTime
+        - attachmentUrls: List<String>
+    }
+}
+
+package "Évaluations & Délibérations" {
+    class Evaluation {
+        - id: UUID
+        - type: EvaluationType
+        - coefficient: Double
+        - examDate: LocalDate
+        - maxScore: Double = 20.0
+    }
+
+    enum EvaluationType {
+        CONTROLE_CONTINU
+        TRAVAUX_PRATIQUES
+        EXAMEN_FINAL_ORD
+        EXAMEN_FINAL_RAT
+    }
+
+    class StudentGrade {
+        - id: UUID
+        - score: Double
+        - isAbsent: Boolean
+        - sealed: Boolean
+        + isEliminatory(): Boolean
+    }
+
+    class Deliberation {
+        - id: UUID
+        - dateHeld: LocalDateTime
+        - academicYear: String
+        - status: DeliberationStatus
+        - sealedReportHash: String
+        + computeResults(): void
+        + signDeliberation(juryId: UUID): void
+    }
+
+    enum DeliberationStatus {
+        DRAFT
+        COMPUTED
+        SEALED_OFFICIAL
+    }
+
+    class ModuleResult {
+        - id: UUID
+        - finalAverage: Double
+        - status: ModuleValidationStatus
+        - hasEliminatoryGrade: Boolean
+    }
+
+    enum ModuleValidationStatus {
+        VALIDE
+        VALIDE_PAR_COMPENSATION
+        AJOURNE_RATTRAPAGE
+        NON_VALIDE
+    }
+}
+
+package "PFE & Recherche" {
+    class ThesisProject {
+        - id: UUID
+        - title: String
+        - abstractText: String
+        - companyName: String
+        - status: ThesisStatus
+        - embeddingVector: List<Float>
+        + generateVector(): void
+    }
+
+    enum ThesisStatus {
+        PROPOSED
+        APPROVED
+        IN_PROGRESS
+        DEFENSE_SCHEDULED
+        DEFENDED_PASSED
+        REJECTED
+    }
+
+    class ThesisDefense {
+        - id: UUID
+        - defenseDate: LocalDateTime
+        - grade: Double
+        - honors: String
+    }
+}
+
+package "Sécurité & Audit (Loi 09-08)" {
+    class AuditLog {
+        - id: UUID
+        - entityName: String
+        - entityId: UUID
+        - action: String
+        - performedBy: UUID
+        - performedAt: LocalDateTime
+        - ipAddress: String
+        - previousState: String
+        - newState: String
+        - hmacIntegrity: String
+    }
+}
+
+' Relations Structurelles
+Campus "1" *-- "1..*" Room : possède >
+Program "1" *-- "1..*" Semester : structuré en >
+Semester "1" *-- "1..*" Module : comporte >
+Module "1" *-- "1..*" ModuleElement : composé de >
+
+User <|-- Student
+User <|-- Professor
+Student "1..*" -- "1" Group : appartient à >
+Campus "1" -- "1..*" Group : héberge >
+
+Seance "1" o-- "1" Room : se déroule dans >
+Seance "1" o-- "1" Professor : animée par >
+Seance "1" o-- "1" Group : concerne >
+Seance "1" o-- "1" ModuleElement : enseigne >
+Seance "1" *-- "0..1" Textbook : documentée par >
+Seance "1" *-- "0..*" Attendance : enregistre >
+Attendance "0..*" -- "1" Student : concerne >
+
+ModuleElement "1" *-- "1..*" Evaluation : est évalué par >
+Evaluation "1" *-- "0..*" StudentGrade : contient >
+StudentGrade "0..*" -- "1" Student : attribuée à >
+
+Deliberation "1" *-- "1..*" ModuleResult : produit >
+ModuleResult "0..*" -- "1" Student : concerne >
+ModuleResult "0..*" -- "1" Module : évalue >
+
+ThesisProject "1" -- "1" Student : mené par >
+ThesisProject "1" -- "1" Professor : encadré par >
+ThesisProject "1" *-- "0..1" ThesisDefense : aboutit à >
+ThesisDefense "0..*" o-- "2..3" Professor : évalué par (Jury) >
+
+@enduml

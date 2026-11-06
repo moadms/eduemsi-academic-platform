@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMSI Campus ERP — Spécification Complète des Acteurs & Cas d'Utilisation</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        emsi: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            dark: '#022c22'
+                        },
+                        navy: {
+                            800: '#0f172a',
+                            900: '#020617',
+                            950: '#010409'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(16, 185, 129, 0.4);
+            border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(16, 185, 129, 0.8);
+        }
+    </style>
+</head>
+<body class="bg-navy-950 text-slate-200 font-sans antialiased selection:bg-emsi-500 selection:text-white">
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-50 backdrop-blur-md bg-navy-900/80 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emsi-600 to-emerald-400 flex items-center justify-center shadow-lg shadow-emsi-600/30">
+                    <i data-lucide="graduation-cap" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg text-white leading-tight flex items-center gap-2">
+                        EMSI Campus ERP
+                        <span class="text-xs bg-emsi-500/20 text-emerald-400 px-2 py-0.5 rounded-full border border-emerald-500/30">D2SI 5ᵉ Année</span>
+                    </h1>
+                    <p class="text-xs text-slate-400">Dossier d'Architecture Fonctionnelle & Matrice Globale</p>
+                </div>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6 text-sm font-medium">
+                <a href="#vision" class="text-slate-300 hover:text-emerald-400 transition">Vision & Réalité EMSI</a>
+                <a href="#acteurs" class="text-slate-300 hover:text-emerald-400 transition">12 Acteurs</a>
+                <a href="#modules" class="text-slate-300 hover:text-emerald-400 transition">14 Modules ERP</a>
+                <a href="#grill-me" class="text-slate-300 hover:text-emerald-400 transition">Grill-Me & Défis</a>
+                <a href="#tech-ia" class="text-slate-300 hover:text-emerald-400 transition">Moteur IA & Multi-Tenant</a>
+            </nav>
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-950/80 text-emerald-400 border border-emerald-500/40">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                    SaaS-Ready Ready
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="relative py-16 overflow-hidden border-b border-slate-800 bg-gradient-to-b from-navy-900 to-navy-950">
+        <div class="absolute inset-0 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(16,185,129,0.15),rgba(255,255,255,0))]"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="max-w-3xl">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-md text-xs font-semibold bg-slate-800 text-slate-300 border border-slate-700 mb-4">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
+                    Spécification d'Excellence pour Projet de Fin d'Études D2SI
+                </div>
+                <h2 class="text-4xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
+                    Résoudre 100% des frictions de gestion & planification à l'EMSI
+                </h2>
+                <p class="mt-4 text-lg text-slate-300 leading-relaxed">
+                    Une cartographie exhaustive et pragmatique conçue pour surmonter les défis réels d'une grande école multi-sites : gestion des vacataires, salles spécialisées, anonymat des examens, délibérations de jurys, conventions de stages triangulaires, moteur IA d'affectation PFE et isolation Multi-Tenant.
+                </p>
+            </div>
+
+            <!-- Chiffres clés / Scope -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-10">
+                <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 backdrop-blur">
+                    <div class="text-3xl font-extrabold text-emerald-400">12</div>
+                    <div class="text-xs uppercase tracking-wider text-slate-400 mt-1 font-semibold">Profils d'Acteurs</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 backdrop-blur">
+                    <div class="text-3xl font-extrabold text-cyan-400">14</div>
+                    <div class="text-xs uppercase tracking-wider text-slate-400 mt-1 font-semibold">Pôles Fonctionnels</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 backdrop-blur">
+                    <div class="text-3xl font-extrabold text-indigo-400">65+</div>
+                    <div class="text-xs uppercase tracking-wider text-slate-400 mt-1 font-semibold">Cas d'Utilisation Ciblés</div>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800/80 backdrop-blur">
+                    <div class="text-3xl font-extrabold text-amber-400">100%</div>
+                    <div class="text-xs uppercase tracking-wider text-slate-400 mt-1 font-semibold">Conforme Réalité Maroc</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 1: La Réalité Opérationnelle EMSI -->
+    <section id="vision" class="py-14 border-b border-slate-800 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-3 mb-6">
+            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <i data-lucide="building-2" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-white">1. Ce qui manque aux ERPs génériques : La Réalité EMSI</h3>
+                <p class="text-sm text-slate-400">Comprendre le terrain pour construire un système qui ne sera jamais rejeté par l'administration</p>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-6">
+            <div class="bg-slate-900/70 p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition">
+                <div class="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center mb-4">
+                    <i data-lucide="map-pin" class="w-5 h-5"></i>
+                </div>
+                <h4 class="text-lg font-bold text-white mb-2">Multi-Sites dans la même ville</h4>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    À Casablanca ou Rabat, l'EMSI possède plusieurs sites (ex: Centre, Maârif, Orangers, Roudani / Agdal, Hassan). Les professeurs permanents et vacataires changent souvent de site dans la même journée. Le planificateur doit intégrer une <strong>durée de battement inter-sites obligatoire</strong> pour éviter des retards chroniques.
+                </p>
+            </div>
+
+            <div class="bg-slate-900/70 p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition">
+                <div class="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center mb-4">
+                    <i data-lucide="clock" class="w-5 h-5"></i>
+                </div>
+                <h4 class="text-lg font-bold text-white mb-2">Les Enseignants Vacataires</h4>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    Une part majeure des modules techniques de 4ᵉ/5ᵉ année est assurée par des experts industriels vacataires. Leurs créneaux sont ultra-contraints (soirs, samedis, jours spécifiques). Un ERP doit gérer <strong>leurs fiches de disponibilité, émargements numériques et validation d'heures réelles</strong> pour la paie.
+                </p>
+            </div>
+
+            <div class="bg-slate-900/70 p-6 rounded-2xl border border-slate-800 hover:border-slate-700 transition">
+                <div class="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-400 flex items-center justify-center mb-4">
+                    <i data-lucide="file-check-2" class="w-5 h-5"></i>
+                </div>
+                <h4 class="text-lg font-bold text-white mb-2">L'Anonymat & Jurys de Délibération</h4>
+                <p class="text-sm text-slate-300 leading-relaxed">
+                    La gestion des examens finaux exige un <strong>numéro d'anonymat</strong> avec scellés sur les copies, une répartition surveillant/étudiant équitable, et des délibérations semestrielles avec règles d'élimination (note &lt; 7/20), compensation modulaire (moyenne &ge; 12/20) et session de rattrapage.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 2: Les 12 Acteurs du Système -->
+    <section id="acteurs" class="py-14 border-b border-slate-800 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-3 mb-8">
+            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <i data-lucide="users" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-white">2. Répertoire Complet des 12 Acteurs</h3>
+                <p class="text-sm text-slate-400">Rôles, périmètres d'accès et interactions dans l'écosystème EMSI Campus</p>
+            </div>
+        </div>
+
+        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Acteur 1 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-purple-500/20 text-purple-300 border border-purple-500/30">Niveau Système</span>
+                        <i data-lucide="server" class="w-5 h-5 text-purple-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">1. Super-Administrateur SaaS</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Gère le multi-tenant, provisionne de nouveaux établissements (ex: EMSI Casa, EMSI Rabat, ou autre université), configure les quotas stockage/IA et supervise l'état global de la plateforme.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> TenantProvisioning, GlobalConfig, Billing, GlobalAudit.
+                </div>
+            </div>
+
+            <!-- Acteur 2 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-red-500/20 text-red-300 border border-red-500/30">Direction</span>
+                        <i data-lucide="award" class="w-5 h-5 text-red-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">2. Directeur d'Établissement & Pédagogique</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Valide les maquettes pédagogiques, pilote les statistiques de rétention, valide les PV finaux de délibération des diplômes et approuve les exclusions disciplinaires.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> KPI_Dashboard, ApprovePV, DisciplineSignOff, AcademicRulesOverride.
+                </div>
+            </div>
+
+            <!-- Acteur 3 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-blue-500/20 text-blue-300 border border-blue-500/30">Gestion Pédagogique</span>
+                        <i data-lucide="layers" class="w-5 h-5 text-blue-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">3. Responsable de Filière / Département</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        (Ex: Resp D2SI, IIR, 2IA). Gère les modules, l'affectation des enseignants aux cours, supervise les jurys de PFE, arbitre les affectations IA et préside les délibérations de filière.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> ModuleAssignment, PFE_Supervision, AI_Recommendation_Override, GradesValidation.
+                </div>
+            </div>
+
+            <!-- Acteur 4 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-amber-500/20 text-amber-300 border border-amber-500/30">Opérations Critiques</span>
+                        <i data-lucide="calendar" class="w-5 h-5 text-amber-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">4. Responsable de Planification (EDT & Logistique)</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Construit les emplois du temps avec le solveur d'optimisation (OR-Tools), gère les réservations de salles (Labos GPU, Réseaux, Salles Mac), résout les conflits en temps réel et planifie les surveillances.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> ScheduleOptimizer, RoomAllocation, ExamLogistics, TeacherDisponibilityManager.
+                </div>
+            </div>
+
+            <!-- Acteur 5 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Corps Enseignant</span>
+                        <i data-lucide="book-open" class="w-5 h-5 text-emerald-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">5. Enseignant Permanent</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Délivre les cours, prend les présences en direct (ou déclenche le QR code dynamique), saisit les notes d'éléments de modules, encadre les PFE, évalue les livrables et participe aux surveillances et jurys.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> AttendanceTake, GradesEntry, StudentEval, PFE_Supervise, JuryGrading.
+                </div>
+            </div>
+
+            <!-- Acteur 6 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-teal-500/20 text-teal-300 border border-teal-500/30">Corps Enseignant</span>
+                        <i data-lucide="briefcase" class="w-5 h-5 text-teal-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">6. Enseignant Vacataire (Externe)</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Accès restreint à ses seuls modules et créneaux autorisés. Déclare ses disponibilités, émarge électroniquement chaque séance effectuée pour validation des honoraires et saisit ses évaluations.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> RestrictedAttendance, SessionSigning, DisponibilityDeclaration, GradesEntry.
+                </div>
+            </div>
+
+            <!-- Acteur 7 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-sky-500/20 text-sky-300 border border-sky-500/30">Cœur Utilisateur</span>
+                        <i data-lucide="user" class="w-5 h-5 text-sky-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">7. Étudiant (Web & Mobile)</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Consulte son planning dynamique, ses notes, son taux d'absentéisme par matière, dépose ses justificatifs médicaux, postule aux sujets de PFE, soumet son rapport et télécharge ses attestations officielles.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> ViewMyGrades, ViewMySchedule, SubmitMedicalLeave, PFESubmission, RequestDocs.
+                </div>
+            </div>
+
+            <!-- Acteur 8 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">Représentation</span>
+                        <i data-lucide="megaphone" class="w-5 h-5 text-cyan-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">8. Délégué de Groupe / Promotion</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Profil étudiant enrichi : peut initier une demande de déplacement de séance avec confirmation du professeur et accord du planificateur, et soumettre un compte-rendu de séance en cas de litige.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> StudentPerms + RequestSessionReschedule, GroupNoticeBroadcast.
+                </div>
+            </div>
+
+            <!-- Acteur 9 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-yellow-500/20 text-yellow-300 border border-yellow-500/30">Administration</span>
+                        <i data-lucide="clipboard-list" class="w-5 h-5 text-yellow-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">9. Service Scolarité & Guichet Unique</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Gère les inscriptions, les réinscriptions, l'impression sécurisée des cartes d'étudiants, le traitement des justificatifs d'absence soumis par les étudiants et l'émission des attestations avec QR code infalsifiable.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> StudentRegistration, MedicalLeaveApproval, CertificateSigning, CardGeneration.
+                </div>
+            </div>
+
+            <!-- Acteur 10 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Relations Entreprises</span>
+                        <i data-lucide="building" class="w-5 h-5 text-emerald-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">10. Responsable des Stages & Insertion Pro</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Valide la conformité des entreprises d'accueil, génère les conventions de stages tripartites, vérifie les polices d'assurance responsabilité civile et planifie les vagues de soutenances PFE/PFA.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> InternshipContractValidator, CompanyDirectoryManager, DefenseScheduler.
+                </div>
+            </div>
+
+            <!-- Acteur 11 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-rose-500/20 text-rose-300 border border-rose-500/30">Partenaire Externe</span>
+                        <i data-lucide="user-check" class="w-5 h-5 text-rose-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">11. Tuteur Entreprise (Maître de Stage)</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Accède via un lien sécurisé OTP / portail externe restreint pour valider la fiche de mission, signer électroniquement la convention et remplir la grille d'évaluation professionnelle à mi-parcours et finale.
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> ExternalPortalAccess, SubmitCompanyEvaluation, SignContractOTP.
+                </div>
+            </div>
+
+            <!-- Acteur 12 -->
+            <div class="bg-slate-900/80 p-5 rounded-xl border border-slate-800 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">Finance & Trésorerie</span>
+                        <i data-lucide="credit-card" class="w-5 h-5 text-indigo-400"></i>
+                    </div>
+                    <h4 class="font-bold text-white text-base">12. Service Facturation / Suivi Scolarité</h4>
+                    <p class="text-xs text-slate-300 mt-2">
+                        Suit le règlement des frais de scolarité (traites, virements, chèques). Applique un verrouillage automatique (délivrance d'attestations ou consultation des bulletins conditionnée à la régularité du paiement).
+                    </p>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400">
+                    <strong class="text-slate-200">Permissions :</strong> PaymentAudit, FinancialHoldToggle, TuitionFeeManagement.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECTION 3: 14 Modules ERP & Cas d'Utilisation Exhaustifs -->
+    <section id="modules" class="py-14 border-b border-slate-800 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between mb-8">
+            <div class="flex items-center gap-3">
+                <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <i data-lucide="grid" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-bold text-white">3. Matrice Exhaustive des 14 Modules & Cas d'Utilisation</h3>
+                    <p class="text-sm text-slate-400">Les briques requises pour une couverture totale des besoins académiques et logistiques</p>
+                </div>
+            </div>
+            <div class="text-xs text-slate-400 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                Format : Identifiant UC-XX & Acteurs impliqués
+            </div>
+        </div>
+
+        <div class="space-y-6">
+
+            <!-- MODULE 1 -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">M1</span>
+                        <h4 class="text-lg font-bold text-white">IAM, Multi-Tenancy & Sécurité Zéro-Trust</h4>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Socle Technique & Sécurité</span>
+                </div>
+                <div class="grid md:grid-cols-2 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-01 : Authentification JWT & Résolution de Tenant
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">L'utilisateur se connecte via email/mot de passe. Le backend résout son <code>tenant_id</code> à partir de son compte (et non d'un header falsifiable). Injection du contexte dans un <code>TenantContextHolder</code> (ThreadLocal).</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-02 : RBAC Dynamique & Détection d'Usurpation
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Contrôle granulaire d'accès basé sur les rôles et permissions. Détection de tentative de franchissement de périmètre d'un autre site ou établissement avec alerte SOC/Audit.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 2 -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">M2</span>
+                        <h4 class="text-lg font-bold text-white">Structure Pédagogique & Référentiel Multi-Sites EMSI</h4>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Référentiel Académique</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-03 : Gestion Villes & Campus
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Configuration des sites (ex: Casablanca - Centre, Roudani ; Rabat - Agdal). Définition des temps de trajet inter-campus pour les contraintes de planning.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-04 : Maquettes Pédagogiques & Semestres
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Découpage Filière &rarr; Année (1A à 5A) &rarr; Semestre (S1 à S10) &rarr; Modules &rarr; Éléments de module (ex: 2 éléments par module avec coefficients et volumes horaires CM/TD/TP).</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-05 : Typologie des Salles & Équipements
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Inventaire des capacités et contraintes physiques : Salles cours, Amphis, Labos Informatique (spécifications GPU, RAM, Docker préinstallé), Salles réseaux (Switchs/Routeurs réels).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 3 - CRITIQUE -->
+            <div class="bg-slate-900/60 border border-emerald-500/40 rounded-2xl p-6 shadow-lg shadow-emerald-500/5">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500 text-navy-950 flex items-center justify-center font-bold text-sm">M3</span>
+                        <div>
+                            <h4 class="text-lg font-bold text-white flex items-center gap-2">
+                                Moteur d'Emplois du Temps & Résolution de Conflits
+                                <span class="badge bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">Cœur Algorithmique</span>
+                            </h4>
+                        </div>
+                    </div>
+                    <span class="badge bg-amber-500/20 text-amber-300 border border-amber-500/30">Problème Majeur EMSI</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="zap" class="w-4 h-4"></i> UC-06 : Modélisation Contraintes OR-Tools
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Formulation CSP (Constraint Satisfaction Problem) : zéro chevauchement prof/groupe/salle, respect des créneaux d'indisponibilité des vacataires, pause déjeuner et volume max par jour (pas plus de 8h/jour par promo).</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="navigation" class="w-4 h-4"></i> UC-07 : Contrainte Déplacement Inter-Campus
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Si un enseignant a une séance à 10h15 au site Maârif et une autre l'après-midi au site Roudani, le moteur garantit un créneau tampon minimal calculé selon la distance réelle entre sites.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i> UC-08 : Réajustement & Remplacement Express
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">En cas d'absence imprévue d'un enseignant, suggestion automatique d'un créneau de rattrapage ou d'une permutation de séance avec notification push immédiate aux étudiants et professeurs.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 4 -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">M4</span>
+                        <h4 class="text-lg font-bold text-white">Gestion de l'Assiduité, Présence & Justificatifs</h4>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Vie Scolaire</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="qr-code" class="w-4 h-4"></i> UC-09 : Émargement Numérique & QR Code Rotatif
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Génération par le prof d'un QR code dynamique projeté (rafraîchi toutes les 5 secondes avec hachage géolocalisé pour empêcher le scan à distance entre camarades).</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="upload" class="w-4 h-4"></i> UC-10 : Dépôt & Workflow Justificatif Médical
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">L'étudiant soumet son certificat médical sous 48h via l'application mobile. Le service scolarité valide ou rejette. Si accepté, l'absence bascule automatiquement de "Non Justifiée" à "Justifiée".</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="alert-triangle" class="w-4 h-4"></i> UC-11 : Barème Disciplinaire & Alertes Seuils
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Dépassement de 3 absences injustifiées par module &rarr; Alerte automatique aux parents (SMS/Email), avertissement formel, et proposition d'exclusion du module pour l'examen final.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 5 -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">M5</span>
+                        <h4 class="text-lg font-bold text-white">Évaluations, Examens, Rattrapages & Délibérations</h4>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Contrôle des Connaissances</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i> UC-12 : Saisie des Notes & Formule Modulaire
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Pondération paramétrable : CC (30%) + TP (20%) + Examen Final (50%). Calcul automatique de la note du module avec gestion du seuil éliminatoire (&lt; 7/20).</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="scale" class="w-4 h-4"></i> UC-13 : Algorithme de Délibération & PV Jury
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Application automatique des règles de validation : Admis si moyenne semestrielle &ge; 12/20 sans note éliminatoire. Détermination des matières à passer en rattrapage. Signature électronique du PV.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="eye" class="w-4 h-4"></i> UC-14 : Publication Conditionnelle & Réclamations
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Publication des résultats synchronisée par filière. Ouverture d'une fenêtre de 72h pour dépôt de réclamation de note avec suivi du traitement par le professeur.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 6 -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">M6</span>
+                        <h4 class="text-lg font-bold text-white">Logistique des Examens, Anonymat & Surveillances</h4>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Intégrité Académique</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="hash" class="w-4 h-4"></i> UC-15 : Numérotation d'Anonymat & Table de Correspondance
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Génération cryptographique des numéros d'anonymat pour chaque épreuve finale. La table liant l'étudiant à son anonymat reste chiffrée jusqu'à la levée officielle de l'anonymat.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="user-check" class="w-4 h-4"></i> UC-16 : Répartition Équitable des Surveillances
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Équilibrage de la charge de surveillance entre enseignants permanents et vacataires. Règle absolue : un professeur ne surveille pas sa propre matière.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="shield-alert" class="w-4 h-4"></i> UC-17 : Procès-Verbal de Fraude & Conseil de Discipline
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Saisie sur mobile du PV de surveillance en direct, constat d'incident ou de tricherie avec prise de photo de la pièce à conviction et transmission immédiate au conseil de discipline.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 7 & 8 - PFE & IA -->
+            <div class="bg-slate-900/60 border border-cyan-500/40 rounded-2xl p-6 shadow-lg shadow-cyan-500/5">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-cyan-500 text-navy-950 flex items-center justify-center font-bold text-sm">M7</span>
+                        <div>
+                            <h4 class="text-lg font-bold text-white flex items-center gap-2">
+                                Gestion PFE, Stages & Conventions Tripartites
+                                <span class="badge bg-cyan-500/20 text-cyan-400 border border-cyan-500/30">Cycle Professionnel</span>
+                            </h4>
+                        </div>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Livrable 5ᵉ Année</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-cyan-400 flex items-center gap-1.5">
+                            <i data-lucide="file-text" class="w-4 h-4"></i> UC-18 : Dépôt & Validation Fiche de Sujet PFE
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">L'étudiant soumet l'intitulé, problématique, technologies prévues et entreprise d'accueil. Validation pédagogique par le responsable de filière.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-cyan-400 flex items-center gap-1.5">
+                            <i data-lucide="pen-tool" class="w-4 h-4"></i> UC-19 : Convention de Stage Tripartite & OTP
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Génération PDF automatique avec clauses légales. Workflow de signature numérique sécurisé : Étudiant &rarr; Tuteur Entreprise (via code SMS/Email) &rarr; Directeur EMSI.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-cyan-400 flex items-center gap-1.5">
+                            <i data-lucide="activity" class="w-4 h-4"></i> UC-20 : Suivi Périodique & Points d'Étape
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Journal de bord hebdomadaire, validation de l'avancement à 30%, 60% et 90% par l'encadrant académique et dépôt du livrable final avec contrôle anti-plagiat.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 8 - MOTEUR IA -->
+            <div class="bg-slate-900/60 border border-indigo-500/40 rounded-2xl p-6 shadow-lg shadow-indigo-500/5">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-500 text-white flex items-center justify-center font-bold text-sm">M8</span>
+                        <div>
+                            <h4 class="text-lg font-bold text-white flex items-center gap-2">
+                                Moteur IA Hybride : Ollama (LLM) + Scoring Explicable (Backend)
+                                <span class="badge bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">IA Décisionnelle</span>
+                            </h4>
+                        </div>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Feature Phare PFE</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-indigo-400 flex items-center gap-1.5">
+                            <i data-lucide="cpu" class="w-4 h-4"></i> UC-21 : Extraction Sémantique via Ollama
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Prompting structuré vers un LLM local (ex: Llama3 / Mistral via Ollama) pour extraire de la description un JSON strict : <code>{ doman: "...", tech_stack: [...], difficulty: 1-5, keywords: [...] }</code>.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-indigo-400 flex items-center gap-1.5">
+                            <i data-lucide="sliders" class="w-4 h-4"></i> UC-22 : Algorithme de Scoring Déterministe
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Calcul transparent : <em>Score = 0.4 &times; Match_Compétences + 0.3 &times; Dispo_Quota + 0.2 &times; Historique_Sujets + 0.1 &times; Proximité_Campus</em>. Zéro effet boîte noire !</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-indigo-400 flex items-center gap-1.5">
+                            <i data-lucide="user-check" class="w-4 h-4"></i> UC-23 : Validation Humaine (Human-in-the-Loop)
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">L'IA ne prend jamais de décision unilatérale. Elle présente au Responsable de Filière un top 3 avec explications claires (« Recommandé à 88% car expert Spring/Docker et quota de 3/8 PFE »).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 9 -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">M9</span>
+                        <h4 class="text-lg font-bold text-white">Soutenances PFE, Jurys & Grilles d'Évaluation</h4>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Phase Finale Diplôme</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-24 : Composition & Programmation des Jurys
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Planification sans conflit du Président de jury, de l'Examinateur et de l'Encadrant. Prise en compte de la disponibilité du tuteur entreprise (présentiel ou visio intégrée).</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-25 : Grille d'Évaluation Multicritères en Direct
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Saisie simultanée par les membres du jury pendant la soutenance : Qualité technique (30%), Présentation orale (25%), Réponses aux questions (25%), Évaluation entreprise (20%).</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-26 : Génération Instantanée du PV de Soutenance
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Calcul de la mention, verrouillage des notes et génération du PV officiel signé numériquement par les jurys avec archivage immuable.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 10 -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">M10</span>
+                        <h4 class="text-lg font-bold text-white">Gestion des Vacations & Suivi des Heures Enseignées</h4>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Ressources Humaines & Paie</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-27 : Décompte Automatisé des Heures Effectives
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Les heures réalisées sont alimentées par les feuilles d'émargement numériques. Comparaison en temps réel avec le volume contractuel prévu par module.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-28 : Validation Mensuelle & Ordre de Virement
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Le Responsable de Filière valide l'état récapitulatif mensuel. Export des états de vacation (taux horaire &times; heures réalisées) directement vers le service comptabilité.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-29 : Gestion des Heures Supplémentaires
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Calcul automatique du dépassement de quota d'heures annuelles statutaires pour les enseignants permanents.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 11 -->
+            <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-6">
+                <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-sm">M11</span>
+                        <h4 class="text-lg font-bold text-white">Guichet Unique Numérique & Documents Sécurisés</h4>
+                    </div>
+                    <span class="badge bg-slate-800 text-slate-300">Services aux Étudiants</span>
+                </div>
+                <div class="grid md:grid-cols-3 gap-4 mt-4 text-sm text-slate-300">
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i> UC-30 : Demande en 1 Clic (Web & Mobile)
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Attestation de scolarité, relevé de notes officiel, attestation de réussite, convention de stage. Suivi de l'état de traitement en temps réel.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="shield-check" class="w-4 h-4"></i> UC-31 : Sceau Numérique & QR Code Vérifiable
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Chaque document PDF généré embarque un QR code pointant vers une URL publique d'authentification (ex: <code>verify.emsi.ma/doc/{hash}</code>) prouvant l'authenticité auprès des ambassades et recruteurs.</p>
+                    </div>
+                    <div class="bg-navy-950/60 p-3.5 rounded-xl border border-slate-800/80">
+                        <div class="font-semibold text-emerald-400 flex items-center gap-1.5">
+                            <i data-lucide="lock" class="w-4 h-4"></i> UC-32 : Blocage Financier Automatisé
+                        </div>
+                        <p class="text-xs text-slate-400 mt-1">Interdiction automatique de téléchargement des documents officiels en cas d'impayé de scolarité signalé par le service financier.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODULE 12, 13, 14 -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <!-- M12 -->
+                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">M12</span>
+                        <h4 class="font-bold text-white text-base">Vie Étudiante & Discipline</h4>
+                    </div>
+                    <ul class="text-xs text-slate-300 space-y-2.5">
+                        <li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5"></i> <strong>UC-33 :</strong> Convocation commission de discipline.</li>
+                        <li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5"></i> <strong>UC-34 :</strong> Gestion des avertissements & blâmes.</li>
+                        <li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5"></i> <strong>UC-35 :</strong> Annuaire des clubs et événements parascolaires.</li>
+                    </ul>
+                </div>
+
+                <!-- M13 -->
+                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">M13</span>
+                        <h4 class="font-bold text-white text-base">Notifications & Communication</h4>
+                    </div>
+                    <ul class="text-xs text-slate-300 space-y-2.5">
+                        <li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5"></i> <strong>UC-36 :</strong> Push Mobile temps-réel (FCM) changements d'EDT.</li>
+                        <li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5"></i> <strong>UC-37 :</strong> Passerelle SMS pour alertes urgentes et absences.</li>
+                        <li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5"></i> <strong>UC-38 :</strong> Canaux de diffusion par filière / groupe de TD.</li>
+                    </ul>
+                </div>
+
+                <!-- M14 -->
+                <div class="bg-slate-900/60 border border-slate-800 rounded-2xl p-5">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="w-7 h-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">M14</span>
+                        <h4 class="font-bold text-white text-base">Audit Trail & Conformité RGPD / CNDP</h4>
+                    </div>
+                    <ul class="text-xs text-slate-300 space-y-2.5">
+                        <li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5"></i> <strong>UC-39 :</strong> Traçabilité immuable des modifications de notes.</li>
+                        <li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5"></i> <strong>UC-40 :</strong> Journalisation détaillée des accès administrateurs.</li>
+                        <li class="flex items-start gap-1.5"><i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400 mt-0.5"></i> <strong>UC-41 :</strong> Anonymisation & purge selon les directives CNDP Maroc.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 4: LE GRILL-ME STRATÉGIQUE (Questions Pièges & Défis) -->
+    <section id="grill-me" class="py-14 border-b border-slate-800 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-navy-950 via-slate-950 to-navy-950">
+        <div class="flex items-center gap-3 mb-8">
+            <div class="p-2 rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                <i data-lucide="flame" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-white">4. « GRILL-ME » : Le Crash Test du Jury PFE</h3>
+                <p class="text-sm text-slate-400">Les questions techniques, architecturales et métier que le jury va obligatoirement vous poser le jour J</p>
+            </div>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+
+            <!-- Question 1 -->
+            <div class="bg-slate-900/90 p-6 rounded-2xl border border-amber-500/30">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="badge bg-amber-500/20 text-amber-400 border border-amber-500/30">Défi Multi-Tenant & Hibernate</span>
+                    <i data-lucide="help-circle" class="w-5 h-5 text-amber-400"></i>
+                </div>
+                <h4 class="font-bold text-white text-base">Q1 : Comment empêchez-vous STRICTEMENT une fuite de données entre deux établissements dans Spring Boot ?</h4>
+                <p class="text-xs text-slate-400 mt-2">
+                    Si vous mettez juste <code>WHERE tenant_id = ?</code> dans vos repositories Spring Data, un développeur étourdi va tôt ou tard écrire une requête native ou oublier le filtre, exposant les données de l'EMSI à une autre université.
+                </p>
+                <div class="mt-4 p-3 bg-navy-950 rounded-xl border border-slate-800 text-xs text-emerald-400">
+                    <strong>Solution attendue :</strong> Utiliser <code>@TenantId</code> natif d'Hibernate 6 (qui injecte automatiquement le tenant dans toutes les requêtes JPQL/Criteria) ou des politiques <strong>PostgreSQL Row-Level Security (RLS)</strong> avec <code>SET app.current_tenant = ...</code> avant chaque transaction de connexion !
+                </div>
+            </div>
+
+            <!-- Question 2 -->
+            <div class="bg-slate-900/90 p-6 rounded-2xl border border-amber-500/30">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="badge bg-amber-500/20 text-amber-400 border border-amber-500/30">Défi Moteur IA & Ollama</span>
+                    <i data-lucide="help-circle" class="w-5 h-5 text-amber-400"></i>
+                </div>
+                <h4 class="font-bold text-white text-base">Q2 : Que se passe-t-il si Ollama hallucine, plante ou met 45 secondes à répondre ?</h4>
+                <p class="text-xs text-slate-400 mt-2">
+                    Si l'appel HTTP vers Ollama est synchrone dans un contrôleur Spring Boot REST, le thread pool Tomcat s'épuise et l'application s'effondre. De plus, un LLM peut renvoyer du Markdown non parseable au lieu de JSON.
+                </p>
+                <div class="mt-4 p-3 bg-navy-950 rounded-xl border border-slate-800 text-xs text-emerald-400">
+                    <strong>Solution attendue :</strong> Architecture asynchrone (Job queue avec statut EN_COURS), format JSON garanti avec mode <code>format: "json"</code> d'Ollama + validation Pydantic/Java Jackson, et fallback déterministe par recherche de mots-clés si le LLM est indisponible.
+                </div>
+            </div>
+
+            <!-- Question 3 -->
+            <div class="bg-slate-900/90 p-6 rounded-2xl border border-amber-500/30">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="badge bg-amber-500/20 text-amber-400 border border-amber-500/30">Défi Planification & OR-Tools</span>
+                    <i data-lucide="help-circle" class="w-5 h-5 text-amber-400"></i>
+                </div>
+                <h4 class="font-bold text-white text-base">Q3 : Générer un emploi du temps pour 3000 étudiants et 150 profs est un problème NP-Complet. Si OR-Tools ne trouve pas de solution parfaite, que fait le système ?</h4>
+                <p class="text-xs text-slate-400 mt-2">
+                    Dans la vraie vie, il y a trop de contraintes (un prof ne veut que le mardi, les salles GPU sont pleines). Un solveur rigide renvoie simplement "UNSATISFIABLE" et échoue.
+                </p>
+                <div class="mt-4 p-3 bg-navy-950 rounded-xl border border-slate-800 text-xs text-emerald-400">
+                    <strong>Solution attendue :</strong> Séparer les contraintes en <strong>Hard Constraints</strong> (zéro chevauchement physique) et <strong>Soft Constraints</strong> avec pénalités pondérées (préférences horaires). Fournir une interface d'assistance visuelle de résolution des conflits pour le planificateur.
+                </div>
+            </div>
+
+            <!-- Question 4 -->
+            <div class="bg-slate-900/90 p-6 rounded-2xl border border-amber-500/30">
+                <div class="flex items-center justify-between mb-3">
+                    <span class="badge bg-amber-500/20 text-amber-400 border border-amber-500/30">Défi Présence & Fraude Mobile</span>
+                    <i data-lucide="help-circle" class="w-5 h-5 text-amber-400"></i>
+                </div>
+                <h4 class="font-bold text-white text-base">Q4 : Comment empêcher un étudiant resté chez lui de scanner une photo du QR Code envoyée sur WhatsApp par son camarade en amphi ?</h4>
+                <p class="text-xs text-slate-400 mt-2">
+                    Les étudiants sont ingénieux. Un simple QR code statique est instantanément capturé en photo et partagé dans le groupe WhatsApp de la promo.
+                </p>
+                <div class="mt-4 p-3 bg-navy-950 rounded-xl border border-slate-800 text-xs text-emerald-400">
+                    <strong>Solution attendue :</strong> Double barrière : (1) QR code tournant généré avec TOTP (validité 10s max) et (2) Vérification de la géolocalisation GPS du mobile ou restriction à l'adresse IP du Wi-Fi campus de l'EMSI.
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- SECTION 5: Architecture Technique & Multi-Tenancy -->
+    <section id="tech-ia" class="py-14 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center gap-3 mb-8">
+            <div class="p-2 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <i data-lucide="cpu" class="w-6 h-6"></i>
+            </div>
+            <div>
+                <h3 class="text-2xl font-bold text-white">5. Workflow d'IA d'Affectation PFE & Isolation des Données</h3>
+                <p class="text-sm text-slate-400">Pipeline complet de recommandation et stratégie d'isolation multi-tenant</p>
+            </div>
+        </div>
+
+        <!-- Schéma Workflow IA -->
+        <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800 mb-8">
+            <h4 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                <i data-lucide="git-merge" class="w-4 h-4 text-emerald-400"></i>
+                Pipeline d'Affectation Intelligente des Encadrants PFE
+            </h4>
+            <div class="grid sm:grid-cols-4 gap-4 text-xs">
+                <div class="bg-navy-950 p-4 rounded-xl border border-slate-800">
+                    <div class="text-emerald-400 font-bold mb-1">Étape 1 : Ingestion Sujet</div>
+                    <p class="text-slate-400">Titre + Description + Technologies renseignées par l'étudiant/entreprise.</p>
+                </div>
+                <div class="bg-navy-950 p-4 rounded-xl border border-slate-800">
+                    <div class="text-indigo-400 font-bold mb-1">Étape 2 : Ollama Parsing</div>
+                    <p class="text-slate-400">Extraction sémantique locale : domaines-clés, complexité et tags technologiques normalisés.</p>
+                </div>
+                <div class="bg-navy-950 p-4 rounded-xl border border-slate-800">
+                    <div class="text-cyan-400 font-bold mb-1">Étape 3 : Backend Scoring</div>
+                    <p class="text-slate-400">Calcul du score transparent pondéré par professeur (compétences, quota restant, charge actuelle).</p>
+                </div>
+                <div class="bg-navy-950 p-4 rounded-xl border border-slate-800">
+                    <div class="text-amber-400 font-bold mb-1">Étape 4 : Validation Resp.</div>
+                    <p class="text-slate-400">Dashboard de recommandation avec arguments explicites et validation en 1 clic par le responsable.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Matrice RACI Synthétique -->
+        <div class="bg-slate-900/80 p-6 rounded-2xl border border-slate-800">
+            <h4 class="text-base font-bold text-white mb-4 flex items-center gap-2">
+                <i data-lucide="table" class="w-4 h-4 text-emerald-400"></i>
+                Synthèse des Responsabilités par Domaine (Matrice RACI)
+            </h4>
+            <div class="overflow-x-auto custom-scrollbar">
+                <table class="w-full text-xs text-left text-slate-300">
+                    <thead class="bg-navy-950 text-slate-400 uppercase font-semibold border-b border-slate-800">
+                        <tr>
+                            <th class="py-3 px-4">Domaine ERP</th>
+                            <th class="py-3 px-4 text-center">Direction</th>
+                            <th class="py-3 px-4 text-center">Resp Filière</th>
+                            <th class="py-3 px-4 text-center">Planificateur</th>
+                            <th class="py-3 px-4 text-center">Enseignant</th>
+                            <th class="py-3 px-4 text-center">Étudiant</th>
+                            <th class="py-3 px-4 text-center">Scolarité</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800">
+                        <tr class="hover:bg-slate-800/40">
+                            <td class="py-2.5 px-4 font-semibold text-white">Gestion des Emplois du Temps</td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-slate-800 text-slate-400">I</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-blue-500/20 text-blue-300">C</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-emerald-500/20 text-emerald-300">R / A</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-slate-800 text-slate-400">I</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-slate-800 text-slate-400">I</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-slate-800 text-slate-400">I</span></td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40">
+                            <td class="py-2.5 px-4 font-semibold text-white">Absences & Présences</td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-slate-800 text-slate-400">I</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-blue-500/20 text-blue-300">C</span></td>
+                            <td class="py-2.5 px-4 text-center">-</td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-emerald-500/20 text-emerald-300">R</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-purple-500/20 text-purple-300">A</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-amber-500/20 text-amber-300">A</span></td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40">
+                            <td class="py-2.5 px-4 font-semibold text-white">Notes, Examens & Rattrapages</td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-red-500/20 text-red-300">A</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-emerald-500/20 text-emerald-300">R</span></td>
+                            <td class="py-2.5 px-4 text-center">-</td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-emerald-500/20 text-emerald-300">R</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-slate-800 text-slate-400">I</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-blue-500/20 text-blue-300">C</span></td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40">
+                            <td class="py-2.5 px-4 font-semibold text-white">Affectation IA & Soutenances PFE</td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-slate-800 text-slate-400">I</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-red-500/20 text-red-300">A</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-blue-500/20 text-blue-300">C</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-emerald-500/20 text-emerald-300">R</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-emerald-500/20 text-emerald-300">R</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-slate-800 text-slate-400">I</span></td>
+                        </tr>
+                        <tr class="hover:bg-slate-800/40">
+                            <td class="py-2.5 px-4 font-semibold text-white">Documents Officiels (Attestations)</td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-red-500/20 text-red-300">A</span></td>
+                            <td class="py-2.5 px-4 text-center">-</td>
+                            <td class="py-2.5 px-4 text-center">-</td>
+                            <td class="py-2.5 px-4 text-center">-</td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-blue-500/20 text-blue-300">Demandeur</span></td>
+                            <td class="py-2.5 px-4 text-center"><span class="badge bg-emerald-500/20 text-emerald-300">R</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div class="mt-3 text-[11px] text-slate-400 flex items-center gap-4">
+                    <span><strong>R :</strong> Responsible (Réalise)</span>
+                    <span><strong>A :</strong> Accountable (Valide / Approbateur final)</span>
+                    <span><strong>C :</strong> Consulted (Consulté)</span>
+                    <span><strong>I :</strong> Informed (Informé)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-8 bg-navy-900 border-t border-slate-800 text-center text-xs text-slate-500">
+        <p>Projet EMSI Campus ERP — Équipe Ingénieurs 5ᵉ Année D2SI — Référentiel Spécification & Architecture</p>
+        <p class="mt-1">Document généré automatiquement pour le dossier de projet & soutenance.</p>
+    </footer>
+
+    <script>
+        // Init Lucide Icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+@startuml dia04_pfe_complete_lifecycle
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam roundcorner 10
+skinparam shadowing false
+
+skinparam state {
+  BackgroundColor #EFF6FF
+  BorderColor #2563EB
+  FontColor #1E3A5F
+  ArrowColor #2563EB
+  StartColor #059669
+  EndColor #DC2626
+  AttributeFontColor #374151
+  AttributeFontSize 10
+}
+
+title <b>🎓 Cycle de Vie Complet du PFE — de la Proposition à la Soutenance</b>\nUniVora ERP · Module PFE · EMSI 2024-2025
+
+[*] --> OUVERTURE_DEPOT : Admin ouvre\nla période de dépôt
+
+state OUVERTURE_DEPOT : 📁 Période Dépôt Ouverte
+state OUVERTURE_DEPOT : --
+state OUVERTURE_DEPOT : Admin configure dates + quotas
+state OUVERTURE_DEPOT : Professeurs soumettent sujets
+state OUVERTURE_DEPOT : Entreprises déposent offres PFE
+
+OUVERTURE_DEPOT --> SOUMISSION_SUJET : Professeur soumet sujet
+
+state SOUMISSION_SUJET : 📝 Soumission de Sujet
+state SOUMISSION_SUJET : --
+state SOUMISSION_SUJET : Titre + Description + Mots-clés
+state SOUMISSION_SUJET : Technologies requises
+state SOUMISSION_SUJET : Capacité d'encadrement
+state SOUMISSION_SUJET : [RULE-AI-05] Vérification anti-doublon\nOllama Llama 3.2 > cosine 0.70
+
+SOUMISSION_SUJET --> VALIDATION_SUJET : Chef Département\nvalide le sujet
+SOUMISSION_SUJET --> SOUMISSION_SUJET : Révision demandée
+
+state VALIDATION_SUJET : ✅ Sujet Validé & Publié
+state VALIDATION_SUJET : --
+state VALIDATION_SUJET : Catalogue PFE mis à jour
+state VALIDATION_SUJET : Notification étudiants
+
+VALIDATION_SUJET --> AFFECTATION : Étudiant choisit\net demande sujet
+
+state AFFECTATION : 🔗 Affectation Étudiant-Encadrant
+state AFFECTATION : --
+state AFFECTATION : Système matching IA (similarité CV)
+state AFFECTATION : Vérification disponibilité encadrant
+state AFFECTATION : Accord étudiant + encadrant + entreprise
+state AFFECTATION : Contrat tripartite généré (PDF)
+
+AFFECTATION --> LANCEMENT : Convention signée\n(numérique)
+
+state LANCEMENT : 🚀 Lancement Phase Réalisation
+state LANCEMENT : --
+state LANCEMENT : Accès environnements tech accordé
+state LANCEMENT : Planning réunions encadrant défini
+state LANCEMENT : Jalons définis (M1, M2, M3)
+
+LANCEMENT --> SUIVI_MENSUEL : Début travaux
+
+state SUIVI_MENSUEL : 📊 Suivi Mensuel & Jalons
+state SUIVI_MENSUEL : --
+state SUIVI_MENSUEL : Rapports d'avancement (M1/M2/M3)
+state SUIVI_MENSUEL : Réunions encadrant (hebdo min)
+state SUIVI_MENSUEL : Log activités étudiant
+state SUIVI_MENSUEL : Alertes retards automatiques
+
+SUIVI_MENSUEL --> SUIVI_MENSUEL : Jalon intermédiaire\nvalidé
+SUIVI_MENSUEL --> DEPOT_RAPPORT : Travaux terminés\n(J-30 soutenance)
+
+state DEPOT_RAPPORT : 📄 Dépôt Rapport Final
+state DEPOT_RAPPORT : --
+state DEPOT_RAPPORT : Upload PDF rapport
+state DEPOT_RAPPORT : Vérification anti-plagiat (Turnitin)
+state DEPOT_RAPPORT : Validation format EMSI (template LaTeX)
+state DEPOT_RAPPORT : Dépôt code source (GitHub/GitLab)
+
+DEPOT_RAPPORT --> EVALUATION_RAPPORT : Rapport approuvé\npar encadrant
+
+DEPOT_RAPPORT --> DEPOT_RAPPORT : Rapport refusé\n(plagiat > 20% ou\nformat non conforme)
+
+state EVALUATION_RAPPORT : 📋 Évaluation par Jury
+state EVALUATION_RAPPORT : --
+state EVALUATION_RAPPORT : Note rapport encadrant (20pts)
+state EVALUATION_RAPPORT : Note rapport jury externe (20pts)
+state EVALUATION_RAPPORT : Pondération : 40% rapport
+
+EVALUATION_RAPPORT --> PLANIFICATION_SOUTENANCE : Jury convoqué\ndates confirmées
+
+state PLANIFICATION_SOUTENANCE : 📅 Planification Soutenance
+state PLANIFICATION_SOUTENANCE : --
+state PLANIFICATION_SOUTENANCE : OR-Tools scheduling automatique
+state PLANIFICATION_SOUTENANCE : Affectation salles + jury
+state PLANIFICATION_SOUTENANCE : Convocations envoyées
+state PLANIFICATION_SOUTENANCE : Matériel réservé (vidéo, PC)
+
+PLANIFICATION_SOUTENANCE --> SOUTENANCE : Jour J
+
+state SOUTENANCE : 🎤 Soutenance Orale (30 min)
+state SOUTENANCE : --
+state SOUTENANCE : Présentation 15 min
+state SOUTENANCE : Questions jury 10 min
+state SOUTENANCE : Délibération jury 5 min (huis clos)
+state SOUTENANCE : Grille notation numérique (tablette jury)
+
+SOUTENANCE --> DELIBERATION_PFE : Délibération\njury terminée
+
+state DELIBERATION_PFE : ⚖️ Délibération PFE
+state DELIBERATION_PFE : --
+state DELIBERATION_PFE : NM_pfe = Rapport×40% + Soutenance×40%\n        + Encadrant×20%
+state DELIBERATION_PFE : Mention attribuée
+state DELIBERATION_PFE : PV délibération signé
+
+DELIBERATION_PFE --> ARCHIVE_DIPLOME : Note ≥ 10/20 ✅
+DELIBERATION_PFE --> SUIVI_MENSUEL : Note < 10/20 ❌\nRattrapage / Nouvelle\nsoutenance
+
+state ARCHIVE_DIPLOME : 🏆 Archivage & Diplôme
+state ARCHIVE_DIPLOME : --
+state ARCHIVE_DIPLOME : Rapport archivé bibliothèque numérique
+state ARCHIVE_DIPLOME : Code source archivé
+state ARCHIVE_DIPLOME : Attestation de réussite générée
+state ARCHIVE_DIPLOME : Mise à jour dossier étudiant
+
+ARCHIVE_DIPLOME --> [*] : PFE clôturé ✅
+
+note bottom of AFFECTATION #FEF3C7
+  <b>RULE-AI-05 :</b>
+  Matching sémantique Ollama Llama 3.2
+  Cosine similarity > 0.70 pour suggestion
+  Détection doublon sujets : cosine > 0.85
+end note
+
+note bottom of DEPOT_RAPPORT #FEF2F2
+  <b>Anti-plagiat :</b>
+  Turnitin API intégrée
+  Seuil acceptation : ≤ 20% similarité
+  Rapport détaillé au jury
+end note
+
+@enduml

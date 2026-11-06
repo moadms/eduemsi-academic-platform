@@ -1,0 +1,54 @@
+@startuml act02_schedule_generation_transit
+title Processus d'Optimisation des Emplois du Temps avec Transit Inter-Campus (45 min)
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+skinparam conditionStyle inside
+
+|Responsable Planning|
+start
+:Définir la maquette semestrielle et les volumes horaires;
+:Renseigner les indisponibilités professeurs et contraintes des salles;
+:Lancer le calcul d'optimisation hebdomadaire;
+
+|Moteur OR-Tools CP-SAT|
+:Initialiser le modèle d'optimisation linéaire en nombres entiers (MIP);
+:Définir les variables de décision : X[seance, salle, creneau, jour];
+
+partition "Injection des Contraintes Strictes" {
+    :Contrainte 1 : Non-chevauchement des séances par groupe;
+    :Contrainte 2 : Non-chevauchement des séances par enseignant;
+    :Contrainte 3 : Respect de la capacité maximale des salles (Effectif <= Capacité);
+    :Contrainte 4 (BR-GEO-01) : Battement de transit Guéliz <-> Targa >= 45 min;
+    note right
+        Pour tout enseignant dispensant le cours S1 sur Guéliz
+        et le cours S2 sur Targa :
+        Début(S2) >= Fin(S1) + 45 minutes
+    end note
+}
+
+partition "Définition de la Fonction Objectif (Soft Constraints)" {
+    :Minimiser les trous dans la journée des étudiants;
+    :Minimiser le nombre de déplacements inter-campus par semaine;
+    :Maximiser les préférences horaires déclarées par les professeurs;
+}
+
+:Lancer la résolution avec timeout fixé à 180 secondes;
+
+if (Statut Solveur == OPTIMAL ou FEASIBLE ?) then (oui)
+    :Extraire la solution d'affectation globale;
+    :Formater les séances dans le schéma relationnel;
+else (non)
+    #pink:Identifier le sous-ensemble de contraintes conflictuelles (IIS);
+    #pink:Générer le rapport d'infaisabilité;
+    |Responsable Planning|
+    :Assouplir les contraintes (disponibilité enseignant ou salle);
+    detach
+endif
+
+|Système Backend ERP|
+:Valider les invariants d'intégrité relationnelle;
+:Sauvegarder les séances en statut 'PLANNED';
+:Invalider le cache des plannings sur Redis;
+:Notifier les enseignants et délégués de classe;
+stop
+@enduml

@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Cahier des Charges — Système ERP EMSI Campus (Norme IEEE 830)</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 15mm 15mm 15mm 15mm;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #ffffff;
+            color: #1e293b;
+            line-height: 1.5;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+        .page-break-after {
+            page-break-after: always;
+        }
+        .avoid-break {
+            page-break-inside: avoid;
+        }
+        .badge-must {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #f87171;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 10px;
+        }
+        .badge-should {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #fbbf24;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 10px;
+        }
+        .badge-could {
+            background-color: #e0f2fe;
+            color: #075985;
+            border: 1px solid #38bdf8;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 10px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 7px 10px;
+            font-size: 11px;
+        }
+        th {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            font-weight: 700;
+            text-align: left;
+        }
+    </style>
+</head>
+<body class="p-4 sm:p-8 max-w-5xl mx-auto">
+
+    <!-- ==================================================================== -->
+    <!-- 1. PAGE DE GARDE OFFICIELLE (COVER PAGE) -->
+    <!-- ==================================================================== -->
+    <div class="page-break-after flex flex-col justify-between min-h-[920px] p-6 border-4 border-emerald-800 rounded-2xl bg-gradient-to-b from-emerald-50/40 via-white to-slate-50">
+        <div>
+            <!-- Header Logos & Institution -->
+            <div class="flex items-center justify-between border-b-2 border-emerald-800 pb-6">
+                <div>
+                    <img src="assets/emsi_logo.png" alt="Logo EMSI" class="h-20 w-auto object-contain">
+                </div>
+                <div class="text-right">
+                    <div class="text-xs font-black tracking-widest text-emerald-900 uppercase">École Marocaine des Sciences de l'Ingénieur</div>
+                    <div class="text-[11px] text-slate-500 font-medium">Membre du Réseau Honoris United Universities</div>
+                    <div class="text-[10px] text-emerald-700 font-semibold mt-1">Campus de Marrakech (Gueliz & Targa) • Casablanca • Rabat</div>
+                </div>
+            </div>
+
+            <!-- Titre Principal du Document -->
+            <div class="mt-16 text-center">
+                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-widest bg-emerald-800 text-white shadow-sm mb-4">
+                    Document de Spécification des Exigences Logicielles (SRS)
+                </span>
+                <div class="text-sm font-bold text-slate-500 uppercase tracking-widest mb-1">Norme Internationale IEEE 830-1998 / ISO-IEC-IEEE 29148</div>
+                <h1 class="text-4xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight mt-2">
+                    CAHIER DES CHARGES<br>
+                    <span class="text-emerald-700">FONCTIONNEL & TECHNIQUE</span>
+                </h1>
+                <div class="w-24 h-1.5 bg-emerald-600 mx-auto my-6 rounded-full"></div>
+                <h2 class="text-xl font-bold text-slate-700">
+                    Projet EMSI Campus (Univora) — Plateforme ERP Académique Web & Mobile avec Intelligence Artificielle
+                </h2>
+                <p class="text-xs text-slate-500 max-w-2xl mx-auto mt-3">
+                    Résolution intégrale de la planification multi-campus, suppression des fichiers Excel de notes, cahier de texte automatique, affectation IA des jurys de PFE, inventaire logistique et recouvrement de scolarité.
+                </p>
+            </div>
+        </div>
+
+        <!-- Métadonnées & Validation -->
+        <div class="mt-12">
+            <div class="grid grid-cols-2 gap-4 border-t-2 border-emerald-800 pt-6 text-xs">
+                <div class="space-y-1.5">
+                    <div><strong class="text-slate-900">Établissement Client :</strong> EMSI Marrakech (Gueliz & Targa)</div>
+                    <div><strong class="text-slate-900">Filière / Niveau :</strong> 5ᵉ Année Ingénierie D2SI (Data & SI)</div>
+                    <div><strong class="text-slate-900">Équipe Projet :</strong> 6 Élèves-Ingénieurs D2SI</div>
+                    <div><strong class="text-slate-900">Rôle Méthodologique :</strong> Lead Architect & Scrum Master</div>
+                </div>
+                <div class="space-y-1.5 text-right">
+                    <div><strong class="text-slate-900">Référence :</strong> CDCF-EMSI-D2SI-2026-V1</div>
+                    <div><strong class="text-slate-900">Version :</strong> 1.0 — Validée pour Implémentation</div>
+                    <div><strong class="text-slate-900">Date d'Édition :</strong> 16 Octobre 2026</div>
+                    <div><strong class="text-slate-900">Cycle de Vie :</strong> Agile Scrum (Sprints 1 à 5)</div>
+                </div>
+            </div>
+
+            <!-- Signatures Cadre -->
+            <div class="grid grid-cols-3 gap-3 mt-6 pt-4 border-t border-slate-200 text-center text-[10px] text-slate-600">
+                <div class="border border-slate-300 rounded p-2 bg-white">
+                    <span class="font-bold block text-slate-800">L'Équipe Ingénieurs D2SI</span>
+                    <span class="text-emerald-700 font-semibold italic mt-4 block">Validé & Signé</span>
+                </div>
+                <div class="border border-slate-300 rounded p-2 bg-white">
+                    <span class="font-bold block text-slate-800">Responsable Pédagogique EMSI</span>
+                    <span class="text-slate-400 italic mt-4 block">Mention "Bon pour Accord"</span>
+                </div>
+                <div class="border border-slate-300 rounded p-2 bg-white">
+                    <span class="font-bold block text-slate-800">Direction Générale / Jury PFE</span>
+                    <span class="text-slate-400 italic mt-4 block">Visa Officiel</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 2. SOMMAIRE EXÉCUTIF & CONTRÔLE DES VERSIONS -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-2xl font-black text-emerald-800 border-b-2 border-emerald-800 pb-2 mb-4 uppercase flex items-center justify-between">
+            <span>Table des Matières (Norme IEEE 830)</span>
+            <span class="text-xs font-semibold text-slate-500 lowercase">cdcf v1.0</span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-2 text-xs">
+            <div class="space-y-2">
+                <div class="font-bold text-emerald-900 text-sm border-b border-emerald-200 pb-1">1. Introduction</div>
+                <div class="pl-3 space-y-1 text-slate-700">
+                    <div>1.1. Objet et Portée du Projet</div>
+                    <div>1.2. Problématique Métier de l'EMSI</div>
+                    <div>1.3. Définitions, Acronymes & Abréviations</div>
+                    <div>1.4. Références Normatives & Cadre Contractuel</div>
+                </div>
+
+                <div class="font-bold text-emerald-900 text-sm border-b border-emerald-200 pb-1 pt-2">2. Description Générale du Système</div>
+                <div class="pl-3 space-y-1 text-slate-700">
+                    <div>2.1. Contexte Opérationnel Multi-Sites (Gueliz & Targa)</div>
+                    <div>2.2. Cartographie Globale des 10 Acteurs</div>
+                    <div>2.3. Matrice des Responsabilités RACI</div>
+                    <div>2.4. Règles de Gestion Structurantes (RG-01 à RG-12)</div>
+                </div>
+
+                <div class="font-bold text-emerald-900 text-sm border-b border-emerald-200 pb-1 pt-2">3. Exigences Spécifiques Fonctionnelles</div>
+                <div class="pl-3 space-y-1 text-slate-700">
+                    <div>3.1. Module EDT & Déplacements Inter-Campus [REQ-EDT]</div>
+                    <div>3.2. Module Cahier de Texte & Rapport Post-Cours [REQ-RAP]</div>
+                    <div>3.3. Module Évaluations & Délibérations sans Excel [REQ-NOT]</div>
+                    <div>3.4. Module Soutenances, Templates & IA Ollama [REQ-SOUT]</div>
+                    <div>3.5. Module Inventaire Logistique & Matériel [REQ-MAT]</div>
+                    <div>3.6. Module Scolarité, Impayés & Verrou Financier [REQ-PAI]</div>
+                    <div>3.7. Module RH, Vacations & Heures Émargées [REQ-RH]</div>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <div class="font-bold text-emerald-900 text-sm border-b border-emerald-200 pb-1">4. Exigences d'Interfaces Externes</div>
+                <div class="pl-3 space-y-1 text-slate-700">
+                    <div>4.1. Interface Utilisateur Web (React / TypeScript / Tailwind)</div>
+                    <div>4.2. Interface Mobile Native (Flutter / Dart)</div>
+                    <div>4.3. Interfaces Matérielles (Caméra QR Code, Écrans Salles)</div>
+                    <div>4.4. Interfaces de Communication (API REST, FCM Push, SMS)</div>
+                </div>
+
+                <div class="font-bold text-emerald-900 text-sm border-b border-emerald-200 pb-1 pt-2">5. Exigences Non-Fonctionnelles (QoS & Sécurité)</div>
+                <div class="pl-3 space-y-1 text-slate-700">
+                    <div>5.1. Performance & Dimensionnement [REQ-PERF]</div>
+                    <div>5.2. Sécurité Zéro-Trust & Multi-Tenancy [REQ-SEC]</div>
+                    <div>5.3. Conformité Réglementaire CNDP Loi 09-08 Maroc</div>
+                    <div>5.4. Disponibilité & Plan de Reprise d'Activité (PRA)</div>
+                </div>
+
+                <div class="font-bold text-emerald-900 text-sm border-b border-emerald-200 pb-1 pt-2">6. Conception Technique & Base de Données</div>
+                <div class="pl-3 space-y-1 text-slate-700">
+                    <div>6.1. Architecture Logicielle en Monolithe Modulaire</div>
+                    <div>6.2. Schéma Relationnel PostgreSQL 15+ (Flyway V1)</div>
+                    <div>6.3. Pipeline d'IA Hybride (Ollama Local + Scoring Explicable)</div>
+                </div>
+
+                <div class="font-bold text-emerald-900 text-sm border-b border-emerald-200 pb-1 pt-2">7. Gestion de Projet Agile & Recette</div>
+                <div class="pl-3 space-y-1 text-slate-700">
+                    <div>7.1. Découpage en 5 Sprints Scrum de 2 Semaines</div>
+                    <div>7.2. Matrice des Risques Majeurs & Plans de Secours</div>
+                    <div>7.3. Matrice de Traçabilité des Exigences (RTM)</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historique des Révisions -->
+        <div class="mt-8 pt-4 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Historique des Révisions</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">Version</th>
+                        <th style="width: 15%;">Date</th>
+                        <th style="width: 20%;">Auteur</th>
+                        <th style="width: 40%;">Description de la Modification</th>
+                        <th style="width: 15%;">Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="font-bold">v0.1</td>
+                        <td>10/10/2026</td>
+                        <td>Équipe 5A D2SI</td>
+                        <td>Recueil des besoins initiaux et premiers cas d'utilisation.</td>
+                        <td>Brouillon</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold">v0.5</td>
+                        <td>14/10/2026</td>
+                        <td>Équipe 5A D2SI</td>
+                        <td>Ajout des contraintes multi-campus Marrakech (Gueliz & Targa) et IA PFE.</td>
+                        <td>Revue</td>
+                    </tr>
+                    <tr>
+                        <td class="font-bold text-emerald-700">v1.0</td>
+                        <td>16/10/2026</td>
+                        <td>Lead Architect / SM</td>
+                        <td>Version formelle conforme IEEE 830 avec 40 exigences atomiques, MoSCoW et RTM.</td>
+                        <td class="font-bold text-emerald-700">Validé</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 3. SECTION 1 : INTRODUCTION & CADRAGE -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-xl font-black text-emerald-800 border-b-2 border-emerald-800 pb-1 mb-4 uppercase">
+            1. Introduction & Périmètre Global
+        </h2>
+
+        <div class="space-y-4 text-xs text-slate-700 leading-relaxed">
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">1.1. Objet du Document</h3>
+                <p>
+                    Le présent document constitue le <strong>Cahier des Charges Fonctionnel et Technique (CdCF)</strong> officiel du système <strong>EMSI Campus (Univora)</strong>. Il a pour objectif de fixer de manière contractuelle, exhaustive et vérifiable les besoins métiers, les règles académiques, les contraintes logistiques et l'architecture logicielle du nouvel ERP académique destiné à l'École Marocaine des Sciences de l'Ingénieur.
+                </p>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">1.2. Diagnostic & Problématique Métier de l'EMSI</h3>
+                <p>
+                    L'EMSI compte plusieurs milliers d'étudiants répartis sur des campus urbains denses. L'audit terrain mené sur le site pilote de **Marrakech** a mis en exergue des dysfonctionnements critiques impactant la qualité pédagogique et l'efficacité administrative :
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                    <div class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <strong class="text-red-900 block mb-1">1. Conflits d'Emplois du Temps & Multi-Sites :</strong>
+                        À Marrakech, les sites de <strong>Gueliz</strong> et <strong>Targa</strong> sont distants de 6 à 7 km (20 à 30 min de trajet). Les enseignants vacataires et permanents sont parfois programmés consécutivement sans délai de battement, créant des retards systématiques.
+                    </div>
+                    <div class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <strong class="text-red-900 block mb-1">2. Perte de Données & Tableurs Excel :</strong>
+                        Les notes d'examens et de contrôles continus circulent par fichiers Excel isolés. Ce mode opératoire génère des risques d'écrasement de notes, une absence d'audit trail et une lourdeur extrême lors des délibérations.
+                    </div>
+                    <div class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <strong class="text-red-900 block mb-1">3. Oubli Chronique des Cahiers de Texte :</strong>
+                        Les enseignants omettent régulièrement de consigner le déroulement de leurs cours. L'administration ne dispose d'aucune visibilité en temps réel sur l'état d'avancement des syllabus.
+                    </div>
+                    <div class="p-3 bg-red-50 border border-red-200 rounded-lg">
+                        <strong class="text-red-900 block mb-1">4. Hétérogénéité des Soutenances & Jurys :</strong>
+                        Les soutenances de stages (2A, 3A, 4A) et PFE (5A) souffrent d'une affectation manuelle des jurys souvent non alignée avec la spécialité technologique du sujet, couplée à des formats de livrables non standardisés.
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">1.3. Définitions, Acronymes & Abréviations</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Terme / Acronyme</th>
+                            <th style="width: 80%;">Signification Officielle</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td class="font-bold">D2SI</td><td>Données, Systèmes d'Information et Intelligence Artificielle (Filière Ingénieur EMSI).</td></tr>
+                        <tr><td class="font-bold">PFE / PFA</td><td>Projet de Fin d'Études (5ᵉ année) / Projet de Fin d'Année (4ᵉ année).</td></tr>
+                        <tr><td class="font-bold">OR-Tools</td><td>Suite d'optimisation combinatoire développée par Google pour la résolution de contraintes.</td></tr>
+                        <tr><td class="font-bold">Ollama</td><td>Moteur d'inférence de modèles de langage (LLM) exécuté localement sans dépendance cloud tierce.</td></tr>
+                        <tr><td class="font-bold">RBAC</td><td><em>Role-Based Access Control</em> — Contrôle d'accès basé sur les rôles et permissions.</td></tr>
+                        <tr><td class="font-bold">MoSCoW</td><td>Méthode de priorisation d'exigences : <em>Must have, Should have, Could have, Won't have</em>.</td></tr>
+                        <tr><td class="font-bold">TOTP</td><td><em>Time-based One-Time Password</em> — Code à usage unique à validité temporelle éphémère.</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 4. SECTION 2 : ACTEURS, RACI & RÈGLES DE GESTION -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-xl font-black text-emerald-800 border-b-2 border-emerald-800 pb-1 mb-4 uppercase">
+            2. Description Générale, Acteurs & Règles Métier
+        </h2>
+
+        <div class="space-y-4 text-xs text-slate-700">
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">2.1. Les 10 Acteurs Clés du Système</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Acteur</th>
+                            <th style="width: 25%;">Profil Métier</th>
+                            <th style="width: 50%;">Périmètre d'Action Principal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-bold text-emerald-900">1. Directeur Pédagogique</td>
+                            <td>Direction Établissement</td>
+                            <td>Supervision globale, validation finale des PV de délibération des diplômes et arbitrages disciplinaires.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">2. Responsable de Filière</td>
+                            <td>Chef de Département (D2SI/IIR)</td>
+                            <td>Affectation des modules aux enseignants, validation des emplois du temps de la filière, arbitrage des jurys PFE et délibérations.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">3. Responsable Planning</td>
+                            <td>Planificateur & Logistique</td>
+                            <td>Gestion des salles, lancement du solveur OR-Tools, gestion des conflits d'horaires et logistique des examens.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">4. Enseignant Permanent</td>
+                            <td>Corps Enseignant Interne</td>
+                            <td>Émargement des séances, saisie obligatoire du cahier de texte post-cours, notation directe, encadrement PFE.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">5. Enseignant Vacataire</td>
+                            <td>Expert Externe Industriel</td>
+                            <td>Déclaration des disponibilités horaires (soirs/samedis), émargement de ses cours et consultation des états de vacation.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">6. Élève-Ingénieur</td>
+                            <td>Étudiant (1A à 5A)</td>
+                            <td>Consultation de l'EDT dynamique, scan de présence QR code, téléchargement templates PFE, suivi des notes et scolarité.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">7. Service Scolarité</td>
+                            <td>Administration</td>
+                            <td>Traitement des inscriptions, validation des certificats médicaux d'absence et délivrance des attestations officielles.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">8. Service Financier</td>
+                            <td>Comptabilité Scolarité</td>
+                            <td>Enregistrement des règlements (chèques/traites), identification des impayés, relance des parents et gestion des verrous.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">9. Support Technique</td>
+                            <td>Maintenance & Matériel</td>
+                            <td>Gestion du parc de machines des salles TP (PC, GPUs, Switchs), suivi des vidéoprojecteurs et résolution de tickets.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">10. Tuteur Entreprise</td>
+                            <td>Maître de Stage Externe</td>
+                            <td>Signature de convention par lien OTP sécurisé et saisie de l'évaluation professionnelle de fin de stage.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">2.2. Règles de Gestion Métier Structurantes (RG)</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
+                    <div class="p-2.5 bg-slate-50 border border-slate-300 rounded">
+                        <strong class="text-emerald-800">RG-LOG-01 (Transit Inter-Sites) :</strong> Un délai d'au moins <strong>45 minutes</strong> est automatiquement réservé entre la fin d'un cours sur le site de Gueliz et le début d'un cours à Targa pour un même enseignant.
+                    </div>
+                    <div class="p-2.5 bg-slate-50 border border-slate-300 rounded">
+                        <strong class="text-emerald-800">RG-PED-01 (Seuil de Validation) :</strong> Un module est validé si et seulement si la moyenne générale est $\ge 12.00 / 20.00$.
+                    </div>
+                    <div class="p-2.5 bg-slate-50 border border-slate-300 rounded">
+                        <strong class="text-emerald-800">RG-PED-02 (Note Éliminatoire) :</strong> Toute note d'élément de module inférieure à <strong>7.00 / 20.00</strong> entraîne obligatoirement le passage du module en session de rattrapage.
+                    </div>
+                    <div class="p-2.5 bg-slate-50 border border-slate-300 rounded">
+                        <strong class="text-emerald-800">RG-RAP-01 (Cahier de Texte Obligatoire) :</strong> Tout enseignant doit consigner le rapport de sa séance dans l'heure suivant la fin du créneau officiel sous peine de blocage de l'état de vacation.
+                    </div>
+                    <div class="p-2.5 bg-slate-50 border border-slate-300 rounded">
+                        <strong class="text-emerald-800">RG-SOUT-01 (Conformité des Livrables) :</strong> Aucun étudiant ne peut soutenir sans avoir utilisé le template officiel EMSI et sans avoir uploadé l'attestation de stage signée.
+                    </div>
+                    <div class="p-2.5 bg-slate-50 border border-slate-300 rounded">
+                        <strong class="text-emerald-800">RG-FIN-01 (Verrou Administratif) :</strong> Tout retard de paiement supérieur à 10 jours bloque l'accès aux documents administratifs officiels sur le portail étudiant.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 5. SECTION 3 : EXIGENCES FONCTIONNELLES SPÉCIFIQUES (REQ-XXX) -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-xl font-black text-emerald-800 border-b-2 border-emerald-800 pb-1 mb-4 uppercase">
+            3. Exigences Spécifiques Fonctionnelles (IEEE 830)
+        </h2>
+
+        <div class="space-y-4">
+
+            <!-- REQ-EDT-01 -->
+            <div class="avoid-break p-3.5 bg-white border border-slate-300 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                    <span class="font-mono text-xs font-bold text-emerald-800">REQ-EDT-01 : Planification Multi-Sites Gueliz/Targa & Salles Spécialisées</span>
+                    <span class="badge-must">MUST HAVE</span>
+                </div>
+                <div class="text-[11px] text-slate-700 space-y-1">
+                    <div><strong>Description :</strong> Le système doit générer automatiquement l'emploi du temps des promotions (1A à 5A) pour les filières (Informatique, Industriel, Civil) au moyen du solveur OR-Tools.</div>
+                    <div><strong>Règles associées :</strong> Respect absolu du temps de trajet inter-campus (45 min entre Gueliz et Targa), affectation des TP informatiques aux salles disposant de PC/GPU fonctionnels, et respect des disponibilités déclarées par les vacataires (soirs/samedis).</div>
+                    <div><strong>Critère d'acceptation :</strong> Zéro chevauchement physique et génération en moins de 3 minutes pour une filière complète.</div>
+                </div>
+            </div>
+
+            <!-- REQ-RAP-01 -->
+            <div class="avoid-break p-3.5 bg-white border-2 border-emerald-600 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                    <span class="font-mono text-xs font-bold text-emerald-800">REQ-RAP-01 : Notification Push de Fin de Séance & Cahier de Texte Obligatoire</span>
+                    <span class="badge-must">MUST HAVE</span>
+                </div>
+                <div class="text-[11px] text-slate-700 space-y-1">
+                    <div><strong>Description :</strong> À la fin de chaque séance d'enseignement, le système doit notifier immédiatement le professeur sur son terminal mobile pour forcer la consignation de l'avancement pédagogique.</div>
+                    <div><strong>Comportement :</strong> Formulaire épuré sur Flutter comprenant : Chapitre abordé, Objectifs atteints et Travaux à préparer. Relance push à H+30 min si non complété. Escalade visuelle au chef de filière si délai > 24h.</div>
+                    <div><strong>Critère d'acceptation :</strong> Formulaire complété en moins de 60 secondes ; alimentation immédiate du cahier de texte consultable par les élèves.</div>
+                </div>
+            </div>
+
+            <!-- REQ-NOT-01 -->
+            <div class="avoid-break p-3.5 bg-white border border-slate-300 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                    <span class="font-mono text-xs font-bold text-emerald-800">REQ-NOT-01 : Saisie Directe des Notes en Ligne & Suppression d'Excel</span>
+                    <span class="badge-must">MUST HAVE</span>
+                </div>
+                <div class="text-[11px] text-slate-700 space-y-1">
+                    <div><strong>Description :</strong> Le système doit proposer une interface de saisie directe au clavier des notes de CC, TP et examens, éliminant tout recours aux tableurs Excel.</div>
+                    <div><strong>Comportement :</strong> Sauvegarde asynchrone toutes les 15 secondes, validation des bornes (0.00 à 20.00), calcul automatique des moyennes modulaires pondérées et surbrillance rouge des notes éliminatoires (&lt; 7.00).</div>
+                    <div><strong>Critère d'acceptation :</strong> Calcul automatique instantané des moyennes et journalisation immuable de chaque modification dans l'audit log.</div>
+                </div>
+            </div>
+
+            <!-- REQ-SOUT-01 -->
+            <div class="avoid-break p-3.5 bg-white border border-slate-300 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                    <span class="font-mono text-xs font-bold text-emerald-800">REQ-SOUT-01 : Gestion des Soutenances (2A à 5A) & Dépôt des Pièces Justificatives</span>
+                    <span class="badge-must">MUST HAVE</span>
+                </div>
+                <div class="text-[11px] text-slate-700 space-y-1">
+                    <div><strong>Description :</strong> Gestion unifiée du cycle des soutenances : stage d'initiation (2A), stage d'application (3A/4A) et PFE (5A).</div>
+                    <div><strong>Comportement :</strong> L'étudiant dépose sa convention tripartite signée et son attestation de fin de stage avant la date butoir. En cas de pièce manquante, la planification de la soutenance est verrouillée.</div>
+                    <div><strong>Critère d'acceptation :</strong> Contrôle automatique de la complétude du dossier avant autorisation de passage devant le jury.</div>
+                </div>
+            </div>
+
+            <!-- REQ-SOUT-02 -->
+            <div class="avoid-break p-3.5 bg-white border border-slate-300 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                    <span class="font-mono text-xs font-bold text-emerald-800">REQ-SOUT-02 : Espace de Téléchargement des Templates Officiels EMSI</span>
+                    <span class="badge-must">MUST HAVE</span>
+                </div>
+                <div class="text-[11px] text-slate-700 space-y-1">
+                    <div><strong>Description :</strong> Le système doit fournir un espace centralisé mettant à disposition les modèles officiels normalisés aux chartes de l'école.</div>
+                    <div><strong>Livrables téléchargeables :</strong> Template de Rapport en format Word (`.docx`) et LaTeX (`.tex`), Template de Présentation PowerPoint (`.pptx`), et grille officielle d'évaluation.</div>
+                    <div><strong>Critère d'acceptation :</strong> Téléchargement direct sans redirection externe et mise à jour annuelle par la direction pédagogique.</div>
+                </div>
+            </div>
+
+            <!-- REQ-SOUT-03 -->
+            <div class="avoid-break p-3.5 bg-white border-2 border-emerald-600 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                    <span class="font-mono text-xs font-bold text-emerald-800">REQ-SOUT-03 : Moteur IA d'Affectation des Jurys & Encadrants par Spécialité</span>
+                    <span class="badge-must">MUST HAVE</span>
+                </div>
+                <div class="text-[11px] text-slate-700 space-y-1">
+                    <div><strong>Description :</strong> Le système utilise le LLM local (Ollama) pour extraire les compétences du sujet PFE (ex: Dev Java/Spring Boot, Mobile, IA, IoT) et apparie les encadrants et membres de jurys de même spécialité.</div>
+                    <div><strong>Algorithme :</strong> $\text{Score} = (0.45 \times \text{Compétences}) + (0.35 \times \text{Quota Disponible}) + (0.20 \times \text{Historique})$. Proposition d'un Président et d'un Examinateur experts dans le thème.</div>
+                    <div><strong>Critère d'acceptation :</strong> Recommandation explicable affichée au responsable de filière qui valide ou ajuste l'affectation en 1 clic.</div>
+                </div>
+            </div>
+
+            <!-- REQ-MAT-01 -->
+            <div class="avoid-break p-3.5 bg-white border border-slate-300 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                    <span class="font-mono text-xs font-bold text-slate-800">REQ-MAT-01 : Inventaire des Salles & Ticketing des Pannes (PC, Vidéoprojecteurs)</span>
+                    <span class="badge-should">SHOULD HAVE</span>
+                </div>
+                <div class="text-[11px] text-slate-700 space-y-1">
+                    <div><strong>Description :</strong> Suivi opérationnel des ressources physiques de chaque salle (nombre de tables, chaises, vidéoprojecteurs et PC fonctionnels).</div>
+                    <div><strong>Ticketing :</strong> En cas de panne constatée pendant le cours, signalement immédiat sur l'application mobile avec photo. Transmission automatique au support technique du campus concerné (Gueliz ou Targa).</div>
+                    <div><strong>Critère d'acceptation :</strong> Prise en compte immédiate dans l'inventaire des salles disponibles pour le planning.</div>
+                </div>
+            </div>
+
+            <!-- REQ-PAI-01 -->
+            <div class="avoid-break p-3.5 bg-white border border-slate-300 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                    <span class="font-mono text-xs font-bold text-slate-800">REQ-PAI-01 : Suivi des Frais de Scolarité, Impayés & Verrou Administratif</span>
+                    <span class="badge-must">MUST HAVE</span>
+                </div>
+                <div class="text-[11px] text-slate-700 space-y-1">
+                    <div><strong>Description :</strong> Suivi des règlements financiers par étudiant (mensualités, tranches, acomptes). Détection automatique des retards pour relancer les familles.</div>
+                    <div><strong>Verrouillage :</strong> Si impayé supérieur au délai paramétré, blocage automatique du téléchargement des attestations officielles et bulletins, sans pénaliser l'accès aux cours.</div>
+                    <div><strong>Critère d'acceptation :</strong> Déverrouillage temps réel dès validation de l'encaissement par la comptabilité.</div>
+                </div>
+            </div>
+
+            <!-- REQ-RH-01 -->
+            <div class="avoid-break p-3.5 bg-white border border-slate-300 rounded-lg shadow-sm">
+                <div class="flex items-center justify-between border-b border-slate-200 pb-2 mb-2">
+                    <span class="font-mono text-xs font-bold text-slate-800">REQ-RH-01 : Gestion des Enseignants Vacataires & Décompte des Heures Réelles</span>
+                    <span class="badge-must">MUST HAVE</span>
+                </div>
+                <div class="text-[11px] text-slate-700 space-y-1">
+                    <div><strong>Description :</strong> Suivi des contrats horaires des intervenants extérieurs et calcul automatisé des honoraires de vacation.</div>
+                    <div><strong>Calcul :</strong> $\text{Montant} = \text{Heures Validées par Émargement et Rapport} \times \text{Taux Horaire Contractuel}$. Validation mensuelle par le chef de filière pour ordre de virement bancaire.</div>
+                    <div><strong>Critère d'acceptation :</strong> Zéro paiement déclenché pour des séances annulées non rattrapées.</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 6. SECTION 4 : ARCHITECTURE & CONCEPTION TECHNIQUE -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-xl font-black text-emerald-800 border-b-2 border-emerald-800 pb-1 mb-4 uppercase">
+            4. Architecture Technique, Base de Données & Sécurité
+        </h2>
+
+        <div class="space-y-4 text-xs text-slate-700">
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">4.1. Justification de la Stack Technologique Retenue</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Brique</th>
+                            <th style="width: 30%;">Technologie Retenue</th>
+                            <th style="width: 50%;">Justification Technique & Bénéfice PFE</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-bold">Backend API</td>
+                            <td class="font-semibold text-emerald-800">Java 21 + Spring Boot 3</td>
+                            <td>Architecture d'entreprise robuste, sécurité Zéro-Trust via Spring Security, threads virtuels (Project Loom) pour la charge, et intégration native de Google OR-Tools.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Frontend Web</td>
+                            <td class="font-semibold text-emerald-800">React + TypeScript + Vite + Tailwind</td>
+                            <td>Application monopage (SPA) ultra-rapide, typage statique prévenant les erreurs d'exécution, tableaux de bord interactifs pour les délibérations et l'emploi du temps.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Mobile App</td>
+                            <td class="font-semibold text-emerald-800">Flutter + Dart</td>
+                            <td>Codebase unique pour iOS et Android, rendu 60 fps natif, utilisation matérielle fluide (caméra pour scan QR rapide, géolocalisation anti-fraude) et push Firebase.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Base de Données</td>
+                            <td class="font-semibold text-emerald-800">PostgreSQL 15+ & Flyway</td>
+                            <td>Support natif des colonnes JSONB pour les compétences IA, intégrité transactionnelle ACID absolue et versioning strict des schémas via Flyway.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold">Moteur IA</td>
+                            <td class="font-semibold text-emerald-800">Ollama Local (Llama3 / Mistral)</td>
+                            <td>Respect absolu de la confidentialité industrielle des sujets d'entreprises (aucune donnée envoyée vers des tiers externes), coût d'exploitation nul et indépendance réseau.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">4.2. Schéma Relationnel & Tables Principales (PostgreSQL)</h3>
+                <p class="mb-2">Le schéma est matérialisé dans le script Flyway <code>V1__init_schema.sql</code> et s'articule autour de 10 pôles de données étanches :</p>
+                <div class="grid grid-cols-2 gap-2 text-[10px]">
+                    <div class="p-2 bg-slate-50 border border-slate-300 rounded font-mono">
+                        <strong class="text-slate-900 block font-sans">1. Socle Multi-Tenant & IAM :</strong>
+                        tenants, users, roles, permissions, role_permissions, user_roles
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-300 rounded font-mono">
+                        <strong class="text-slate-900 block font-sans">2. Multi-Sites & Salles :</strong>
+                        campuses, campus_travel_times, rooms, room_assets
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-300 rounded font-mono">
+                        <strong class="text-slate-900 block font-sans">3. Pédagogie & Filières :</strong>
+                        academic_years, programs, semesters, modules, module_elements, student_groups
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-300 rounded font-mono">
+                        <strong class="text-slate-900 block font-sans">4. Corps Enseignant & Compétences :</strong>
+                        professors, professor_skills, professor_availabilities
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-300 rounded font-mono">
+                        <strong class="text-slate-900 block font-sans">5. Emploi du Temps & Cahier de Texte :</strong>
+                        course_assignments, schedule_slots, course_sessions, session_reports
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-300 rounded font-mono">
+                        <strong class="text-slate-900 block font-sans">6. Évaluations & Délibérations :</strong>
+                        evaluations, grades, exam_anonymities, deliberation_results
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-300 rounded font-mono">
+                        <strong class="text-slate-900 block font-sans">7. Stages & IA PFE :</strong>
+                        companies, pfe_topics, pfe_extracted_features, pfe_recommendations, pfe_assignments
+                    </div>
+                    <div class="p-2 bg-slate-50 border border-slate-300 rounded font-mono">
+                        <strong class="text-slate-900 block font-sans">8. Finances & Vacations :</strong>
+                        student_tuition_accounts, tuition_payments, teaching_hours_logs
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- 7. SECTION 5 : GESTION DE PROJET AGILE & MATRICE DE RISQUES -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-xl font-black text-emerald-800 border-b-2 border-emerald-800 pb-1 mb-4 uppercase">
+            5. Organisation Agile, Risques & Matrice de Traçabilité
+        </h2>
+
+        <div class="space-y-4 text-xs text-slate-700">
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">5.1. Découpage en 5 Sprints Scrum (Équipe de 6 Ingénieurs D2SI)</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 15%;">Sprint</th>
+                            <th style="width: 20%;">Période</th>
+                            <th style="width: 40%;">Livrables & User Stories Majeures</th>
+                            <th style="width: 25%;">Binômes Responsables</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-bold text-emerald-900">Sprint 1</td>
+                            <td>Semaines 1 - 2</td>
+                            <td>Socle Spring Boot 3, Multi-Tenant Hibernate, Schéma Flyway V1, Gestion des Campus (Gueliz & Targa) et Salles.</td>
+                            <td>Binôme Backend & DevOps</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">Sprint 2</td>
+                            <td>Semaines 3 - 4</td>
+                            <td>Solveur OR-Tools pour l'EDT, App Flutter avec scan QR dynamique de présence et push automatique de fin de séance.</td>
+                            <td>Binôme Backend + Mobile</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">Sprint 3</td>
+                            <td>Semaines 5 - 6</td>
+                            <td>Saisie des notes directe en ligne (adieu Excel), calcul automatique des délibérations et PV de jury scellés.</td>
+                            <td>Binôme Web + Backend</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">Sprint 4</td>
+                            <td>Semaines 7 - 8</td>
+                            <td>Module PFE complet, téléchargement templates EMSI officiels, pipeline IA Ollama pour matching par spécialité.</td>
+                            <td>Binôme Mobile/IA + Web</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-emerald-900">Sprint 5</td>
+                            <td>Semaines 9 - 10</td>
+                            <td>Suivi trésorerie scolarité (impayés/verrous), inventaire logistique des salles, tests E2E et recette finale.</td>
+                            <td>Équipe Complète (6/6)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-slate-900 text-sm mb-1">5.2. Matrice des Risques Majeurs & Plans de Secours</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 25%;">Risque Identifié</th>
+                            <th style="width: 10%;">Gravité</th>
+                            <th style="width: 65%;">Plan de Mitigation Obligatoire</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="font-bold text-red-900">Solveur OR-Tools insoluble</td>
+                            <td class="text-center font-bold text-red-700">CRITIQUE</td>
+                            <td>Séparation stricte des contraintes en dures (hard) et souples (soft). Si aucune solution idéale n'est trouvée sous 60s, affichage des goulots d'étranglement pour résolution semi-automatique.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-amber-900">Oubli persistant des rapports</td>
+                            <td class="text-center font-bold text-amber-700">ÉLEVÉE</td>
+                            <td>Notifications push répétées (H+0, H+30 min) et conditionnement du calcul des honoraires de vacation à la validation des rapports de séance.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-amber-900">Indisponibilité du LLM Ollama</td>
+                            <td class="text-center font-bold text-amber-700">MOYENNE</td>
+                            <td>File d'attente asynchrone Spring Boot (`@Async`) avec fallback déterministe par recherche de mots-clés si le serveur IA est saturé.</td>
+                        </tr>
+                        <tr>
+                            <td class="font-bold text-red-900">Fraude au scan QR Code</td>
+                            <td class="text-center font-bold text-red-700">ÉLEVÉE</td>
+                            <td>QR code dynamique tournant (validité 10s via TOTP) couplé à une vérification géolocalisée et restriction Wi-Fi campus.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Document -->
+    <div class="mt-12 pt-4 border-t border-slate-300 text-center text-[10px] text-slate-500">
+        <p>EMSI Campus ERP — Cahier des Charges Fonctionnel et Technique — Promotion 5A D2SI</p>
+        <p class="font-semibold text-slate-700 mt-0.5">École Marocaine des Sciences de l'Ingénieur • Réseau Honoris United Universities</p>
+    </div>
+
+    <script>
+        lucide.createIcons();
+    </script>
+</body>
+</html>

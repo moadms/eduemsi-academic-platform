@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Dossier de Cadrage Agile (Scrum + XP) — EMSI Campus ERP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 12mm 15mm 15mm 15mm;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #ffffff;
+            color: #0f172a;
+            line-height: 1.45;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+        }
+        .page-break { page-break-before: always; }
+        .page-break-after { page-break-after: always; }
+        .avoid-break { page-break-inside: avoid; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #cbd5e1; padding: 6px 10px; font-size: 11px; }
+        th { background-color: #f8fafc; color: #064e3b; font-weight: 700; }
+        .gherkin-box {
+            background-color: #f8fafc;
+            border-left: 3px solid #059669;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            padding: 8px 12px;
+            border-radius: 0 6px 6px 0;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body class="p-2 sm:p-6 max-w-5xl mx-auto">
+
+    <!-- ==================================================================== -->
+    <!-- PAGE 1 : PAGE DE GARDE AVEC CADRE OFFICIEL DE SIGNATURES -->
+    <!-- ==================================================================== -->
+    <div class="page-break-after min-h-[940px] flex flex-col justify-between p-8 border-4 border-emerald-900 rounded-2xl bg-white shadow-sm">
+        <div>
+            <!-- En-tête Institutionnel -->
+            <div class="flex items-center justify-between border-b-2 border-emerald-900 pb-5">
+                <img src="assets/emsi_logo.png" alt="Logo EMSI" class="h-16 w-auto object-contain">
+                <div class="text-right">
+                    <div class="text-xs font-black text-emerald-950 uppercase tracking-widest">École Marocaine des Sciences de l'Ingénieur</div>
+                    <div class="text-[11px] text-slate-600 font-semibold">Membre du Réseau Honoris United Universities</div>
+                    <div class="text-[10px] text-emerald-700 font-bold mt-0.5">Campus Marrakech (Gueliz & Targa) • Casablanca • Rabat</div>
+                </div>
+            </div>
+
+            <!-- Titre & Badge PFE -->
+            <div class="mt-14 text-center">
+                <span class="inline-block px-4 py-1.5 rounded-full text-xs font-extrabold uppercase tracking-widest bg-emerald-900 text-white mb-4">
+                    Dossier de Cadrage Agile & Cahier des Charges Synthétique
+                </span>
+                <div class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">
+                    Méthodologie Hybride : Scrum (Gestion de Projet) & eXtreme Programming (Qualité Logicielle)
+                </div>
+                <h1 class="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight leading-tight mt-2">
+                    EMSI CAMPUS <span class="text-emerald-700">(Univora)</span>
+                </h1>
+                <div class="w-20 h-1 bg-emerald-600 mx-auto my-4 rounded-full"></div>
+                <h2 class="text-lg font-bold text-slate-700 max-w-2xl mx-auto">
+                    ERP Académique Intelligent Web & Mobile pour l'Optimisation de la Planification, la Pédagogie, les Soutenances et la Logistique
+                </h2>
+                <p class="text-xs text-slate-500 max-w-xl mx-auto mt-2 italic">
+                    « Remplacer les tableurs Excel, automatiser les cahiers de texte, résoudre les contraintes multi-campus (Gueliz ⇄ Targa) et affecter les jurys PFE par Intelligence Artificielle. »
+                </p>
+            </div>
+        </div>
+
+        <!-- Informations Administratives & Signatures -->
+        <div>
+            <div class="grid grid-cols-2 gap-4 border-t-2 border-emerald-900 pt-5 text-xs text-slate-700 mb-6">
+                <div class="space-y-1">
+                    <div><strong class="text-slate-900">Établissement :</strong> EMSI Marrakech (Gueliz & Targa)</div>
+                    <div><strong class="text-slate-900">Promotion :</strong> 5ᵉ Année Ingénierie D2SI (2026-2027)</div>
+                    <div><strong class="text-slate-900">Groupe Projet :</strong> Équipe de 6 Élèves-Ingénieurs</div>
+                    <div><strong class="text-slate-900">Stack Technique :</strong> Spring Boot 3, React, Flutter, PostgreSQL, Ollama, OR-Tools</div>
+                </div>
+                <div class="space-y-1 text-right">
+                    <div><strong class="text-slate-900">Date de Présentation :</strong> Octobre 2026</div>
+                    <div><strong class="text-slate-900">Cadre Méthodologique :</strong> Agile Scrum + XP (5 Sprints de 2 sem.)</div>
+                    <div><strong class="text-slate-900">Version du Dossier :</strong> Version 1.0 Finale</div>
+                    <div><strong class="text-slate-900">Statut :</strong> Soumis à l'approbation du corps enseignant</div>
+                </div>
+            </div>
+
+            <!-- CADRE OFFICIEL DE VALIDATION ET DE SIGNATURES -->
+            <div class="border-2 border-slate-300 rounded-xl p-4 bg-slate-50/50">
+                <div class="text-[11px] font-bold uppercase tracking-wider text-emerald-900 text-center mb-3">
+                    Cadre Formel de Validation & Signatures pour Lancement des Sprints
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-center text-[10px]">
+                    <div class="bg-white border border-slate-300 rounded-lg p-3 flex flex-col justify-between min-h-[110px]">
+                        <span class="font-bold text-slate-800">L'Équipe des 6 Ingénieurs D2SI</span>
+                        <span class="text-emerald-700 font-semibold italic mt-6">Approuvé le 16/10/2026</span>
+                    </div>
+                    <div class="bg-white border-2 border-emerald-700 rounded-lg p-3 flex flex-col justify-between min-h-[110px]">
+                        <span class="font-bold text-slate-800">Le Professeur Encadrant (Tuteur)</span>
+                        <div class="border-b border-dashed border-slate-300 pb-1 mt-6">
+                            <span class="text-slate-400 italic text-[9px]">Signature & Date</span>
+                        </div>
+                    </div>
+                    <div class="bg-white border border-slate-300 rounded-lg p-3 flex flex-col justify-between min-h-[110px]">
+                        <span class="font-bold text-slate-800">Le Responsable de Filière (D2SI)</span>
+                        <div class="border-b border-dashed border-slate-300 pb-1 mt-6">
+                            <span class="text-slate-400 italic text-[9px]">Visa "Bon pour Réalisation"</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- PAGE 2 : DIAGNOSTIC TERRAIN & PROBLÈMES RENCONTRÉS À L'EMSI -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-xl font-black text-emerald-900 border-b-2 border-emerald-900 pb-1 mb-4 uppercase flex justify-between items-center">
+            <span>1. Diagnostic Terrain : Les 6 Problèmes Majeurs de l'EMSI</span>
+            <span class="text-xs font-normal text-slate-500 lowercase">cadrage pfe</span>
+        </h2>
+
+        <div class="text-xs text-slate-700 leading-relaxed mb-4">
+            L'audit direct des opérations sur le site de <strong>Marrakech</strong> démontre que l'administration et les enseignants sont confrontés à des irritants critiques qui freinent la fluidité de l'enseignement :
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+            <!-- P1 -->
+            <div class="p-3 bg-red-50/70 border border-red-200 rounded-lg">
+                <div class="flex items-center gap-1.5 font-bold text-red-900 mb-1">
+                    <span class="w-5 h-5 rounded-full bg-red-700 text-white flex items-center justify-center text-[10px]">1</span>
+                    Le Casse-tête Multi-Sites : Gueliz vs Targa
+                </div>
+                <p class="text-slate-700 text-[11px]">
+                    À Marrakech, l'école est éclatée entre le campus historique de <strong>Gueliz</strong> et le nouveau campus de <strong>Targa</strong> (6 à 7 km, 20 à 30 min de route). Les professeurs vacataires et permanents ont souvent des séances consécutives sans temps de battement, provoquant des retards en chaîne et des salles réservées mais vides.
+                </p>
+            </div>
+
+            <!-- P2 -->
+            <div class="p-3 bg-red-50/70 border border-red-200 rounded-lg">
+                <div class="flex items-center gap-1.5 font-bold text-red-900 mb-1">
+                    <span class="w-5 h-5 rounded-full bg-red-700 text-white flex items-center justify-center text-[10px]">2</span>
+                    La Saisie des Notes sous Tableurs Excel Isolés
+                </div>
+                <p class="text-slate-700 text-[11px]">
+                    Chaque professeur saisit les notes de CC et d'examens sur son propre fichier Excel. <strong>Conséquences :</strong> Erreurs de formules, pertes d'historique, retards de délibération de plusieurs semaines et impossibilité d'appliquer automatiquement les règles éliminatoires (< 7.00/20.00).
+                </p>
+            </div>
+
+            <!-- P3 -->
+            <div class="p-3 bg-red-50/70 border border-red-200 rounded-lg">
+                <div class="flex items-center gap-1.5 font-bold text-red-900 mb-1">
+                    <span class="w-5 h-5 rounded-full bg-red-700 text-white flex items-center justify-center text-[10px]">3</span>
+                    L'Oubli Systématique des Rapports de Séance (Cahier de Texte)
+                </div>
+                <p class="text-slate-700 text-[11px]">
+                    À la fin du cours, les enseignants quittent la salle sans consigner l'avancement pédagogique. L'administration ne sait pas quel chapitre a été réellement dispensé, empêchant tout contrôle du syllabus et compliquant le calcul des heures de vacation réelles.
+                </p>
+            </div>
+
+            <!-- P4 -->
+            <div class="p-3 bg-red-50/70 border border-red-200 rounded-lg">
+                <div class="flex items-center gap-1.5 font-bold text-red-900 mb-1">
+                    <span class="w-5 h-5 rounded-full bg-red-700 text-white flex items-center justify-center text-[10px]">4</span>
+                    La Désorganisation des Soutenances de Stages & PFE (2A à 5A)
+                </div>
+                <p class="text-slate-700 text-[11px]">
+                    Les étudiants utilisent des formats disparates. Pire encore : l'affectation des jurys est manuelle et aléatoire. Un sujet portant sur du <em>Cloud Java/Spring Boot</em> se retrouve fréquemment jugé par un professeur spécialiste d'un domaine non connexe par manque de visibilité.
+                </p>
+            </div>
+
+            <!-- P5 -->
+            <div class="p-3 bg-red-50/70 border border-red-200 rounded-lg">
+                <div class="flex items-center gap-1.5 font-bold text-red-900 mb-1">
+                    <span class="w-5 h-5 rounded-full bg-red-700 text-white flex items-center justify-center text-[10px]">5</span>
+                    Le Suivi des Impayés de Scolarité & Trésorerie
+                </div>
+                <p class="text-slate-700 text-[11px]">
+                    Absence de synchronisation en temps réel entre le paiement des mensualités et la vie scolaire. L'administration peine à relancer les parents à temps, et les attestations officielles sont parfois délivrées à des étudiants en situation de contentieux financier.
+                </p>
+            </div>
+
+            <!-- P6 -->
+            <div class="p-3 bg-red-50/70 border border-red-200 rounded-lg">
+                <div class="flex items-center gap-1.5 font-bold text-red-900 mb-1">
+                    <span class="w-5 h-5 rounded-full bg-red-700 text-white flex items-center justify-center text-[10px]">6</span>
+                    Pannes Matérielles & Salles Informatiques Défaillantes
+                </div>
+                <p class="text-slate-700 text-[11px]">
+                    Vidéoprojecteurs hors service ou PC de TP info non alimentés signalés trop tardivement. Les cours débutent avec 20 minutes de retard sans qu'un ticket d'incident formel ne soit transmis à l'équipe technique du campus.
+                </p>
+            </div>
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- LA RÉPONSE DE NOTRE SOLUTION ERP -->
+        <!-- ==================================================================== -->
+        <h2 class="text-xl font-black text-emerald-900 border-b-2 border-emerald-900 pb-1 mt-6 mb-3 uppercase">
+            2. La Solution EMSI Campus : 6 Réponses Technologiques Précises
+        </h2>
+
+        <div class="space-y-2 text-xs">
+            <div class="p-2.5 bg-emerald-50/60 border border-emerald-200 rounded-lg flex items-start gap-2">
+                <div class="font-bold text-emerald-800 shrink-0 w-24">1. Solveur OR-Tools</div>
+                <div class="text-slate-700">Contrainte obligatoire de <strong>45 minutes de battement</strong> entre toute séance à Gueliz et à Targa. Prise en compte des créneaux restreints des vacataires (soirs/samedis) et des salles équipées de GPU.</div>
+            </div>
+            <div class="p-2.5 bg-emerald-50/60 border border-emerald-200 rounded-lg flex items-start gap-2">
+                <div class="font-bold text-emerald-800 shrink-0 w-24">2. Zéro Excel</div>
+                <div class="text-slate-700">Interface de saisie directe des notes avec calcul instantané des formules officielles, détection visuelle des notes éliminatoires (&lt; 7.00) et génération automatique des PV de délibération.</div>
+            </div>
+            <div class="p-2.5 bg-emerald-50/60 border border-emerald-200 rounded-lg flex items-start gap-2">
+                <div class="font-bold text-emerald-800 shrink-0 w-24">3. Push Mobile Auto</div>
+                <div class="text-slate-700">Dès la fin officielle du cours, une notification push prioritaire s'ouvre sur le smartphone du professeur pour remplir le <strong>cahier de texte en moins de 60 secondes</strong> (chapitre traité, notions clés, devoirs).</div>
+            </div>
+            <div class="p-2.5 bg-emerald-50/60 border border-emerald-200 rounded-lg flex items-start gap-2">
+                <div class="font-bold text-emerald-800 shrink-0 w-24">4. IA Ollama + PFE</div>
+                <div class="text-slate-700">Extraction NLP locale des compétences des sujets PFE et <strong>matching automatique des encadrants et jurys ayant la même spécialité technique</strong>. Téléchargement direct des templates officiels EMSI (Word/LaTeX/PowerPoint).</div>
+            </div>
+            <div class="p-2.5 bg-emerald-50/60 border border-emerald-200 rounded-lg flex items-start gap-2">
+                <div class="font-bold text-emerald-800 shrink-0 w-24">5. Verrou Financier</div>
+                <div class="text-slate-700">Suivi des mensualités et activation d'un verrou automatique empêchant le téléchargement des attestations scolaires en cas d'impayé persistant, tout en préservant l'accès aux cours.</div>
+            </div>
+            <div class="p-2.5 bg-emerald-50/60 border border-emerald-200 rounded-lg flex items-start gap-2">
+                <div class="font-bold text-emerald-800 shrink-0 w-24">6. Ticketing Matériel</div>
+                <div class="text-slate-700">Inventaire en temps réel des postes fonctionnels par salle et signalement instantané des pannes avec photo depuis l'application mobile pour intervention technique immédiate.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- PAGE 3 : DÉMARCHE D'INGÉNIERIE : AGILE SCRUM & EXTREME PROGRAMMING -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-xl font-black text-emerald-900 border-b-2 border-emerald-900 pb-1 mb-4 uppercase flex justify-between items-center">
+            <span>3. Cadre Méthodologique : L'Alliance Agile Scrum + XP</span>
+            <span class="text-xs font-normal text-slate-500 lowercase">excellence génie logiciel</span>
+        </h2>
+
+        <div class="text-xs text-slate-700 leading-relaxed mb-4">
+            Pour un projet d'ingénierie à 6 personnes, Scrum seul ne suffit pas : il gère le planning et les réunions, mais ne protège pas contre les bugs d'intégration. Nous combinons **Scrum** (pour le pilotage produit) et **eXtreme Programming - XP** (pour la rigueur technique du code).
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <!-- Pôle Scrum -->
+            <div class="p-4 border-2 border-emerald-800 rounded-xl bg-white shadow-sm">
+                <div class="flex items-center gap-2 font-bold text-emerald-900 text-sm border-b border-emerald-200 pb-2 mb-2">
+                    <span class="px-2 py-0.5 rounded bg-emerald-800 text-white text-[10px]">SCRUM</span>
+                    Macro-Gestion & Pilotage des Livraisons
+                </div>
+                <ul class="space-y-2 text-slate-700">
+                    <li><strong>• Rôles Définis :</strong> Product Owner (représente l'EMSI et les besoins métiers), Scrum Master (garant du rythme et de la levée des blocages), Dev Team de 6 ingénieurs.</li>
+                    <li><strong>• Sprints Courts de 2 Semaines :</strong> Découpage en 5 itérations avec livrables fonctionnels déployables et testables à chaque fin de Sprint.</li>
+                    <li><strong>• Rituels Rigoureux :</strong>
+                        <div class="text-[11px] text-slate-600 pl-2 mt-0.5">
+                            - <em>Daily Standup</em> (10 min tous les matins)<br>
+                            - <em>Sprint Planning</em> (estimation en Story Points)<br>
+                            - <em>Sprint Review</em> (Démo live au professeur)<br>
+                            - <em>Rétrospective</em> (Amélioration continue de l'équipe)
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Pôle XP -->
+            <div class="p-4 border-2 border-slate-700 rounded-xl bg-white shadow-sm">
+                <div class="flex items-center gap-2 font-bold text-slate-900 text-sm border-b border-slate-200 pb-2 mb-2">
+                    <span class="px-2 py-0.5 rounded bg-slate-800 text-white text-[10px]">XP (eXtreme Programming)</span>
+                    Qualité Technique & Zéro Bug
+                </div>
+                <ul class="space-y-2 text-slate-700">
+                    <li><strong>• Test-Driven Development (TDD) :</strong> Cycle strict <em>Red $\rightarrow$ Green $\rightarrow$ Refactor</em>. Les tests unitaires (JUnit 5, Mockito) sont écrits avant le code métier pour garantir une couverture &gt; 75%.</li>
+                    <li><strong>• Pair Programming (Binômes) :</strong> L'équipe de 6 est organisée en **3 binômes spécialisés** qui relisent et valident mutuellement chaque ligne de code.</li>
+                    <li><strong>• Intégration Continue (CI/CD) :</strong> GitHub Actions compile et exécute automatiquement les tests à chaque Pull Request. Zéro merge direct sur la branche <code>main</code>.</li>
+                    <li><strong>• Refactoring & Simple Design :</strong> Élimination immédiate de la dette technique ; architecture en monolithe modulaire propre.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Répartition de l'équipe de 6 ingénieurs -->
+        <h3 class="font-bold text-slate-900 text-sm mt-5 mb-2">Organisation Concrète de l'Équipe (3 Binômes XP)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 25%;">Binôme XP</th>
+                    <th style="width: 25%;">Rôle & Responsabilité</th>
+                    <th style="width: 50%;">Périmètre Technique Affecté</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="font-bold text-emerald-900">Binôme 1 (2 Ingénieurs)</td>
+                    <td>Core Backend & Sécurité</td>
+                    <td>Spring Boot 3, Spring Security JWT, Multi-Tenant Hibernate 6, Migrations Flyway PostgreSQL, Délibérations et Calcul de notes.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-emerald-900">Binôme 2 (2 Ingénieurs)</td>
+                    <td>Client Web & Logistique</td>
+                    <td>React, TypeScript, Tailwind CSS, Interface de saisie des notes sans Excel, Grille interactive d'EDT et tableaux de bord financiers.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-emerald-900">Binôme 3 (2 Ingénieurs)</td>
+                    <td>Mobile Flutter & Moteur IA</td>
+                    <td>Application mobile Flutter (Scan QR code dynamique, push cahier de texte), Serveur local Ollama (Llama3) et Solveur OR-Tools.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- PAGE 4 : LE PRODUCT BACKLOG INITIAL (USER STORIES GHERKIN) -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-xl font-black text-emerald-900 border-b-2 border-emerald-900 pb-1 mb-4 uppercase flex justify-between items-center">
+            <span>4. Product Backlog Initial : User Stories & Critères Gherkin</span>
+            <span class="text-xs font-normal text-slate-500 lowercase">spécifications vérifiables</span>
+        </h2>
+
+        <div class="space-y-3">
+
+            <!-- US-01 : Planning Multi-Sites -->
+            <div class="avoid-break border border-slate-300 rounded-lg p-3 bg-white">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-xs text-emerald-900">US-01 [EPIC PLANNING] : Emploi du Temps Multi-Campus Gueliz ⇄ Targa</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">8 Story Points • MUST</span>
+                </div>
+                <div class="text-[11px] text-slate-700">
+                    <strong>En tant que</strong> Responsable de Planification,<br>
+                    <strong>Je veux</strong> générer un emploi du temps automatique sous OR-Tools,<br>
+                    <strong>Afin de</strong> garantir qu'aucun professeur n'enchaîne un cours à Gueliz puis à Targa sans au moins 45 minutes de trajet.
+                </div>
+                <div class="gherkin-box">
+                    <strong>Critère d'Acceptation (Gherkin) :</strong><br>
+                    <strong>GIVEN</strong> un enseignant affecté à un cours se terminant à 10h15 sur le campus de Gueliz<br>
+                    <strong>WHEN</strong> le solveur OR-Tools planifie sa prochaine séance sur le campus de Targa<br>
+                    <strong>THEN</strong> l'heure de début minimale autorisée à Targa doit être &ge; 11h00 (45 minutes de battement obligatoire).
+                </div>
+            </div>
+
+            <!-- US-02 : Cahier de texte push -->
+            <div class="avoid-break border border-slate-300 rounded-lg p-3 bg-white">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-xs text-emerald-900">US-02 [EPIC PÉDAGOGIE] : Rapport de Séance Immédiat sur Notification Push</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">5 Story Points • MUST</span>
+                </div>
+                <div class="text-[11px] text-slate-700">
+                    <strong>En tant qu'</strong> Enseignant (Permanent ou Vacataire),<br>
+                    <strong>Je veux</strong> recevoir une notification push sur mon smartphone dès la sonnerie de fin de cours,<br>
+                    <strong>Afin de</strong> renseigner mon rapport de séance (chapitre traité, objectifs, devoirs) en moins de 60 secondes sans l'oublier.
+                </div>
+                <div class="gherkin-box">
+                    <strong>Critère d'Acceptation (Gherkin) :</strong><br>
+                    <strong>GIVEN</strong> une séance planifiée de 08h30 à 10h15<br>
+                    <strong>WHEN</strong> l'horloge système atteint 10h15<br>
+                    <strong>THEN</strong> une notification push FCM est envoyée sur l'application mobile du professeur ouvrant directement le formulaire pré-rempli.
+                </div>
+            </div>
+
+            <!-- US-03 : Saisie Notes sans Excel -->
+            <div class="avoid-break border border-slate-300 rounded-lg p-3 bg-white">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-xs text-emerald-900">US-03 [EPIC ÉVALUATION] : Saisie Directe des Notes & Délibération sans Fichier Excel</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">8 Story Points • MUST</span>
+                </div>
+                <div class="text-[11px] text-slate-700">
+                    <strong>En tant qu'</strong> Enseignant et Chef de Filière,<br>
+                    <strong>Je veux</strong> saisir les notes sur une grille web interactive et lancer le calcul de délibération en un clic,<br>
+                    <strong>Afin d'</strong> éradiquer les tableurs Excel et détecter immédiatement les notes éliminatoires (&lt; 7.00).
+                </div>
+                <div class="gherkin-box">
+                    <strong>Critère d'Acceptation (Gherkin) :</strong><br>
+                    <strong>GIVEN</strong> un étudiant ayant une moyenne de module à 12.50 mais un élément de module à 06.50<br>
+                    <strong>WHEN</strong> le moteur de délibération exécute l'analyse du semestre<br>
+                    <strong>THEN</strong> le module est marqué "NON VALIDÉ - RATTRAPAGE OBLIGATOIRE" en raison du seuil éliminatoire (&lt; 7.00).
+                </div>
+            </div>
+
+            <!-- US-04 : IA Ollama Matching PFE -->
+            <div class="avoid-break border border-slate-300 rounded-lg p-3 bg-white">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-xs text-emerald-900">US-04 [EPIC PFE & IA] : Affectation Intelligente des Jurys selon la Spécialité Technique</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">8 Story Points • MUST</span>
+                </div>
+                <div class="text-[11px] text-slate-700">
+                    <strong>En tant que</strong> Responsable de Filière,<br>
+                    <strong>Je veux</strong> que le moteur IA Ollama analyse la description du sujet PFE,<br>
+                    <strong>Afin d'</strong> affecter un encadrant et des jurys experts de la même technologie (ex: Java/Spring Boot vs Laravel vs IA).
+                </div>
+                <div class="gherkin-box">
+                    <strong>Critère d'Acceptation (Gherkin) :</strong><br>
+                    <strong>GIVEN</strong> un sujet de PFE axé sur "Microservices Spring Cloud & Kubernetes"<br>
+                    <strong>WHEN</strong> le moteur d'IA extrait les compétences et calcule le scoring des enseignants<br>
+                    <strong>THEN</strong> le top 3 des jurys recommandés affiche exclusivement des enseignants certifiés ou ayant enseigné ces technos, avec score explicatif.
+                </div>
+            </div>
+
+            <!-- US-05 : Suivi Scolarité & Verrou -->
+            <div class="avoid-break border border-slate-300 rounded-lg p-3 bg-white">
+                <div class="flex items-center justify-between mb-1">
+                    <span class="font-bold text-xs text-emerald-900">US-05 [EPIC SCOLARITÉ & TRÉSORERIE] : Détection des Impayés & Verrou Administratif</span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">5 Story Points • MUST</span>
+                </div>
+                <div class="text-[11px] text-slate-700">
+                    <strong>En tant qu'</strong> Agent Financier,<br>
+                    <strong>Je veux</strong> identifier les reliquats de scolarité non réglés,<br>
+                    <strong>Afin de</strong> relancer les familles et bloquer automatiquement le téléchargement des attestations officielles sans pénaliser les cours.
+                </div>
+                <div class="gherkin-box">
+                    <strong>Critère d'Acceptation (Gherkin) :</strong><br>
+                    <strong>GIVEN</strong> un étudiant présentant un retard de scolarité &gt; 10 jours ouvrés<br>
+                    <strong>WHEN</strong> cet étudiant clique sur "Télécharger mon attestation de scolarité"<br>
+                    <strong>THEN</strong> le système refuse la délivrance et affiche : "Veuillez régulariser votre situation financière auprès de la comptabilité".
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ==================================================================== -->
+    <!-- PAGE 5 : ARCHITECTURE TECHNIQUE & PLANNING DES SPRINTS -->
+    <!-- ==================================================================== -->
+    <div class="page-break pt-4">
+        <h2 class="text-xl font-black text-emerald-900 border-b-2 border-emerald-900 pb-1 mb-4 uppercase flex justify-between items-center">
+            <span>5. Architecture Technique & Feuille de Route (5 Sprints)</span>
+            <span class="text-xs font-normal text-slate-500 lowercase">socle d'ingénierie</span>
+        </h2>
+
+        <!-- Stack et DB -->
+        <div class="grid grid-cols-2 gap-4 text-xs mb-4">
+            <div class="p-3 bg-slate-50 border border-slate-300 rounded-lg">
+                <strong class="text-emerald-900 block mb-1">Stack Technologique Choisie :</strong>
+                <ul class="space-y-1 text-slate-700 text-[11px]">
+                    <li>• <strong>Backend :</strong> Java 21 + Spring Boot 3 (Monolithe modulaire, Spring Security, JWT).</li>
+                    <li>• <strong>Frontend :</strong> React 18 + TypeScript + Vite + Tailwind CSS.</li>
+                    <li>• <strong>Mobile :</strong> Flutter 3+ & Dart (Android & iOS natif, Camera QR, FCM Push).</li>
+                    <li>• <strong>Base de Données :</strong> PostgreSQL 15+ gérée par migrations <strong>Flyway V1 (40 tables)</strong>.</li>
+                    <li>• <strong>IA & Optimisation :</strong> Ollama (Llama3 local sans cloud tiers) & Google OR-Tools Java API.</li>
+                </ul>
+            </div>
+            <div class="p-3 bg-slate-50 border border-slate-300 rounded-lg">
+                <strong class="text-emerald-900 block mb-1">Sécurité & Isolation Multi-Tenants :</strong>
+                <ul class="space-y-1 text-slate-700 text-[11px]">
+                    <li>• Résolution stricte du <code>tenant_id</code> via le contexte JWT authentifié (aucun header falsifiable).</li>
+                    <li>• Filtres Hibernate 6 <code>@TenantId</code> natifs garantissant l'étanchéité absolue entre établissements.</li>
+                    <li>• Conformité réglementaire CNDP (Loi 09-08 Maroc sur la protection des données personnelles).</li>
+                    <li>• Audit Trail immuable pour chaque modification de note ou opération de jury.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Feuille de route des 5 Sprints -->
+        <h3 class="font-bold text-slate-900 text-sm mb-2">Planning Directeur Agile (5 Sprints de 2 Semaines)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 12%;">Sprint</th>
+                    <th style="width: 18%;">Dates Cibles</th>
+                    <th style="width: 45%;">Objectifs & Livrables Concrets (Incrément Produit)</th>
+                    <th style="width: 25%;">Critère de Démo (Sprint Review)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="font-bold text-emerald-900">Sprint 1</td>
+                    <td>Semaines 1 - 2</td>
+                    <td>Socle Spring Boot 3, Multi-Tenant Hibernate, Schéma Flyway V1 (40 tables), Gestion des Campus Gueliz & Targa et Salles.</td>
+                    <td>Authentification JWT fonctionnelle et affichage des campus sur React & Flutter.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-emerald-900">Sprint 2</td>
+                    <td>Semaines 3 - 4</td>
+                    <td>Moteur d'EDT OR-Tools (contrainte 45 min Gueliz ⇄ Targa), QR Code de présence dynamique et push mobile fin de cours (cahier de texte).</td>
+                    <td>Génération sans conflit d'un planning et réception du push mobile à la fin du cours.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-emerald-900">Sprint 3</td>
+                    <td>Semaines 5 - 6</td>
+                    <td>Saisie des notes directe en ligne (adieu Excel), calcul automatique des moyennes, détection éliminatoires et PV de délibération.</td>
+                    <td>Calcul en direct d'un PV de délibération sans passer par aucun fichier Excel.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-emerald-900">Sprint 4</td>
+                    <td>Semaines 7 - 8</td>
+                    <td>Module Soutenances (2A à 5A), templates officiels EMSI (Word/LaTeX/PPT), pipeline IA Ollama de matching des jurys par spécialité.</td>
+                    <td>Recommandation IA en direct d'un jury spécialisé à partir du texte d'un sujet PFE.</td>
+                </tr>
+                <tr>
+                    <td class="font-bold text-emerald-900">Sprint 5</td>
+                    <td>Semaines 9 - 10</td>
+                    <td>Module Trésorerie scolarité (impayés & verrou), inventaire et ticketing matériel des salles, tests E2E et recette finale.</td>
+                    <td>Parcours complet testé de bout en bout et validation finale pour mise en production.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Conclusion & Engagement -->
+        <div class="mt-6 p-4 bg-emerald-950 text-white rounded-xl text-xs flex items-center justify-between">
+            <div>
+                <span class="font-bold text-sm text-emerald-400 block mb-0.5">Engagement Qualité de l'Équipe Ingénieurs D2SI</span>
+                <span>Chaque incrément logiciel sera démontré en direct lors des revues de sprint avec une couverture de tests TDD rigoureuse.</span>
+            </div>
+            <div class="text-right shrink-0">
+                <span class="inline-block px-3 py-1 bg-emerald-800 text-emerald-200 rounded font-bold text-[10px] uppercase tracking-wider">
+                    Dossier Prêt pour Soutenance
+                </span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNiVora ERP — Galerie Architecture & Diagrammes</title>
+<style>
+  :root {
+    --primary: #1E3A5F;
+    --accent: #2563EB;
+    --accent2: #059669;
+    --bg: #F8FAFC;
+    --card: #FFFFFF;
+    --border: #E2E8F0;
+    --text: #1E293B;
+    --muted: #64748B;
+    --tag-blue: #DBEAFE;
+    --tag-green: #DCFCE7;
+    --tag-orange: #FEF3C7;
+    --tag-purple: #F3E8FF;
+    --tag-red: #FEE2E2;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(135deg, #1E3A5F 0%, #2563EB 50%, #059669 100%);
+    color: white;
+    padding: 3rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+  .header-content { position: relative; z-index: 1; }
+  .header h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .header h2 { font-size: 1.3rem; font-weight: 400; opacity: 0.9; margin-bottom: 1rem; }
+  .header-meta { font-size: 0.9rem; opacity: 0.7; }
+  .badge-row { display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap; margin-top: 1rem; }
+  .badge { background: rgba(255,255,255,0.2); padding: 0.3rem 0.9rem; border-radius: 999px; font-size: 0.85rem; backdrop-filter: blur(4px); }
+
+  /* STATS BAR */
+  .stats-bar {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    padding: 1.2rem 2rem;
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .stat { text-align: center; }
+  .stat-num { font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: 0.8rem; color: var(--muted); margin-top: 0.1rem; }
+
+  /* NAVIGATION TABS */
+  .nav-tabs {
+    background: white;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+    sticky: top;
+    top: 0;
+    z-index: 100;
+    padding: 0 2rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    position: sticky;
+  }
+  .tab {
+    padding: 1rem 1.5rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab:hover { color: var(--accent); background: #F0F9FF; }
+  .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+  /* MAIN CONTENT */
+  .main { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+
+  /* SECTION */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .section-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border);
+  }
+  .section-header h2 { font-size: 1.6rem; color: var(--primary); }
+  .section-header p { color: var(--muted); margin-top: 0.4rem; }
+
+  /* GRID */
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: 1.5rem; }
+  .grid-3 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+
+  /* DIAGRAM CARD */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    transition: all 0.25s ease;
+    cursor: pointer;
+  }
+  .card:hover {
+    box-shadow: 0 8px 24px rgba(37,99,235,0.15);
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+  .card-img {
+    width: 100%;
+    background: #F0F4FF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 220px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  .card-img img {
+    width: 100%;
+    height: 220px;
+    object-fit: contain;
+    object-position: center top;
+    transition: transform 0.3s;
+    background: white;
+  }
+  .card:hover .card-img img { transform: scale(1.03); }
+  .card-img.placeholder {
+    background: linear-gradient(135deg, #EFF6FF, #F0FDF4);
+    font-size: 3rem;
+    min-height: 180px;
+  }
+  .card-body { padding: 1rem 1.2rem; }
+  .card-title { font-size: 1rem; font-weight: 700; color: var(--primary); margin-bottom: 0.3rem; }
+  .card-desc { font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
+  .card-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.6rem; }
+  .tag { padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+  .tag-blue { background: var(--tag-blue); color: #1D4ED8; }
+  .tag-green { background: var(--tag-green); color: #065F46; }
+  .tag-orange { background: var(--tag-orange); color: #92400E; }
+  .tag-purple { background: var(--tag-purple); color: #5B21B6; }
+  .tag-red { background: var(--tag-red); color: #991B1B; }
+
+  /* LIGHTBOX */
+  .lightbox {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.92);
+    z-index: 9999;
+    cursor: zoom-out;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+  .lightbox.open { display: flex; }
+  .lightbox-inner { position: relative; max-width: 95vw; max-height: 90vh; }
+  .lightbox img { max-width: 100%; max-height: 85vh; border-radius: 8px; object-fit: contain; }
+  .lightbox-close {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    color: white;
+    font-size: 2rem;
+    cursor: pointer;
+    background: rgba(255,255,255,0.15);
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+  }
+  .lightbox-title {
+    color: white;
+    text-align: center;
+    margin-top: 0.8rem;
+    font-size: 0.95rem;
+    opacity: 0.8;
+  }
+
+  /* ARCHITECTURE SECTION */
+  .arch-overview {
+    background: linear-gradient(135deg, #1E3A5F, #2563EB);
+    border-radius: 16px;
+    padding: 2rem;
+    color: white;
+    margin-bottom: 2rem;
+  }
+  .arch-overview h3 { font-size: 1.3rem; margin-bottom: 1rem; }
+  .arch-layers { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+  .arch-layer {
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 1rem;
+    border: 1px solid rgba(255,255,255,0.2);
+    backdrop-filter: blur(4px);
+  }
+  .arch-layer-title { font-weight: 700; margin-bottom: 0.5rem; font-size: 0.9rem; }
+  .arch-layer-items { font-size: 0.8rem; opacity: 0.85; line-height: 1.8; }
+
+  /* TECH STACK */
+  .tech-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+  .tech-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  }
+  .tech-icon { font-size: 2rem; margin-bottom: 0.4rem; }
+  .tech-name { font-weight: 700; font-size: 0.9rem; color: var(--primary); }
+  .tech-role { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
+
+  /* MODULES TABLE */
+  .modules-table { width: 100%; border-collapse: collapse; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .modules-table th { background: var(--primary); color: white; padding: 0.8rem 1rem; text-align: left; font-size: 0.85rem; }
+  .modules-table td { padding: 0.8rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+  .modules-table tr:hover td { background: #F8FAFF; }
+  .status-badge { padding: 0.2rem 0.7rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+  .status-done { background: #DCFCE7; color: #065F46; }
+  .status-progress { background: #FEF3C7; color: #92400E; }
+
+  /* FOOTER */
+  .footer {
+    background: var(--primary);
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    padding: 2rem;
+    margin-top: 4rem;
+    font-size: 0.85rem;
+  }
+  .footer strong { color: white; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .header h1 { font-size: 1.6rem; }
+    .grid { grid-template-columns: 1fr; }
+    .nav-tabs { padding: 0 0.5rem; }
+    .tab { padding: 0.8rem 1rem; font-size: 0.8rem; }
+    .main { padding: 1rem; }
+  }
+
+  @media print {
+    .nav-tabs, .lightbox { display: none; }
+    .section { display: block !important; page-break-before: always; }
+    .card { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-content">
+    <div style="font-size:3rem; margin-bottom:0.5rem;">🎓</div>
+    <h1>UNiVora ERP — EMSI Campus</h1>
+    <h2>Galerie Complète Architecture & Diagrammes UML</h2>
+    <p class="header-meta">Projet de Fin d'Études · Encadrante : <strong>Pr. ZGANDRI</strong> · Jury : Pr. AIT OUNEJJAR Lahoussaine</p>
+    <div class="badge-row">
+      <span class="badge">🏫 EMSI Marrakech</span>
+      <span class="badge">📅 2024–2025</span>
+      <span class="badge">🛠 NestJS + Flutter + PostgreSQL</span>
+      <span class="badge">🤖 OR-Tools + Ollama AI</span>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-bar">
+  <div class="stat"><div class="stat-num">7</div><div class="stat-label">Modules Fonctionnels</div></div>
+  <div class="stat"><div class="stat-num">29</div><div class="stat-label">Diagrammes UML</div></div>
+  <div class="stat"><div class="stat-num">2</div><div class="stat-label">Campus Couverts</div></div>
+  <div class="stat"><div class="stat-num">5</div><div class="stat-label">Rôles Utilisateurs</div></div>
+  <div class="stat"><div class="stat-num">12</div><div class="stat-label">Nouvelles Fonctions</div></div>
+  <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Offline-First Mobile</div></div>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="tab active" onclick="showTab('overview')">🏠 Vue d'ensemble</div>
+  <div class="tab" onclick="showTab('functional')">⚡ Diagrammes Fonctionnels</div>
+  <div class="tab" onclick="showTab('uml')">📐 Diagrammes UML</div>
+  <div class="tab" onclick="showTab('architecture')">🏗️ Architecture</div>
+  <div class="tab" onclick="showTab('tech')">🛠 Stack Technique</div>
+  <div class="tab" onclick="showTab('modules')">📋 Modules ERP</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ===== TAB: OVERVIEW ===== -->
+  <div id="overview" class="section active">
+    <div class="section-header">
+      <h2>🏠 Vue d'ensemble du Projet UNiVora ERP</h2>
+      <p>Système de gestion universitaire complet pour l'EMSI — Guéliz & Targa, Marrakech</p>
+    </div>
+
+    <div class="arch-overview">
+      <h3>🎯 Vision du Projet</h3>
+      <p style="opacity:0.9; line-height:1.7; margin-bottom:1.5rem;">
+        UNiVora est un ERP universitaire moderne multi-tenant couvrant l'ensemble du cycle de vie académique :
+        emploi du temps automatisé (OR-Tools), présence par QR code anti-fraude, délibération avec algorithme
+        de calcul transparent, gestion PFE avec IA sémantique (Ollama Llama 3.2), et finance intégrée.
+      </p>
+      <div class="arch-layers">
+        <div class="arch-layer">
+          <div class="arch-layer-title">📱 Frontend Mobile</div>
+          <div class="arch-layer-items">Flutter (iOS + Android)<br>Offline-First (Isar DB)<br>BLoC State Management<br>QR Scanner natif</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-title">🖥 Frontend Web</div>
+          <div class="arch-layer-items">Next.js 14 (App Router)<br>TailwindCSS<br>Shadcn/UI<br>WebSocket temps réel</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-title">⚙️ Backend API</div>
+          <div class="arch-layer-items">NestJS Microservices<br>REST + WebSocket<br>Keycloak OIDC<br>Kong API Gateway</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-title">🗄 Données</div>
+          <div class="arch-layer-items">PostgreSQL (RLS Multi-tenant)<br>Redis Cache<br>Elasticsearch Logs<br>S3 Fichiers</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-title">🤖 IA & Optimisation</div>
+          <div class="arch-layer-items">OR-Tools Scheduling<br>Ollama Llama 3.2 PFE<br>Cosine Similarity<br>Anti-plagiat Turnitin</div>
+        </div>
+        <div class="arch-layer">
+          <div class="arch-layer-title">☁️ Infrastructure</div>
+          <div class="arch-layer-items">Docker + Kubernetes<br>Cloudflare CDN<br>GitHub Actions CI/CD<br>Prometheus + Grafana</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7 modules cards -->
+    <h3 style="margin-bottom:1rem; color:var(--primary);">📦 Les 7 Modules Fonctionnels</h3>
+    <div class="grid grid-3">
+      <div class="card" style="cursor:default;">
+        <div class="card-body">
+          <div style="font-size:2rem; margin-bottom:0.5rem;">📅</div>
+          <div class="card-title">Gestion Emploi du Temps</div>
+          <div class="card-desc">Génération automatique OR-Tools, gestion contraintes multi-campus, buffer 45min Guéliz↔Targa (RULE-GEO-01), export iCal.</div>
+          <div class="card-tags"><span class="tag tag-blue">OR-Tools CP-SAT</span><span class="tag tag-orange">Multi-campus</span></div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-body">
+          <div style="font-size:2rem; margin-bottom:0.5rem;">✅</div>
+          <div class="card-title">Gestion des Présences</div>
+          <div class="card-desc">QR éphémère HMAC-SHA256 (15s), géofencing 50m, anti-fraude device, log blockchain immuable (Loi 09-08 CNDP).</div>
+          <div class="card-tags"><span class="tag tag-red">Anti-fraude</span><span class="tag tag-green">QR HMAC</span></div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-body">
+          <div style="font-size:2rem; margin-bottom:0.5rem;">📝</div>
+          <div class="card-title">Gestion Notes & Évaluations</div>
+          <div class="card-desc">Saisie CC/TP/Examen, validation par admin, statistiques par module, import Excel/CSV, export PDF relevé.</div>
+          <div class="card-tags"><span class="tag tag-blue">PDF auto</span><span class="tag tag-purple">Import CSV</span></div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-body">
+          <div style="font-size:2rem; margin-bottom:0.5rem;">⚖️</div>
+          <div class="card-title">Délibération & Résultats</div>
+          <div class="card-desc">Algorithme pondéré MG = Σ(NM×C)/Σ(C), seuil éliminatoire 7/20 (RULE-DELIB-04), PV signé numériquement.</div>
+          <div class="card-tags"><span class="tag tag-orange">RULE-DELIB-04</span><span class="tag tag-green">PV Digital</span></div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-body">
+          <div style="font-size:2rem; margin-bottom:0.5rem;">🎓</div>
+          <div class="card-title">Gestion PFE & Stages</div>
+          <div class="card-desc">IA sémantique Ollama Llama 3.2 (cosine > 0.70), anti-plagiat Turnitin, planning soutenance OR-Tools, jury externe.</div>
+          <div class="card-tags"><span class="tag tag-purple">Ollama AI</span><span class="tag tag-red">Turnitin</span></div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-body">
+          <div style="font-size:2rem; margin-bottom:0.5rem;">💰</div>
+          <div class="card-title">Gestion Finance & Scolarité</div>
+          <div class="card-desc">Paiement CMI en ligne, blocage attestations si retard > 10j (RULE-FIN-06), reçus automatiques, rapports comptables.</div>
+          <div class="card-tags"><span class="tag tag-orange">CMI Pay</span><span class="tag tag-red">RULE-FIN-06</span></div>
+        </div>
+      </div>
+      <div class="card" style="cursor:default;">
+        <div class="card-body">
+          <div style="font-size:2rem; margin-bottom:0.5rem;">📢</div>
+          <div class="card-title">Notifications & Communication</div>
+          <div class="card-desc">Push FCM, email Brevo, WebSocket temps réel, SMS Twilio (urgences), préférences par canal, notifications groupées.</div>
+          <div class="card-tags"><span class="tag tag-blue">FCM Push</span><span class="tag tag-green">WebSocket</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: FUNCTIONAL DIAGRAMS ===== -->
+  <div id="functional" class="section">
+    <div class="section-header">
+      <h2>⚡ Diagrammes Fonctionnels & Métier</h2>
+      <p>12 diagrammes couvrant l'ensemble des processus métier et fonctionnalités de UNiVora ERP</p>
+    </div>
+    <div class="grid" id="functional-grid">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+
+  <!-- ===== TAB: UML DIAGRAMS ===== -->
+  <div id="uml" class="section">
+    <div class="section-header">
+      <h2>📐 Diagrammes UML — Modélisation Complète</h2>
+      <p>17 diagrammes UML existants (Use Case, Séquence, Classe, État, Activité, Composant, Déploiement)</p>
+    </div>
+    <div class="grid" id="uml-grid">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+
+  <!-- ===== TAB: ARCHITECTURE ===== -->
+  <div id="architecture" class="section">
+    <div class="section-header">
+      <h2>🏗️ Architecture Système</h2>
+      <p>Architecture C4, microservices NestJS, multi-tenant PostgreSQL RLS, Kubernetes</p>
+    </div>
+
+    <!-- C4 Levels explanation -->
+    <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1rem; margin-bottom:2rem;">
+      <div style="background:white; border:1px solid var(--border); border-radius:10px; padding:1.2rem; border-top:4px solid #2563EB;">
+        <div style="font-weight:700; color:#1E3A5F; margin-bottom:0.4rem;">📊 C4 Niveau 1 — Contexte</div>
+        <div style="font-size:0.85rem; color:#64748B;">UNiVora dans son écosystème : étudiants, professeurs, admin, ministère, services cloud externes.</div>
+      </div>
+      <div style="background:white; border:1px solid var(--border); border-radius:10px; padding:1.2rem; border-top:4px solid #059669;">
+        <div style="font-weight:700; color:#1E3A5F; margin-bottom:0.4rem;">📊 C4 Niveau 2 — Conteneurs</div>
+        <div style="font-size:0.85rem; color:#64748B;">App Mobile Flutter, Web Next.js, API Gateway, Backend NestJS, PostgreSQL, Redis, Elasticsearch.</div>
+      </div>
+      <div style="background:white; border:1px solid var(--border); border-radius:10px; padding:1.2rem; border-top:4px solid #7C3AED;">
+        <div style="font-weight:700; color:#1E3A5F; margin-bottom:0.4rem;">📊 C4 Niveau 3 — Composants</div>
+        <div style="font-size:0.85rem; color:#64748B;">Modules NestJS : Auth, Schedule, Attendance, Grades, Deliberation, PFE, Finance, Notification.</div>
+      </div>
+      <div style="background:white; border:1px solid var(--border); border-radius:10px; padding:1.2rem; border-top:4px solid #DC2626;">
+        <div style="font-weight:700; color:#1E3A5F; margin-bottom:0.4rem;">🔐 Sécurité STRIDE</div>
+        <div style="font-size:0.85rem; color:#64748B;">Modèle menaces complet : Spoofing, Tampering, Repudiation, Info Disclosure, DoS, Elevation.</div>
+      </div>
+    </div>
+
+    <div class="grid" id="arch-grid">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+
+  <!-- ===== TAB: TECH ===== -->
+  <div id="tech" class="section">
+    <div class="section-header">
+      <h2>🛠 Stack Technique Complète</h2>
+      <p>Technologies choisies avec justification architecturale</p>
+    </div>
+    <div class="tech-grid">
+      <div class="tech-card"><div class="tech-icon">🐦</div><div class="tech-name">Flutter</div><div class="tech-role">App Mobile iOS/Android<br>Offline-First (Isar DB)</div></div>
+      <div class="tech-card"><div class="tech-icon">⚛️</div><div class="tech-name">Next.js 14</div><div class="tech-role">Web App (App Router)<br>SSR + TailwindCSS</div></div>
+      <div class="tech-card"><div class="tech-icon">🟢</div><div class="tech-name">NestJS</div><div class="tech-role">Backend API REST<br>Microservices + DI</div></div>
+      <div class="tech-card"><div class="tech-icon">🐘</div><div class="tech-name">PostgreSQL</div><div class="tech-role">Base principale<br>RLS Multi-tenant</div></div>
+      <div class="tech-card"><div class="tech-icon">🔴</div><div class="tech-name">Redis</div><div class="tech-role">Cache distribué<br>Sessions & Rate limit</div></div>
+      <div class="tech-card"><div class="tech-icon">🔍</div><div class="tech-name">Elasticsearch</div><div class="tech-role">Logs & Recherche<br>Index par tenant</div></div>
+      <div class="tech-card"><div class="tech-icon">🔐</div><div class="tech-name">Keycloak</div><div class="tech-role">OIDC / OAuth2<br>RBAC & MFA</div></div>
+      <div class="tech-card"><div class="tech-icon">🚪</div><div class="tech-name">Kong Gateway</div><div class="tech-role">API Gateway<br>Rate limiting & Auth</div></div>
+      <div class="tech-card"><div class="tech-icon">🤖</div><div class="tech-name">OR-Tools</div><div class="tech-role">CP-SAT Scheduling<br>Contraintes dures/souples</div></div>
+      <div class="tech-card"><div class="tech-icon">🦙</div><div class="tech-name">Ollama Llama 3.2</div><div class="tech-role">IA locale PFE<br>Cosine similarity > 0.70</div></div>
+      <div class="tech-card"><div class="tech-icon">🐳</div><div class="tech-name">Docker + K8s</div><div class="tech-role">Conteneurisation<br>Auto-scaling HPA</div></div>
+      <div class="tech-card"><div class="tech-icon">🌍</div><div class="tech-name">Cloudflare</div><div class="tech-role">CDN + DDoS<br>SSL / WAF</div></div>
+      <div class="tech-card"><div class="tech-icon">📊</div><div class="tech-name">Prometheus</div><div class="tech-role">Métriques & Alertes<br>+ Grafana Dashboard</div></div>
+      <div class="tech-card"><div class="tech-icon">🐰</div><div class="tech-name">RabbitMQ</div><div class="tech-role">Message Broker<br>vhost par tenant</div></div>
+      <div class="tech-card"><div class="tech-icon">🔥</div><div class="tech-name">Firebase FCM</div><div class="tech-role">Push Notifications<br>iOS + Android</div></div>
+      <div class="tech-card"><div class="tech-icon">📧</div><div class="tech-name">Brevo (Sendinblue)</div><div class="tech-role">Emails transactionnels<br>Templates HTML</div></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB: MODULES ===== -->
+  <div id="modules" class="section">
+    <div class="section-header">
+      <h2>📋 Détail des Modules & Règles Métier</h2>
+      <p>Spécifications fonctionnelles et règles critiques de chaque module</p>
+    </div>
+    <table class="modules-table">
+      <thead>
+        <tr>
+          <th>Module</th><th>Règles Critiques</th><th>APIs Clés</th><th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>📅 Emploi du Temps</strong></td>
+          <td>RULE-GEO-01 : 45min buffer Guéliz↔Targa</td>
+          <td>POST /schedule/generate<br>GET /schedule</td>
+          <td><span class="status-badge status-done">Spécifié</span></td>
+        </tr>
+        <tr>
+          <td><strong>✅ Présences QR</strong></td>
+          <td>RULE-ATT-02 : Token HMAC-SHA256 15s<br>Géofencing 50m, Anti-fraude device</td>
+          <td>POST /attendance/scan<br>POST /attendance/session/start</td>
+          <td><span class="status-badge status-done">Spécifié</span></td>
+        </tr>
+        <tr>
+          <td><strong>📢 Notifications</strong></td>
+          <td>RULE-NOT-03 : Push à la fin exacte du cours</td>
+          <td>POST /notifications<br>POST /notifications/broadcast</td>
+          <td><span class="status-badge status-done">Spécifié</span></td>
+        </tr>
+        <tr>
+          <td><strong>⚖️ Délibération</strong></td>
+          <td>RULE-DELIB-04 : Note < 7.00 = ÉLIMINATOIRE<br>Module invalide même si MG ≥ 10</td>
+          <td>POST /deliberation/:id/run<br>POST /deliberation/:id/publish</td>
+          <td><span class="status-badge status-done">Spécifié</span></td>
+        </tr>
+        <tr>
+          <td><strong>🎓 PFE</strong></td>
+          <td>RULE-AI-05 : Ollama cosine > 0.70<br>Anti-plagiat Turnitin ≤ 20%</td>
+          <td>POST /pfe/subjects<br>POST /pfe/upload-report</td>
+          <td><span class="status-badge status-done">Spécifié</span></td>
+        </tr>
+        <tr>
+          <td><strong>💰 Finance</strong></td>
+          <td>RULE-FIN-06 : Blocage attestations si retard > 10 jours ouvrables</td>
+          <td>POST /finance/payment<br>POST /finance/block/:id</td>
+          <td><span class="status-badge status-done">Spécifié</span></td>
+        </tr>
+        <tr>
+          <td><strong>🔒 Sécurité / Audit</strong></td>
+          <td>RULE-SEC-07 : audit_logs immuable<br>Conformité Loi 09-08 CNDP Maroc · RGPD</td>
+          <td>GET /admin/audit-logs<br>(append-only)</td>
+          <td><span class="status-badge status-done">Spécifié</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div><!-- /main -->
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <div class="lightbox-inner" onclick="event.stopPropagation()">
+    <div class="lightbox-close" onclick="closeLightbox()">✕</div>
+    <img id="lightbox-img" src="" alt="">
+    <div class="lightbox-title" id="lightbox-title"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <strong>UNiVora ERP — EMSI Marrakech</strong><br>
+  Encadrante Académique : <strong>Pr. ZGANDRI</strong> · Jury : Pr. AIT OUNEJJAR Lahoussaine<br>
+  Projet de Fin d'Études · Génie Logiciel · 2024–2025<br>
+  <span style="margin-top:0.5rem; display:block; font-size:0.75rem; opacity:0.6;">
+    NestJS · Flutter · PostgreSQL · OR-Tools · Ollama AI · Kubernetes · Cloudflare
+  </span>
+</div>
+
+<script>
+// ===== DATA =====
+const FUNCTIONAL_DIAGRAMS = [
+  { file: 'assets/diagrams/dia01_functional_map_overview.png', title: 'Carte Fonctionnelle Globale', desc: 'Vue d\'ensemble des 7 modules, acteurs et flux principaux du système UNiVora ERP.', tags: [{t:'Vue globale',c:'blue'},{t:'7 modules',c:'green'}] },
+  { file: 'assets/diagrams/dia02_attendance_qr_complete.png', title: 'Présence QR — Cycle Anti-Fraude', desc: 'Flux complet de présence QR : génération HMAC, scan, géofencing 50m, anti-doublon, confirmation blockchain.', tags: [{t:'RULE-ATT-02',c:'red'},{t:'Séquence',c:'blue'},{t:'Anti-fraude',c:'orange'}] },
+  { file: 'assets/diagrams/dia03_deliberation_algorithm_detail.png', title: 'Algorithme de Délibération', desc: 'Calcul pondéré des notes (CC×40%+Exam×60%), règle éliminatoire 7/20, mentions, rattrapage.', tags: [{t:'RULE-DELIB-04',c:'orange'},{t:'Activité',c:'blue'}] },
+  { file: 'assets/diagrams/dia04_pfe_complete_lifecycle.png', title: 'Cycle de Vie PFE Complet', desc: 'De la proposition de sujet à l\'archivage : validation IA, affectation, suivi, anti-plagiat, soutenance, délibération.', tags: [{t:'RULE-AI-05',c:'purple'},{t:'État',c:'blue'},{t:'Turnitin',c:'red'}] },
+  { file: 'assets/diagrams/dia05_multitenancy_architecture.png', title: 'Architecture Multi-Tenant', desc: 'Isolation par schema PostgreSQL + RLS, namespacing Redis, vhost RabbitMQ, résolution tenant par sous-domaine.', tags: [{t:'Multi-tenant',c:'purple'},{t:'RLS PostgreSQL',c:'green'}] },
+  { file: 'assets/diagrams/dia06_notification_flows.png', title: 'Flux de Notifications', desc: '4 cas complets : Absence, Changement planning urgent (SMS), Alerte finance (RULE-FIN-06), Résultats délibération.', tags: [{t:'FCM Push',c:'orange'},{t:'WebSocket',c:'green'},{t:'SMS',c:'blue'}] },
+  { file: 'assets/diagrams/dia07_security_threat_model.png', title: 'Modèle de Menaces STRIDE', desc: 'Analyse STRIDE complète : Spoofing (MFA), Tampering (HMAC), Repudiation (audit logs), DoS (Cloudflare), Elevation (RBAC).', tags: [{t:'STRIDE',c:'red'},{t:'OWASP',c:'orange'},{t:'CNDP Loi 09-08',c:'purple'}] },
+  { file: 'assets/diagrams/dia08_data_flow_complete.png', title: 'Flux de Données Complet (DFD)', desc: 'Diagramme de flux niveau 1 : tous les acteurs, processus, datastores et services externes interconnectés.', tags: [{t:'DFD',c:'blue'},{t:'Vue système',c:'green'}] },
+  { file: 'assets/diagrams/dia09_api_endpoints_map.png', title: 'Carte des API REST', desc: 'Tous les endpoints NestJS organisés par module (Auth, Students, Schedule, Attendance, Grades, Deliberation, PFE, Finance).', tags: [{t:'REST API',c:'blue'},{t:'OpenAPI 3.1',c:'green'},{t:'8 modules',c:'orange'}] },
+  { file: 'assets/diagrams/dia10_mobile_offline_sync.png', title: 'Sync Offline-First Flutter', desc: 'Architecture Isar DB locale, file de sync différée, résolution conflits server-wins, delta sync fond de tâche.', tags: [{t:'Flutter',c:'blue'},{t:'Isar DB',c:'green'},{t:'Offline-First',c:'purple'}] },
+  { file: 'assets/diagrams/dia11_ortools_constraint_model.png', title: 'Modèle OR-Tools — Scheduling', desc: 'Variables BoolVar, contraintes dures (C1-C7 dont buffer 45min), contraintes souples pénalisées, CP-SAT solver.', tags: [{t:'OR-Tools CP-SAT',c:'purple'},{t:'RULE-GEO-01',c:'orange'}] },
+  { file: 'assets/diagrams/dia12_roles_permissions_matrix.png', title: 'Matrice RBAC Complète', desc: 'Permissions détaillées pour 7 rôles (SuperAdmin, AdminScol, Professeur, Étudiant, Chef Dept, Jury, Direction) par module.', tags: [{t:'RBAC',c:'red'},{t:'Keycloak',c:'blue'},{t:'7 rôles',c:'green'}] },
+];
+
+const UML_DIAGRAMS = [
+  { file: 'assets/diagrams/uc01_global_system.png', title: 'Cas d\'Utilisation — Système Global', desc: 'Diagramme UC global avec tous les acteurs et cas d\'utilisation principaux.', tags: [{t:'Use Case',c:'blue'},{t:'Global',c:'green'}] },
+  { file: 'assets/diagrams/uc02_student_professor.png', title: 'UC — Étudiant & Professeur', desc: 'Cas d\'utilisation détaillés des rôles Étudiant et Professeur.', tags: [{t:'Use Case',c:'blue'}] },
+  { file: 'assets/diagrams/uc03_deliberation_admin.png', title: 'UC — Délibération & Admin', desc: 'Cas d\'utilisation du processus de délibération et administration.', tags: [{t:'Use Case',c:'blue'},{t:'Délibération',c:'orange'}] },
+  { file: 'assets/diagrams/state01_seance_lifecycle.png', title: 'État — Cycle Vie Séance', desc: 'Machine à états de la séance de cours : planifiée → en cours → terminée.', tags: [{t:'State Machine',c:'purple'}] },
+  { file: 'assets/diagrams/state02_student_thesis_lifecycle.png', title: 'État — Cycle Vie PFE Étudiant', desc: 'États du dossier PFE de l\'étudiant de la soumission à l\'archivage.', tags: [{t:'State Machine',c:'purple'},{t:'PFE',c:'orange'}] },
+];
+
+const ARCH_DIAGRAMS = [
+  { file: 'assets/diagrams/dia05_multitenancy_architecture.png', title: 'Architecture Multi-Tenant', desc: 'Isolation complète par tenant avec RLS PostgreSQL et namespacing Redis.', tags: [{t:'Multi-tenant',c:'purple'}] },
+  { file: 'assets/diagrams/dia08_data_flow_complete.png', title: 'Flux de Données Niveau 1', desc: 'DFD complet montrant tous les acteurs, processus et datastores.', tags: [{t:'DFD',c:'blue'}] },
+  { file: 'assets/diagrams/dia09_api_endpoints_map.png', title: 'Carte des Endpoints API', desc: 'Tous les endpoints REST organisés par domaine fonctionnel.', tags: [{t:'REST',c:'green'}] },
+  { file: 'assets/diagrams/dia07_security_threat_model.png', title: 'Modèle de Sécurité STRIDE', desc: 'Analyse des menaces et mitigations pour chaque vecteur d\'attaque.', tags: [{t:'Sécurité',c:'red'}] },
+];
+
+// ===== RENDERING =====
+function renderCards(data, containerId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = data.map((d, i) => `
+    <div class="card" onclick="openLightbox('${d.file}', '${d.title}')">
+      <div class="card-img">
+        <img src="${d.file}" alt="${d.title}" loading="lazy" onerror="this.parentElement.innerHTML='<div style=\\'padding:2rem; text-align:center; color:#64748B;\\'>🖼 Image en cours de génération...</div>'">
+      </div>
+      <div class="card-body">
+        <div class="card-title">${d.title}</div>
+        <div class="card-desc">${d.desc}</div>
+        <div class="card-tags">${d.tags.map(t => `<span class="tag tag-${t.c}">${t.t}</span>`).join('')}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderCards(FUNCTIONAL_DIAGRAMS, 'functional-grid');
+renderCards(UML_DIAGRAMS, 'uml-grid');
+renderCards(ARCH_DIAGRAMS, 'arch-grid');
+
+// ===== TAB NAVIGATION =====
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+// ===== LIGHTBOX =====
+function openLightbox(src, title) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-title').textContent = title;
+  document.getElementById('lightbox').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+</script>
+</body>
+</html>

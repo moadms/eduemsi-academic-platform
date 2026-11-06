@@ -1,0 +1,131 @@
+@startuml dia08_data_flow_complete
+!theme plain
+skinparam backgroundColor #F8FAFC
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam roundcorner 10
+skinparam shadowing false
+skinparam arrow {
+  Color #2563EB
+  FontColor #1E40AF
+  FontSize 10
+}
+skinparam rectangle {
+  BackgroundColor #EFF6FF
+  BorderColor #2563EB
+  FontColor #1E3A5F
+}
+skinparam database {
+  BackgroundColor #DCFCE7
+  BorderColor #059669
+  FontColor #065F46
+}
+skinparam actor {
+  BackgroundColor #FEF3C7
+  BorderColor #D97706
+  FontColor #92400E
+}
+skinparam cloud {
+  BackgroundColor #FDF4FF
+  BorderColor #7C3AED
+  FontColor #5B21B6
+}
+
+title <b>🌊 Diagramme de Flux de Données — Vue Globale DFD Niveau 1</b>\nUniVora ERP · Architecture Data · EMSI 2024-2025
+
+' ACTEURS EXTERNES
+actor "👨‍🎓 Étudiant" as ETU
+actor "👨‍🏫 Professeur" as PROF
+actor "🏢 Admin\nScolarité" as ADMIN
+actor "🏫 Direction\nEmsi" as DIR
+actor "🏦 Ministère\n(API externe)" as MIN
+
+' PROCESSUS PRINCIPAUX
+rectangle "P1 🔐\nAuthentification\n& Autorisation" as P1
+rectangle "P2 📅\nGestion Emploi\ndu Temps" as P2
+rectangle "P3 ✅\nGestion\nPrésence" as P3
+rectangle "P4 📝\nGestion\nNotes & Éval." as P4
+rectangle "P5 ⚖️\nDélibération\n& Résultats" as P5
+rectangle "P6 🎓\nGestion PFE\n& Stages" as P6
+rectangle "P7 💰\nGestion\nFinance" as P7
+rectangle "P8 📢\nNotification\n& Alertes" as P8
+
+' DATASTORES
+database "DS1 🗄️\nComptes &\nProfils Utilisateurs" as DS1
+database "DS2 📅\nSeances &\nProgrammation" as DS2
+database "DS3 ✅\nRegistres\nPrésences" as DS3
+database "DS4 📊\nNotes &\nÉvaluations" as DS4
+database "DS5 🎓\nDossiers\nPFE" as DS5
+database "DS6 💰\nTransactions\nFinancières" as DS6
+database "DS7 🔒\nAudit Logs\n(Immuable)" as DS7
+
+' SERVICES EXTERNES
+cloud "☁️ Firebase FCM\nPush Notifications" as FCM
+cloud "📧 Brevo\nEmail Service" as BREVO
+cloud "🔍 Turnitin\nAnti-plagiat" as TUR
+cloud "💳 CMI\nPaiement en ligne" as CMI
+
+' FLUX ÉTUDIANT
+ETU --> P1 : Identifiants\n(email + mdp + OTP)
+P1 --> ETU : JWT Access Token
+P1 <--> DS1 : Lecture/MàJ profil
+ETU --> P3 : Scan QR + GPS
+P3 --> ETU : Confirmation présence
+ETU --> P4 : Consultation notes
+P4 --> ETU : Relevé de notes
+ETU --> P6 : Dépôt rapport PFE\n+ choix sujet
+ETU --> P7 : Paiement scolarité
+P7 --> ETU : Reçu + Attestations
+
+' FLUX PROFESSEUR
+PROF --> P2 : Saisie disponibilités\ncontraintes planning
+PROF --> P3 : Démarrer session\n(génère QR)
+P3 --> PROF : Rapport présence\n(28/32 présents)
+PROF --> P4 : Saisie notes\n(CC, TP, Examen)
+PROF --> P6 : Évaluation rapport PFE\nencadrement
+
+' FLUX ADMIN
+ADMIN --> P2 : Génération planning\nOR-Tools
+P2 --> ADMIN : Planning validé
+ADMIN --> P4 : Validation notes\nfermeture session
+ADMIN --> P5 : Lancer délibération
+P5 --> ADMIN : PV délibération PDF
+ADMIN --> P7 : Gestion paiements\nfrais scolarité
+
+' FLUX DIRECTION
+DIR --> P5 : Consultation\ntableaux de bord
+P5 --> DIR : KPIs, taux réussite\nstatistiques filières
+
+' DATASTORES connexions
+P1 --> DS7 : Log connexions
+P2 <--> DS2 : CRUD séances
+P3 <--> DS3 : Enregistrement\nprésences
+P3 --> DS7 : Audit QR scans
+P4 <--> DS4 : Notes par étudiant
+P5 <--> DS4 : Lecture notes
+P5 --> DS7 : PV délibération
+P6 <--> DS5 : Dossiers PFE
+P7 <--> DS6 : Transactions
+
+' SERVICES EXTERNES
+P8 --> FCM : Push notifications
+P8 --> BREVO : Emails
+P6 --> TUR : Vérification\nanti-plagiat
+P7 <--> CMI : Paiement en ligne\n(redirect + callback)
+P5 --> MIN : Export résultats\n(API Ministère)
+
+' RENVOIS NOTIFICATION
+P3 --> P8 : Absence détectée
+P5 --> P8 : Résultats publiés
+P7 --> P8 : Retard paiement
+P2 --> P8 : Changement planning
+
+note bottom of DS7 #FEF2F2
+  <b>DS7 — Audit Logs Immuable :</b>
+  PostgreSQL + append-only policy
+  Conformité Loi 09-08 CNDP Maroc
+  Rétention : 10 ans
+  Hash cryptographique de chaque entrée
+end note
+
+@enduml

@@ -1,0 +1,42 @@
+@startuml uc03_deliberation_admin
+title Cas d'Utilisation Détaillés - Délibération Zéro Excel & Décisions Académiques
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+actor "Enseignant" as Prof
+actor "Chef de Département" as DeptHead
+actor "Membres du Jury" as Jury
+actor "Direction des Études" as DirEtudes
+actor "Étudiant" as Student
+
+rectangle "Module Délibération & Examens Zéro Excel" {
+    usecase "Saisir les Notes d'Évaluation (CC / TP / Examen)" as UC_EnterGrades
+    usecase "Sceller les Notes avant Délibération" as UC_SealGrades
+    usecase "Exécuter l'Algorithme de Délibération" as UC_CalcDelib
+    usecase "Calculer la Moyenne Modulaire Pondérée" as UC_CalcModularAvg
+    usecase "Contrôler la Note Éliminatoire (< 7.00/20)" as UC_CheckEliminatory
+    usecase "Appliquer les Règles de Compensation" as UC_ApplyCompensation
+    usecase "Générer la Liste des Rattrapages" as UC_GenRetakes
+    usecase "Convoquer la Commission du Jury" as UC_ConveneJury
+    usecase "Signer Électroniquement le PV Officiel" as UC_SignPV
+    usecase "Publier les Résultats & Relevés de Notes" as UC_PublishResults
+    usecase "Consulter son Relevé de Notes Officiel" as UC_ViewReportCard
+}
+
+Prof --> UC_EnterGrades
+DeptHead --> UC_SealGrades
+DeptHead --> UC_CalcDelib
+
+UC_CalcDelib ..> UC_CalcModularAvg : <<include>>
+UC_CalcModularAvg ..> UC_CheckEliminatory : <<include>>
+UC_CalcModularAvg ..> UC_ApplyCompensation : <<include>>
+UC_CheckEliminatory ..> UC_GenRetakes : <<extend>> \n(si Note Exam < 7.00)
+
+DeptHead --> UC_ConveneJury
+Jury --> UC_SignPV
+DirEtudes --> UC_SignPV
+DirEtudes --> UC_PublishResults
+Student --> UC_ViewReportCard
+@enduml

@@ -1,0 +1,72 @@
+@startuml comp01_backend_subsystems
+title Diagramme de Composants Système - Architecture Modulaire EMSI Campus ERP
+skinparam componentStyle uml2
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+package "Couche Présentation & Clients" {
+    [Portail Web Next.js 15\n(React 19 / TypeScript / Tailwind)] as WebApp
+    [Application Mobile Flutter 3.24\n(iOS & Android / Dart)] as MobileApp
+}
+
+node "Passerelle & Sécurité Réseau" {
+    [Reverse Proxy Nginx\n(TLS 1.3 Termination & Rate Limiting)] as NginxGateway
+}
+
+package "Noyau Applicatif Backend (Spring Boot 3.3 Core)" {
+    component [Module Sécurité & Auth\n(Spring Security / JWT / RBAC)] as ModAuth
+    component [Module Scolarité & Groupes] as ModScol
+    component [Module Planning & Emplois du Temps] as ModPlan
+    component [Module Assiduité & QR Éphémère] as ModAtt
+    component [Module Délibération & Examens] as ModDelib
+    component [Module Projets PFE & Recherche] as ModPFE
+    component [Module Finance & Facturation] as ModFin
+    component [Module Audit & Conformité CNDP] as ModAudit
+}
+
+package "Moteurs Spécialisés Découplés" {
+    component [Moteur d'Optimisation Planning\n(Google OR-Tools CP-SAT Service)] as EngineORTools
+    component [Service d'IA Locale Souveraine\n(Ollama LLM - Llama 3.2 & Nomic)] as EngineOllama
+    component [Générateur de Rapports PDF\n(iText 8 Scellé Cryptographiquement)] as EnginePDF
+}
+
+database "Persistance & Caching Haute Performance" {
+    [Base Relationnelle PostgreSQL 16\n(Données Métier, pgvector, Schémas Partitionnés)] as PostgresDB
+    [Cache Mémoire In-Memory Redis 7.2\n(Sessions, Jetons QR 15s, Locks Distribués)] as RedisCache
+    [Stockage Objet S3 MinIO\n(Mémoires PFE, Relevés, Attestations)] as MinIOStorage
+}
+
+' Connexions Clients vers Nginx
+WebApp --> NginxGateway : HTTPS / REST & WebSocket
+MobileApp --> NginxGateway : HTTPS / REST & WebSocket
+
+' Nginx vers Noyau Backend
+NginxGateway --> ModAuth : /api/v1/auth
+NginxGateway --> ModPlan : /api/v1/schedules
+NginxGateway --> ModAtt : /api/v1/attendance
+NginxGateway --> ModDelib : /api/v1/deliberations
+NginxGateway --> ModPFE : /api/v1/theses
+NginxGateway --> ModFin : /api/v1/finance
+
+' Dépendances Internes
+ModPlan ..> EngineORTools : Requête gRPC / RPC Asynchrone
+ModPFE ..> EngineOllama : REST / API Embeddings locale
+ModDelib ..> EnginePDF : Production du PV scellé
+
+ModAtt ..> RedisCache : Token TTL 15s & Anti-Rejeu
+ModPlan ..> RedisCache : Cache plannings étudiants
+
+ModAuth ..> PostgresDB : Tables users, roles
+ModScol ..> PostgresDB : Tables students, groups
+ModPlan ..> PostgresDB : Tables seances, rooms
+ModAtt ..> PostgresDB : Tables attendances
+ModDelib ..> PostgresDB : Tables grades, results
+ModPFE ..> PostgresDB : Tables theses, vectors
+ModPFE ..> MinIOStorage : Stockage mémoires PDF
+ModFin ..> PostgresDB : Tables invoices, payments
+
+ModDelib ..> ModAudit : Enregistrement immuable (Loi 09-08)
+ModFin ..> ModAudit : Enregistrement immuable des flux financiers
+ModAudit ..> PostgresDB : Table audit_logs (Append-Only)
+
+@enduml

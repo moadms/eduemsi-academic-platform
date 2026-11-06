@@ -1,0 +1,169 @@
+@startuml dia02_attendance_qr_complete
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+skinparam roundcorner 12
+skinparam shadowing false
+
+skinparam sequence {
+  ArrowColor #2563EB
+  ArrowFontColor #1E3A5F
+  ActorBorderColor #2563EB
+  ActorBackgroundColor #DBEAFE
+  ParticipantBorderColor #2563EB
+  ParticipantBackgroundColor #EFF6FF
+  ParticipantFontColor #1E3A5F
+  LifeLineBorderColor #93C5FD
+  LifeLineBackgroundColor #BFDBFE
+  NoteBackgroundColor #FEF3C7
+  NoteBorderColor #F59E0B
+  GroupBorderColor #6366F1
+  GroupBackgroundColor #EEF2FF
+  GroupFontColor #4338CA
+}
+
+title <b>🔐 Présence QR Code — Cycle Complet Anti-Fraude</b>\nUniVora ERP · Module Présence · EMSI 2024-2025
+
+actor "Étudiant\n📱" as ETU #DBEAFE
+participant "App Mobile\nFlutter" as APP #EFF6FF
+participant "Backend API\nNestJS" as API #F0FDF4
+participant "Service QR\nHMAC" as QRS #FFF7ED
+participant "Service Géo\nGeofencing" as GEO #FDF4FF
+participant "Base de Données\nPostgreSQL" as DB #F0FDF4
+participant "Blockchain\nAudit Log" as BC #FEF2F2
+actor "Professeur\n👨‍🏫" as PROF #FFF3CD
+
+== 🕐 Phase 1 : Génération QR (Déclenchée par le Professeur) ==
+
+PROF -> API : POST /attendance/session/start\n{cours_id, salle, lat, lon}
+activate API
+API -> DB : Vérifier programmation cours
+DB --> API : ✅ Cours valide + salle confirmée
+API -> QRS : generateQRToken(session_id, timestamp)
+activate QRS
+QRS -> QRS : HMAC-SHA256(secret + session_id + floor(time/15))
+note right QRS #FEF3C7
+  Token éphémère
+  Validité : 15 secondes
+  Régénération automatique
+end note
+QRS --> API : {token, expires_at, sequence_num}
+deactivate QRS
+API -> GEO : createGeofence(salle_lat, salle_lon, rayon=50m)
+activate GEO
+GEO --> API : geofence_id configuré
+deactivate GEO
+API -> DB : INSERT sessions_presence\n{session_id, qr_token_hash, geofence_id}
+API --> PROF : QR Code affiché à l'écran\n(rafraîchi toutes les 15s)
+deactivate API
+
+== 📱 Phase 2 : Scan QR par l'Étudiant ==
+
+ETU -> APP : Ouvrir scanner QR
+activate APP
+APP -> APP : Activer caméra + GPS
+APP -> APP : Scanner QR Code
+APP -> APP : Extraire token QR
+APP -> API : POST /attendance/scan\n{qr_token, etudiant_id,\n gps_lat, gps_lon,\n device_fingerprint,\n timestamp_client}
+activate API
+
+== 🛡️ Phase 3 : Validation Multi-Niveaux ==
+
+group #EEF2FF Validation 1 — Authenticité Token
+  API -> QRS : validateToken(qr_token, session_id)
+  activate QRS
+  QRS -> QRS : Recalcul HMAC + fenêtre ±15s
+  alt Token valide
+    QRS --> API : ✅ Token authentique
+  else Token expiré ou falsifié
+    QRS --> API : ❌ Token invalide
+    API --> APP : 403 — QR Code expiré\nVeuillez rescanner
+    deactivate QRS
+    deactivate API
+    return
+  end
+  deactivate QRS
+end
+
+group #FFF0F6 Validation 2 — Géofencing Campus
+  API -> GEO : checkPosition(gps_lat, gps_lon, geofence_id)
+  activate GEO
+  GEO -> GEO : Calculer distance Haversine
+  alt Dans le rayon 50m
+    GEO --> API : ✅ Position confirmée (campus)
+  else Hors campus
+    GEO --> API : ❌ Hors zone autorisée\ndist=Xm > 50m
+    API --> APP : 403 — Présence impossible\nhors du campus
+    deactivate GEO
+    deactivate API
+    return
+  end
+  deactivate GEO
+end
+
+group #FFFBEB Validation 3 — Anti-Fraude Device
+  API -> DB : checkDeviceFingerprint\n(device_id, etudiant_id, session_id)
+  DB --> API : Historique device
+  alt Nouveau device ou device connu ok
+    API -> DB : checkDuplicateScan\n(etudiant_id, session_id)
+    DB --> API : Résultat doublon
+    alt Pas de doublon
+      API -> DB : checkSharedDevice\n(device_id, session_id, window=5min)
+      DB --> API : Nb étudiants ce device
+      alt ≤ 1 étudiant ce device
+        note right API #DCFCE7
+          Toutes validations passées ✅
+          Présence enregistrée
+        end note
+      else > 1 étudiant — partage suspect
+        API -> DB : INSERT fraude_suspicion\n{type='DEVICE_SHARE', niveau=HIGH}
+        API --> APP : ⚠️ Présence signalée pour vérification
+        deactivate API
+        return
+      end
+    else Doublon détecté — déjà scanné
+      API --> APP : 409 — Présence déjà enregistrée
+      deactivate API
+      return
+    end
+  else Device blacklisté
+    API --> APP : 403 — Device non autorisé
+    deactivate API
+    return
+  end
+end
+
+== ✅ Phase 4 : Enregistrement & Confirmation ==
+
+API -> DB : INSERT presences\n{etudiant_id, session_id, timestamp,\n gps_lat, gps_lon, device_id,\n statut='PRESENT', validations_ok}
+activate DB
+DB --> API : presence_id = #XXXXX
+deactivate DB
+
+API -> BC : appendAuditLog\n{type='PRESENCE_RECORDED',\n etudiant_id, session_id, hash_data}
+activate BC
+note right BC #FEF2F2
+  Log immuable
+  Conformité Loi 09-08 CNDP
+  Maroc
+end note
+BC --> API : ✅ Log enregistré (block_hash)
+deactivate BC
+
+API --> APP : 200 ✅ Présence confirmée\n{heure: 09h14, salle: A204, cours: GL3}
+deactivate API
+
+APP --> ETU : 🎉 Présence enregistrée\n[Notification verte]
+
+== 📊 Phase 5 : Fin de Session ==
+
+PROF -> API : POST /attendance/session/close\n{session_id}
+activate API
+API -> DB : Marquer absents (non scannés)\nCalculer taux présence
+DB --> API : Stats: 28/32 présents (87.5%)
+API -> DB : INSERT notifications (absents)\nStatut = 'ABSENT'
+API --> PROF : 📊 Rapport présence\n28 présents · 4 absents
+deactivate API
+
+@enduml

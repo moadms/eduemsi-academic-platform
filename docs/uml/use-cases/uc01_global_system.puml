@@ -1,0 +1,104 @@
+@startuml uc01_global_system
+title Diagramme Global des Cas d'Utilisation - EMSI Campus ERP (Univora)
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam handwritten false
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 12
+
+actor "Étudiant" as Student <<Humain>>
+actor "Professeur" as Professor <<Humain>>
+actor "Chef de Département" as DeptHead <<Humain>>
+actor "Direction des Études" as AcademicDir <<Humain>>
+actor "Service Scolarité" as Registrar <<Humain>>
+actor "Service Financier" as FinanceService <<Humain>>
+actor "Administrateur" as Admin <<Humain>>
+actor "Moteur OR-Tools" as EngineORTools <<Système>>
+actor "Moteur IA Ollama" as EngineOllama <<Système>>
+
+rectangle "Système EMSI Campus ERP" {
+
+    package "Sécurité & Profils" {
+        usecase "UC-001: S'authentifier (MFA/TOTP)" as UC_Auth
+        usecase "UC-002: Gérer son profil et préférences" as UC_Profile
+    }
+
+    package "Planification & Logistique" {
+        usecase "UC-010: Consulter l'emploi du temps dynamique" as UC_ViewSchedule
+        usecase "UC-011: Générer les plannings sans conflit" as UC_GenSchedule
+        usecase "UC-012: Valider le transit inter-campus (45 min)" as UC_TransitRule
+    }
+
+    package "Pédagogie & Assiduité" {
+        usecase "UC-020: Projeter le QR code éphémère (15s)" as UC_ProjectQR
+        usecase "UC-021: Émarger la séance par scan mobile" as UC_ScanQR
+        usecase "UC-022: Renseigner le cahier de texte post-cours" as UC_FillTextbook
+        usecase "UC-023: Déposer un justificatif d'absence" as UC_SubmitAbsence
+    }
+
+    package "Évaluation & Délibérations Zéro Excel" {
+        usecase "UC-030: Saisir les notes d'évaluation (CC/TP/Exam)" as UC_EnterGrades
+        usecase "UC-031: Exécuter la délibération semestrielle" as UC_RunDelib
+        usecase "UC-032: Appliquer le seuil éliminatoire (< 7.00)" as UC_ApplyElimThreshold
+        usecase "UC-033: Sceller et signer le PV officiel" as UC_SignPV
+    }
+
+    package "Projets de Fin d'Études (PFE)" {
+        usecase "UC-040: Soumettre et suivre un sujet de PFE" as UC_SubmitPFE
+        usecase "UC-041: Effectuer le matching IA mémoires-jurys" as UC_MatchPFE
+        usecase "UC-042: Planifier les soutenances" as UC_ScheduleDefenses
+    }
+
+    package "Administration & Finance" {
+        usecase "UC-050: Gérer les inscriptions et groupes" as UC_ManageEnrollments
+        usecase "UC-051: Gérer la facturation et les règlements" as UC_Billing
+        usecase "UC-052: Délivrer les attestations vérifiables" as UC_IssueCerts
+        usecase "UC-053: Consulter les logs d'audit (Loi 09-08)" as UC_AuditLogs
+    }
+}
+
+' Relations d'héritage d'acteurs
+Professor --|> UC_Auth
+Student --|> UC_Auth
+DeptHead --|> UC_Auth
+AcademicDir --|> UC_Auth
+Registrar --|> UC_Auth
+FinanceService --|> UC_Auth
+Admin --|> UC_Auth
+
+' Interactions Étudiant
+Student --> UC_ViewSchedule
+Student --> UC_ScanQR
+Student --> UC_SubmitAbsence
+Student --> UC_SubmitPFE
+
+' Interactions Professeur
+Professor --> UC_ViewSchedule
+Professor --> UC_ProjectQR
+Professor --> UC_FillTextbook
+Professor --> UC_EnterGrades
+
+' Interactions Chef de Département & Direction
+DeptHead --> UC_GenSchedule
+DeptHead --> UC_RunDelib
+DeptHead --> UC_MatchPFE
+AcademicDir --> UC_SignPV
+DeptHead --> UC_ScheduleDefenses
+
+' Interactions Services Administratifs
+Registrar --> UC_ManageEnrollments
+Registrar --> UC_IssueCerts
+FinanceService --> UC_Billing
+Admin --> UC_AuditLogs
+
+' Inclusions et extensions obligatoires
+UC_GenSchedule ..> UC_TransitRule : <<include>>
+UC_ScanQR ..> UC_ProjectQR : <<depends on>>
+UC_RunDelib ..> UC_ApplyElimThreshold : <<include>>
+UC_RunDelib ..> UC_SignPV : <<include>>
+UC_MatchPFE ..> EngineOllama : <<interacts with>>
+UC_GenSchedule ..> EngineORTools : <<interacts with>>
+UC_IssueCerts ..> UC_Billing : <<extend>> \n(si impayé > 10j, blocage)
+
+@enduml

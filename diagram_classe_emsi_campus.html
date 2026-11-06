@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="fr" class="h-full bg-slate-900 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagramme de Classes UML Exhaustif — EMSI Academic Platform (Univora)</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Mermaid JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        pre.mermaid {
+            background-color: transparent !important;
+            font-family: 'JetBrains Mono', monospace !important;
+        }
+        .custom-scroll::-webkit-scrollbar { width: 8px; height: 8px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #0f172a; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb:hover { background: #475569; }
+    </style>
+</head>
+<body class="min-h-full flex flex-col bg-slate-950 text-slate-200">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-30 px-6 py-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <img src="assets/emsi_logo.png" alt="Logo EMSI" class="h-10 w-auto object-contain">
+                <div class="border-l border-slate-700 pl-4">
+                    <div class="flex items-center gap-2">
+                        <span class="text-[10px] font-black uppercase tracking-wider bg-emerald-950 text-emerald-400 border border-emerald-800 px-2 py-0.5 rounded">
+                            Architecture Complète & Gouvernance RH/IA
+                        </span>
+                        <span class="text-xs text-slate-500">•</span>
+                        <span class="text-xs text-slate-400 font-semibold">Vacataires vs Permanents • Analyse CV IA • Détection Besoins</span>
+                    </div>
+                    <h1 class="text-lg font-black text-white tracking-tight flex items-center gap-2">
+                        Diagramme de Classes UML : Recrutement IA, Priorité Vacataires, Salles TP, Absences & Notifs
+                    </h1>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="window.print()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg text-xs font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-print"></i>
+                    <span>Imprimer / PDF</span>
+                </button>
+                <a href="#vacataires-section" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg text-xs font-bold flex items-center gap-2 transition-all">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <span>RH & Vacataires</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Context & Decisions Banner -->
+    <section class="max-w-7xl mx-auto px-6 py-6 w-full">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <div class="text-amber-400 font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-2">
+                    <i class="fa-solid fa-user-clock"></i> 1. Priorité Vacataires EDT
+                </div>
+                <p class="text-xs text-slate-300">
+                    Les <strong>vacataires sont prioritaires</strong> dans le solveur OR-Tools car leurs créneaux sont restreints (soirs/samedis). Les permanents comblent le reste.
+                </p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <div class="text-cyan-400 font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-2">
+                    <i class="fa-solid fa-file-pdf"></i> 2. Analyse CV IA (Gemini)
+                </div>
+                <p class="text-xs text-slate-300">
+                    Extraction des compétences des CV candidats et scoring automatique par rapport aux besoins en enseignants par matière.
+                </p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <div class="text-rose-400 font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation"></i> 3. Manque de Profs par Branche
+                </div>
+                <p class="text-xs text-slate-300">
+                    Calcul automatique du déficit horaire par filière (ex: <em>Manque 120h de Cloud en 5A IIR</em>) pour piloter le recrutement.
+                </p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl">
+                <div class="text-emerald-400 font-bold text-xs uppercase tracking-wider mb-1 flex items-center gap-2">
+                    <i class="fa-solid fa-desktop"></i> 4. Salles TP PC & Pauses
+                </div>
+                <p class="text-xs text-slate-300">
+                    Campus unique par jour, pause de 15m matin, trou méridien &le; 1h30, et affectation stricte de salles TP avec PC opérationnels.
+                </p>
+            </div>
+        </div>
+
+        <!-- Diagram Canvas -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-2xl overflow-x-auto custom-scroll">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="font-mono text-xs font-bold text-white uppercase tracking-wider">Diagramme de Classes UML Intégral — Modèle Métier & RH IA</span>
+                </div>
+                <span class="text-xs font-mono text-slate-400">7 Domaines Métier • Clean Layered Architecture • Spring Boot 3</span>
+            </div>
+
+            <!-- Mermaid Class Diagram -->
+            <pre class="mermaid text-xs flex justify-center">
+classDiagram
+    direction TB
+
+    %% ==========================================
+    %% 0. BASE AUDITABLE (MAINTENABILITÉ)
+    %% ==========================================
+    class BaseAuditableEntity {
+        <<abstract>>
+        +Long id
+        +LocalDateTime createdAt
+        +String createdBy
+        +LocalDateTime updatedAt
+        +String updatedBy
+    }
+
+    %% ==========================================
+    %% 1. ACTEURS, GOUVERNANCE & RESPONSABLES
+    %% ==========================================
+    class Utilisateur {
+        <<abstract>>
+        +String matricule
+        +String nom
+        +String prenom
+        +String email
+        +String motDePasseHash
+        +RoleUtilisateur role
+        +Boolean estActif
+    }
+
+    class SuperAdmin {
+        +creerResponsableFiliere(ResponsableFiliereDTO dto) ResponsableFiliere
+        +creerResponsablePlanning(ResponsablePlanningDTO dto) ResponsablePlanning
+        +creerResponsableScolarite(ResponsableScolariteDTO dto) ResponsableScolarite
+        +validerCandidatureEnseignant(Long candidatureId, Boolean accepter) Enseignant
+    }
+
+    class ChefDeFiliere {
+        +Filiere filiereRattachee
+        +evaluerBesoinEnseignants() List~BesoinRecrutementFiliere~
+        +analyserCvCandidat(Long candidatureId) RapportAnalyseCvIa
+        +definirMaquetteModule(ModuleDTO dto) Module
+        +affecterEnseignantElement(Long profId, Long elemId) void
+        +validerFicheSeance(Long ficheId) void
+    }
+
+    class ResponsablePlanning {
+        +genererEmploiDuTemps(ParametresEdtDTO params) PlanningHebdo
+        +resoudreConflitAvecAssistantIa(Long seanceId) ExplicationArbitrageIa
+        +permuterSalleSeance(Long seanceId, Long nouvelleSalleId) void
+    }
+
+    class ResponsableScolarite {
+        +creerGroupeEtudiants(GroupeDTO dto) Groupe
+        +inscrireEtudiantGroupe(Long etuId, Long groupeId) void
+        +validerJustificatifAbsence(Long absId, Boolean approuve) void
+    }
+
+    BaseAuditableEntity <|-- Utilisateur
+    Utilisateur <|-- SuperAdmin
+    Utilisateur <|-- ChefDeFiliere
+    Utilisateur <|-- ResponsablePlanning
+    Utilisateur <|-- ResponsableScolarite
+
+    SuperAdmin "1" ..> "0..*" ChefDeFiliere : nomme
+    SuperAdmin "1" ..> "0..*" ResponsablePlanning : nomme
+    SuperAdmin "1" ..> "0..*" ResponsableScolarite : nomme
+
+    %% ==========================================
+    %% 2. STATUT ENSEIGNANTS & DISPONIBILITÉS
+    %% ==========================================
+    class Enseignant {
+        +String specialiteTechnique
+        +TypeStatutEnseignant statutContrat // PERMANENT vs VACATAIRE
+        +Integer volumeHoraireContractuelMax
+        +Integer volumeHoraireMensuelEffectue
+        +Double tauxHoraireVacation
+        +Integer quotaEncadrementPfe
+        +Boolean estPrioritaireDansPlanning() Boolean
+        +remplirFicheSeance(Long seanceId, FicheSeanceDTO dto) void
+        +pointerFeuilleAbsences(Long seanceId, List~AbsenceItemDTO~ appel) void
+    }
+
+    class TypeStatutEnseignant {
+        <<enumeration>>
+        PERMANENT
+        VACATAIRE
+    }
+
+    class DisponibiliteVacataire {
+        +Integer jourSemaine // 1 (Lundi) a 6 (Samedi)
+        +LocalTime heureDebut
+        +LocalTime heureFin
+        +Boolean estDisponible
+        +String commentaire // ex: Libre vendredis soirs & samedis
+    }
+
+    Utilisateur <|-- Enseignant
+    Enseignant ..> TypeStatutEnseignant : possedeStatut
+    Enseignant "1" *-- "0..*" DisponibiliteVacataire : declareDisponibilites
+
+    class Etudiant {
+        +String cneMassar
+        +Integer totalHeuresAbsenceInjustifiee
+        +Boolean seuilCritique20PourcentAtteint
+        +deposerJustificatifAbsence(Long absId, File justificatif) void
+    }
+    Utilisateur <|-- Etudiant
+
+    %% ==========================================
+    %% 3. RECRUTEMENT, CV ANALYTICS IA & DÉFICITS
+    %% ==========================================
+    class CandidatureEnseignant {
+        +String nom
+        +String prenom
+        +String email
+        +String telephone
+        +TypeStatutEnseignant statutVise // Permanent ou Vacataire
+        +String cvDocumentUrl
+        +String competencesExtraitesIa
+        +Double scoreAdequationBesoins
+        +String explicationIaMatching
+        +StatutCandidature statutCandidature
+    }
+
+    class StatutCandidature {
+        <<enumeration>>
+        DEPOSEE
+        EN_COURS_ANALYSE_IA
+        ACCEPTEE_PAR_ADMIN
+        REJETEE
+    }
+
+    class BesoinRecrutementFiliere {
+        +Integer volumeHeuresManquantes
+        +Integer nombreEnseignantsManquants
+        +NiveauUrgenceBesoin urgence
+        +String profilRecherche
+        +calculerDeficitHoraire() Integer
+    }
+
+    class NiveauUrgenceBesoin {
+        <<enumeration>>
+        CRITIQUE_BLOCAGE_EDT
+        MODERE
+        EQUILIBRE
+    }
+
+    BaseAuditableEntity <|-- CandidatureEnseignant
+    BaseAuditableEntity <|-- BesoinRecrutementFiliere
+    CandidatureEnseignant ..> StatutCandidature : etatCandidature
+    BesoinRecrutementFiliere ..> NiveauUrgenceBesoin : degreUrgence
+    Filiere "1" *-- "0..*" BesoinRecrutementFiliere : declareManqueProf
+    ElementModule "1" <-- "*" BesoinRecrutementFiliere : concerneMatiere
+    SuperAdmin "1" ..> "*" CandidatureEnseignant : valideOuRefuse
+    ChefDeFiliere "1" ..> "*" CandidatureEnseignant : examineEtScanne
+
+    %% ==========================================
+    %% 4. INFRASTRUCTURE & SALLES TP PC
+    %% ==========================================
+    class Campus {
+        +String nom // Gueliz, Targa
+        +String adresse
+        +String ville
+    }
+
+    class Salle {
+        +String codeSalle
+        +TypeSalle typeSalle
+        +Integer capacite
+        +Integer nombrePcOperationnels
+        +Boolean projecteurFonctionnel
+        +estCompatible(ElementModule elem, Integer effectif) Boolean
+    }
+
+    class TypeSalle {
+        <<enumeration>>
+        COURS_THEORIQUE
+        TP_INFO_PC
+        LABO_INDUSTRIEL
+        LABO_RESEAUX_CISCO
+        AMPHITHEATRE
+    }
+
+    BaseAuditableEntity <|-- Campus
+    BaseAuditableEntity <|-- Salle
+    Campus "1" *-- "1..*" Salle : disposeDe
+    Salle ..> TypeSalle : typeSalleDefiniPar
+
+    %% ==========================================
+    %% 5. MAQUETTE PÉDAGOGIQUE & FILIÈRES
+    %% ==========================================
+    class Filiere {
+        +String code // IIR, GI, GC, GE
+        +String libelle
+    }
+
+    class Groupe {
+        +String codeGroupe
+        +Integer anneeEtude // 1 a 5
+        +Integer effectif
+        +Campus campusDuJour // Règle Campus Unique / Jour
+    }
+
+    class Module {
+        +String codeModule
+        +String titre
+        +Integer semestre
+    }
+
+    class ElementModule {
+        +String titre
+        +Double coefficient
+        +Integer volumeHoraire
+        +Boolean necessiteSallePc // True pour TP IIR / GI
+        +Boolean estMatiereIndustrielle
+    }
+
+    BaseAuditableEntity <|-- Filiere
+    BaseAuditableEntity <|-- Groupe
+    BaseAuditableEntity <|-- Module
+    BaseAuditableEntity <|-- ElementModule
+
+    ChefDeFiliere "1" --> "1" Filiere : pilote
+    Filiere "1" *-- "1..*" Groupe : composeDe
+    Filiere "1" *-- "1..*" Module : comporte
+    Module "1" *-- "1..*" ElementModule : diviseEn
+    Groupe "1" *-- "1..*" Etudiant : contient
+
+    %% ==========================================
+    %% 6. PLANIFICATION, PAUSES & SÉANCES
+    %% ==========================================
+    class CreneauHoraire {
+        +Integer jourSemaine
+        +LocalTime heureDebut
+        +LocalTime heureFin
+        +PeriodeJournee periode
+        +dureeMinutes() Integer
+    }
+
+    class PeriodeJournee {
+        <<enumeration>>
+        MATIN_1 // 08h30 - 10h00
+        MATIN_2 // 10h15 - 11h45 (Pause 15 min obligatoire)
+        APRES_MIDI_1 // ex: 13h15 - 14h45 (Trou <= 1h30)
+        APRES_MIDI_2 // 15h00 - 16h30
+        SOIR // 16h45 - 18h15
+    }
+
+    class SeancePlanifiee {
+        +LocalDate dateSeance
+        +StatutSeance statut
+        +validerPrioriteVacataire() Boolean
+        +validerCampusUniqueJournee() Boolean
+        +validerPauseMatinale15Min() Boolean
+        +validerTrouMeridienMax1h30() Boolean
+    }
+
+    class StatutSeance {
+        <<enumeration>>
+        PLANIFIEE
+        EN_COURS
+        EFFECTUEE_DOCUMENTEE
+        ANNULEE
+        A_RATTRAPER
+    }
+
+    BaseAuditableEntity <|-- CreneauHoraire
+    BaseAuditableEntity <|-- SeancePlanifiee
+    CreneauHoraire ..> PeriodeJournee : periode
+    SeancePlanifiee "*" --> "1" CreneauHoraire : utilise
+    SeancePlanifiee "*" --> "1" Salle : aLieuDans
+    SeancePlanifiee "*" --> "1" Groupe : convoque
+    SeancePlanifiee "*" --> "1" ElementModule : porteSur
+    SeancePlanifiee "*" --> "1" Enseignant : animeePar
+    SeancePlanifiee ..> StatutSeance : possedeStatut
+
+    %% ==========================================
+    %% 7. FICHES, ABSENCES & NOTIFICATIONS
+    %% ==========================================
+    class FicheSeance {
+        +String chapitreTraite
+        +String objectifsPedagogiques
+        +String resumeExercicesTp
+        +String devoirsDonnes
+        +LocalDate dateLimiteDevoir
+        +LocalDateTime dateHeureRemplissage
+        +Boolean valideeParFiliere
+    }
+
+    class FeuilleAbsence {
+        +LocalDateTime dateHeureAppel
+        +Integer nombrePresents
+        +Integer nombreAbsents
+        +Boolean appelCloture
+    }
+
+    class AbsenceEtudiant {
+        +StatutAbsence statut
+        +String motifDeclare
+        +String justificatifMedicalUrl
+        +Boolean justifieeParAdministration
+    }
+
+    class NotificationProfesseur {
+        +TypeNotification typeNotif
+        +String titre
+        +String message
+        +LocalDateTime dateEnvoi
+        +Boolean estLue
+        +String lienActionWeb
+    }
+
+    BaseAuditableEntity <|-- FicheSeance
+    BaseAuditableEntity <|-- FeuilleAbsence
+    BaseAuditableEntity <|-- AbsenceEtudiant
+    BaseAuditableEntity <|-- NotificationProfesseur
+
+    SeancePlanifiee "1" -- "0..1" FicheSeance : genereePostCours
+    SeancePlanifiee "1" -- "1" FeuilleAbsence : possedeAppel
+    FeuilleAbsence "1" *-- "0..*" AbsenceEtudiant : listeAbsents
+    AbsenceEtudiant "*" --> "1" Etudiant : concerneEtudiant
+    Enseignant "1" *-- "0..*" NotificationProfesseur : recoit
+
+    %% ==========================================
+    %% 8. BRIQUE IA FREE (GEMINI 2.0 FLASH + FALLBACK)
+    %% ==========================================
+    class GeminiAiServiceClient {
+        +String apiKeyFreeTier
+        +analyserCvEnseignant(String cvTexte) List~String~
+        +scorerCandidatVsBesoins(CandidatureEnseignant cand, List~BesoinRecrutementFiliere~ besoins) Double
+        +calculerAffiniteJuryPfe(PfeTopic pfe, Enseignant prof) PfeMatchingResult
+        +analyserAnomaliesEdt(PlanningHebdo planning) EdtAnomalyAnalysis
+        +predireRisqueAbsenteisme(Etudiant etudiant) AbsenceRiskPrediction
+        -executerFallbackHeuristiqueLocal(String payload) Object
+    }
+
+    class PfeTopic {
+        +String titre
+        +String problematique
+        +String technologiesDetectees
+        +Double scoreMatchingIa
+        +String justificationIa
+        +StatutPfe statutPfe
+    }
+
+    class SoutenancePfe {
+        +LocalDateTime dateHeure
+        +Double noteRapport
+        +Double notePresentation
+        +Double noteFinale
+        +String pvSigneUrl
+    }
+
+    BaseAuditableEntity <|-- PfeTopic
+    BaseAuditableEntity <|-- SoutenancePfe
+    BaseAuditableEntity <|-- DisponibiliteVacataire
+
+    Etudiant "1" -- "0..1" PfeTopic : propose
+    Enseignant "1" <-- "0..1" PfeTopic : encadre
+    PfeTopic "1" -- "0..1" SoutenancePfe : faitObjetDe
+    SoutenancePfe "*" --> "1" Salle : derouleDans
+    SoutenancePfe "*" --> "1..*" Enseignant : evalueParJury
+
+    GeminiAiServiceClient ..> CandidatureEnseignant : parseEtScore
+    GeminiAiServiceClient ..> PfeTopic : extraitEtMatch
+            </pre>
+        </div>
+    </section>
+
+    <!-- Specific Features Section -->
+    <section id="vacataires-section" class="max-w-7xl mx-auto px-6 py-8 w-full">
+        <h2 class="text-xl font-black text-white mb-4 flex items-center gap-2">
+            <i class="fa-solid fa-scale-balanced text-amber-400"></i>
+            <span>Détail des Nouveaux Mécanismes Métier Intégrés</span>
+        </h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+            <!-- Vacataire Priority -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                <div class="flex items-center gap-2 text-amber-400 font-bold text-sm mb-2">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Priorité Stricte aux Vacataires dans l'EDT</span>
+                </div>
+                <p class="text-slate-300 leading-relaxed mb-2">
+                    Les professeurs vacataires sont souvent des directeurs techniques ou consultants en entreprise ayant des fenêtres horaires très limitées (ex: vendredis soirs, samedis matin/après-midi).
+                </p>
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-300 space-y-1">
+                    <div>• <strong>Modélisation :</strong> <code class="text-amber-300">DisponibiliteVacataire</code> stocke les créneaux stricts.</div>
+                    <div>• <strong>Contrainte OR-Tools :</strong> Le solveur planifie en <strong>Passe 1</strong> les cours assurés par des vacataires pour sanctuariser leurs créneaux.</div>
+                    <div>• <strong>Passe 2 :</strong> Les enseignants permanents, flexibles sur l'ensemble de la semaine, sont positionnés sur les créneaux restants.</div>
+                </div>
+            </div>
+
+            <!-- CV Analysis & Resource Gaps -->
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-5">
+                <div class="flex items-center gap-2 text-cyan-400 font-bold text-sm mb-2">
+                    <i class="fa-solid fa-robot"></i>
+                    <span>Analyse IA de CV & Détection des Déficits par Branche</span>
+                </div>
+                <p class="text-slate-300 leading-relaxed mb-2">
+                    Le module <code class="text-cyan-300">BesoinRecrutementFiliere</code> calcule automatiquement pour chaque filière le différentiel entre les heures maquette et la capacité d'enseignement réelle.
+                </p>
+                <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 text-slate-300 space-y-1">
+                    <div>• <strong>Alerte Déficit :</strong> <em>« Manque de 140h d'enseignement en Automatisme / Robotique pour la filière GI »</em>.</div>
+                    <div>• <strong>Analyse de CV Gemini :</strong> L'API extrait les mots-clés du CV PDF du candidat et calcule un score de couverture du besoin ($0$ à $100\%$).</div>
+                    <div>• <strong>Validation en 1 Clic :</strong> Dès validation par le SuperAdmin, le candidat devient immédiatement un <code class="text-emerald-300">Enseignant</code> opérationnel dans la base.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-slate-800 py-6 text-center text-xs text-slate-500 bg-slate-950">
+        EMSI Campus Platform (Univora) • Validé par Scrum Master & Équipe 5A D2SI Marrakech
+    </footer>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#090d16',
+                primaryColor: '#064e3b',
+                primaryBorderColor: '#059669',
+                primaryTextColor: '#ecfdf5',
+                secondaryColor: '#1e293b',
+                secondaryBorderColor: '#334155',
+                tertiaryColor: '#0f172a',
+                lineColor: '#64748b',
+                fontFamily: 'JetBrains Mono'
+            }
+        });
+    </script>
+</body>
+</html>

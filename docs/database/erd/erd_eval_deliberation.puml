@@ -1,0 +1,94 @@
+@startuml erd_eval_deliberation
+title Modèle Relationnel Centré Délibération & Examens (Focus Invariants)
+skinparam linetype ortho
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+entity "students" as students {
+    * user_id : UUID [PK]
+    --
+    * cne_massar : VARCHAR(30)
+    * current_year : INTEGER
+}
+
+entity "modules" as modules {
+    * id : UUID [PK]
+    --
+    * code : VARCHAR(20)
+    * title : VARCHAR(100)
+    * coefficient : NUMERIC(3,1)
+    * is_compensable : BOOLEAN
+}
+
+entity "module_elements" as module_elements {
+    * id : UUID [PK]
+    --
+    * module_id : UUID [FK]
+    * code : VARCHAR(20)
+    * title : VARCHAR(100)
+    * weight_in_module : NUMERIC(3,2)
+}
+
+entity "evaluations" as evaluations {
+    * id : UUID [PK]
+    --
+    * element_id : UUID [FK]
+    * evaluation_type : VARCHAR(30)
+    * coefficient : NUMERIC(3,2)
+    * session_type : VARCHAR(20)
+}
+
+entity "student_grades" as student_grades {
+    * id : UUID [PK]
+    --
+    * evaluation_id : UUID [FK]
+    * student_id : UUID [FK]
+    * score : NUMERIC(4,2)
+    * is_eliminatory : BOOLEAN
+    * sealed : BOOLEAN
+}
+
+entity "deliberations" as deliberations {
+    * id : UUID [PK]
+    --
+    * semester_id : UUID [FK]
+    * academic_year : VARCHAR(15)
+    * status : VARCHAR(30)
+    * report_hash : VARCHAR(64)
+}
+
+entity "module_results" as module_results {
+    * id : UUID [PK]
+    --
+    * deliberation_id : UUID [FK]
+    * student_id : UUID [FK]
+    * module_id : UUID [FK]
+    * final_score : NUMERIC(4,2)
+    * validation_status : VARCHAR(30)
+    * has_eliminatory_flag : BOOLEAN
+}
+
+modules ||--o{ module_elements : "contient"
+module_elements ||--o{ evaluations : "évalue via"
+evaluations ||--o{ student_grades : "comporte"
+students ||--o{ student_grades : "obtient"
+
+deliberations ||--o{ module_results : "calcule"
+students ||--o{ module_results : "reçoit"
+modules ||--o{ module_results : "évalue"
+
+note bottom of student_grades
+  Contrainte d'intégrité CHECK :
+  score >= 0.00 AND score <= 20.00
+  Si evaluation_type = 'EXAM_FINAL' ET score < 7.00
+  ALORS is_eliminatory = TRUE
+end note
+
+note bottom of module_results
+  Règle BR-DELIB-04 :
+  Si has_eliminatory_flag = TRUE
+  ALORS validation_status = 'AJOURNE_RATTRAPAGE'
+  indépendamment de final_score >= 10.00
+end note
+
+@enduml

@@ -1,0 +1,152 @@
+@startuml dia12_roles_permissions_matrix
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam roundcorner 8
+skinparam shadowing false
+
+title <b>🔐 Matrice des Rôles & Permissions RBAC — UNiVora ERP</b>\nGestion des Accès · EMSI 2024-2025
+
+skinparam class {
+  BackgroundColor #EFF6FF
+  BorderColor #2563EB
+  FontColor #1E3A5F
+  AttributeFontSize 9
+}
+
+' ==================== RÔLES ====================
+class "👑 SUPER_ADMIN\n(Système)" as RADMIN {
+  Accès : TOTAL système
+  --
+  ✅ Gérer tous les tenants
+  ✅ Configurer infrastructure
+  ✅ Accéder audit_logs complet
+  ✅ Créer/supprimer comptes admin
+  ✅ Voir toutes données tous campus
+}
+
+class "🏢 ADMIN_SCOLARITE\n(Campus)" as RSCOL {
+  Portée : Campus assigné
+  --
+  ✅ Gérer étudiants (CRUD)
+  ✅ Générer emplois du temps
+  ✅ Valider et publier notes
+  ✅ Lancer délibérations
+  ✅ Générer attestations
+  ✅ Gérer dossiers finance
+  ✅ Configurer modules/filières
+  ❌ Accès autres campus
+  ❌ Modifier logs d'audit
+}
+
+class "👨‍🏫 PROFESSEUR\n(Enseignant)" as RPROF {
+  Portée : Ses cours uniquement
+  --
+  ✅ Démarrer/fermer session présence
+  ✅ Saisir notes (CC, TP, Examen)
+  ✅ Voir liste étudiants son cours
+  ✅ Télécharger relevés présence
+  ✅ Proposer/encadrer sujets PFE
+  ✅ Évaluer rapports PFE
+  ❌ Modifier notes après validation
+  ❌ Voir notes autres professeurs
+  ❌ Accès données financières
+}
+
+class "👨‍🎓 ETUDIANT\n(Apprenant)" as RETU {
+  Portée : Ses propres données
+  --
+  ✅ Consulter son planning
+  ✅ Scanner QR présence (ses cours)
+  ✅ Voir ses propres notes
+  ✅ Télécharger son relevé de notes
+  ✅ Déposer rapport PFE
+  ✅ Choisir sujet PFE
+  ✅ Payer scolarité en ligne
+  ✅ Voir ses attestations (si non bloqué)
+  ❌ Voir notes d'autres étudiants
+  ❌ Saisir des notes
+  ❌ Modifier son profil (champs protégés)
+}
+
+class "🏫 CHEF_DEPT\n(Département)" as RCHEF {
+  Portée : Département assigné
+  --
+  ✅ Valider sujets PFE
+  ✅ Affecter encadrants PFE
+  ✅ Voir stats filières son département
+  ✅ Approuver emplois du temps
+  ✅ Consulter résultats délibération
+  ❌ Modifier notes directement
+  ❌ Accès données financières
+}
+
+class "👁️ JURY_EXTERNE\n(Examinateur)" as RJURY {
+  Portée : Session PFE assignée
+  --
+  ✅ Accéder rapport PFE assigné
+  ✅ Saisir notes soutenance (grille)
+  ✅ Voir résumé dossier étudiant
+  ❌ Accès données permanentes
+  ❌ Voir autres notes
+  Durée accès : Période soutenance
+}
+
+class "📊 DIRECTION\n(Dashboard)" as RDIR {
+  Portée : Campus ou tous campus
+  --
+  ✅ Tableaux de bord KPI
+  ✅ Statistiques agrégées
+  ✅ Rapports de performance
+  ✅ Taux réussite par filière
+  ❌ Données nominales étudiants
+  ❌ Modifier quoi que ce soit
+  Mode : READ-ONLY
+}
+
+' ==================== PERMISSIONS PAR MODULE ====================
+package "📋 Permissions par Module" #F8FAFC {
+  
+  note as PERM_TABLE
+    <b>Légende: ✅ Oui | 👁️ Lecture seule | ⚠️ Partiel | ❌ Non</b>
+    ┌─────────────────────┬────────┬────────┬────────┬────────┬────────┬────────┬────────┐
+    │ Module / Rôle       │SADMIN  │ASCOL   │PROF    │ETU     │CHEF    │JURY    │DIR     │
+    ├─────────────────────┼────────┼────────┼────────┼────────┼────────┼────────┼────────┤
+    │ Emploi du Temps     │   ✅   │   ✅   │  👁️   │  👁️  │  ⚠️  │  ❌   │  👁️  │
+    │ Présence — Gestion  │   ✅   │   ✅   │   ✅   │  ⚠️  │  👁️  │  ❌   │  👁️  │
+    │ Notes — Saisie      │   ✅   │   ✅   │   ✅   │  ❌   │  ❌   │  ⚠️  │  ❌   │
+    │ Notes — Lecture     │   ✅   │   ✅   │  ⚠️   │  ⚠️  │  👁️  │  ⚠️  │  📊  │
+    │ Délibération        │   ✅   │   ✅   │  ❌   │  ❌   │  👁️  │  ❌   │  👁️  │
+    │ PFE — Sujets        │   ✅   │   ✅   │   ✅   │  👁️  │   ✅   │  ❌   │  ❌   │
+    │ PFE — Dépôt         │   ✅   │  ⚠️   │  👁️  │   ✅   │  ❌   │  ❌   │  ❌   │
+    │ Finance             │   ✅   │   ✅   │  ❌   │  ⚠️  │  ❌   │  ❌   │  📊  │
+    │ Notifications       │   ✅   │   ✅   │  ⚠️   │  👁️  │  ⚠️  │  ❌   │  ❌   │
+    │ Audit Logs          │   ✅   │  ❌   │  ❌   │  ❌   │  ❌   │  ❌   │  ❌   │
+    │ Config Système      │   ✅   │  ⚠️   │  ❌   │  ❌   │  ❌   │  ❌   │  ❌   │
+    └─────────────────────┴────────┴────────┴────────┴────────┴────────┴────────┴────────┘
+  end note
+}
+
+' HIÉRARCHIE
+RADMIN --|> RSCOL : délègue\npermissions
+RSCOL --|> RCHEF : délègue\npartiel
+RCHEF --|> RPROF : supervise
+
+note bottom of RETU #FEF2F2
+  <b>RULE-FIN-06 :</b>
+  Si scolarité impayée > 10j
+  ETUDIANT perd accès aux
+  attestations + relevés
+  (flag bloqué dans DB)
+end note
+
+note bottom of RJURY #FFF7ED
+  <b>Compte temporaire jury :</b>
+  Créé par Admin Scolarité
+  Expiration auto après
+  date soutenance + 48h
+  Scope limité à 1 PFE
+end note
+
+@enduml

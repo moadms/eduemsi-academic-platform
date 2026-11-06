@@ -1,0 +1,203 @@
+@startuml erd_global_schema
+title Modèle Entité-Association Global (ERD) - EMSI Campus ERP
+skinparam linetype ortho
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+entity "tenants" as tenants {
+    * id : UUID [PK]
+    --
+    * code : VARCHAR(30)
+    * name : VARCHAR(150)
+    * active : BOOLEAN
+    * created_at : TIMESTAMPTZ
+}
+
+entity "campuses" as campuses {
+    * id : UUID [PK]
+    --
+    * tenant_id : UUID [FK]
+    * code : VARCHAR(20)
+    * name : VARCHAR(100)
+    * city : VARCHAR(50)
+    * transit_buffer_min : INTEGER
+}
+
+entity "users" as users {
+    * id : UUID [PK]
+    --
+    * tenant_id : UUID [FK]
+    * email : VARCHAR(150)
+    * password_hash : VARCHAR(255)
+    * first_name : VARCHAR(60)
+    * last_name : VARCHAR(60)
+    * role_name : VARCHAR(30)
+    mfa_secret : VARCHAR(100)
+    * active : BOOLEAN
+}
+
+entity "students" as students {
+    * user_id : UUID [PK, FK]
+    --
+    * cne_massar : VARCHAR(30)
+    * cin : VARCHAR(20)
+    * current_year : INTEGER
+    * financial_locked : BOOLEAN
+}
+
+entity "groups" as groups {
+    * id : UUID [PK]
+    --
+    * campus_id : UUID [FK]
+    * name : VARCHAR(50)
+    * capacity : INTEGER
+}
+
+entity "rooms" as rooms {
+    * id : UUID [PK]
+    --
+    * campus_id : UUID [FK]
+    * room_number : VARCHAR(20)
+    * capacity : INTEGER
+    * room_type : VARCHAR(30)
+    * has_projector : BOOLEAN
+}
+
+entity "modules" as modules {
+    * id : UUID [PK]
+    --
+    * code : VARCHAR(20)
+    * title : VARCHAR(100)
+    * coefficient : NUMERIC(3,1)
+    * credits_ects : INTEGER
+}
+
+entity "module_elements" as module_elements {
+    * id : UUID [PK]
+    --
+    * module_id : UUID [FK]
+    * code : VARCHAR(20)
+    * title : VARCHAR(100)
+    * coefficient : NUMERIC(3,1)
+}
+
+entity "seances" as seances {
+    * id : UUID [PK]
+    --
+    * tenant_id : UUID [FK]
+    * module_element_id : UUID [FK]
+    * professor_id : UUID [FK]
+    * group_id : UUID [FK]
+    * room_id : UUID [FK]
+    * start_time : TIMESTAMPTZ
+    * end_time : TIMESTAMPTZ
+    * status : VARCHAR(30)
+}
+
+entity "attendances" as attendances {
+    * id : UUID [PK]
+    --
+    * seance_id : UUID [FK]
+    * student_id : UUID [FK]
+    * scan_time : TIMESTAMPTZ
+    * status : VARCHAR(25)
+    * device_id : VARCHAR(100)
+    * is_flagged : BOOLEAN
+}
+
+entity "textbooks" as textbooks {
+    * id : UUID [PK]
+    --
+    * seance_id : UUID [FK, UNIQUE]
+    * summary : TEXT
+    homework : TEXT
+    * submitted_at : TIMESTAMPTZ
+}
+
+entity "student_grades" as student_grades {
+    * id : UUID [PK]
+    --
+    * student_id : UUID [FK]
+    * element_id : UUID [FK]
+    * evaluation_type : VARCHAR(30)
+    * score : NUMERIC(4,2)
+    * is_absent : BOOLEAN
+    * sealed : BOOLEAN
+}
+
+entity "deliberations" as deliberations {
+    * id : UUID [PK]
+    --
+    * semester_code : VARCHAR(20)
+    * academic_year : VARCHAR(15)
+    * status : VARCHAR(30)
+    * report_hash : VARCHAR(64)
+    * sealed_at : TIMESTAMPTZ
+}
+
+entity "module_results" as module_results {
+    * id : UUID [PK]
+    --
+    * deliberation_id : UUID [FK]
+    * student_id : UUID [FK]
+    * module_id : UUID [FK]
+    * final_score : NUMERIC(4,2)
+    * status : VARCHAR(30)
+    * has_eliminatory : BOOLEAN
+}
+
+entity "theses" as theses {
+    * id : UUID [PK]
+    --
+    * student_id : UUID [FK, UNIQUE]
+    * supervisor_id : UUID [FK]
+    * title : VARCHAR(255)
+    * abstract_text : TEXT
+    * status : VARCHAR(30)
+}
+
+entity "audit_logs" as audit_logs {
+    * id : BIGSERIAL [PK]
+    --
+    * performed_at : TIMESTAMPTZ
+    * performed_by : UUID [FK]
+    * ip_address : INET
+    * action_type : VARCHAR(50)
+    * entity_name : VARCHAR(50)
+    * entity_id : UUID
+    previous_state : JSONB
+    new_state : JSONB
+    * hmac_signature : VARCHAR(128)
+}
+
+' Relations
+tenants ||--o{ campuses : "possède"
+tenants ||--o{ users : "héberge"
+campuses ||--o{ rooms : "contient"
+campuses ||--o{ groups : "accueille"
+users ||--o| students : "spécialise"
+
+modules ||--o{ module_elements : "composé de"
+
+module_elements ||--o{ seances : "dispensé dans"
+users ||--o{ seances : "anime (Prof)"
+groups ||--o{ seances : "assiste à"
+rooms ||--o{ seances : "héberge"
+
+seances ||--o{ attendances : "enregistre"
+students ||--o{ attendances : "émarge"
+seances ||--o| textbooks : "documentée par"
+
+students ||--o{ student_grades : "obtient"
+module_elements ||--o{ student_grades : "évalue"
+
+deliberations ||--o{ module_results : "produit"
+students ||--o{ module_results : "concerne"
+modules ||--o{ module_results : "sanctionne"
+
+students ||--o| theses : "dépose"
+users ||--o{ theses : "encadre (Prof)"
+
+users ||--o{ audit_logs : "déclenche"
+
+@enduml

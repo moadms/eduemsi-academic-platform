@@ -1,0 +1,108 @@
+@startuml dia09_api_endpoints_map
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam roundcorner 8
+skinparam shadowing false
+
+title <b>🗺️ Carte des API REST — UNiVora ERP (Vue Complète)</b>\nNestJS Backend · EMSI 2024-2025
+
+skinparam package {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #1E3A5F
+}
+
+package "🔐 /api/auth" #FEF2F2 {
+  [POST /login\n→ Access + Refresh Token] as AUTH_LOGIN
+  [POST /refresh\n→ Nouveau Access Token] as AUTH_REFRESH
+  [POST /logout\n→ Révoque token] as AUTH_LOGOUT
+  [POST /mfa/verify\n→ Valide OTP SMS] as AUTH_MFA
+  [GET /me\n→ Profil utilisateur] as AUTH_ME
+}
+
+package "👤 /api/students" #DBEAFE {
+  [GET /\n→ Liste étudiants (paginated)] as STU_LIST
+  [GET /:id\n→ Détail étudiant] as STU_GET
+  [POST /\n→ Créer étudiant (import CSV)] as STU_CREATE
+  [PUT /:id\n→ Modifier profil] as STU_UPDATE
+  [GET /:id/transcript\n→ Relevé de notes PDF] as STU_RELEVE
+  [GET /:id/attestations\n→ Attestations (si non bloqué)] as STU_ATTEST
+  [GET /:id/attendance\n→ Historique présences] as STU_ATTEND
+}
+
+package "📅 /api/schedule" #EFF6FF {
+  [GET /\n→ Emploi du temps (filtres)] as SCHED_GET
+  [POST /generate\n→ Générer planning OR-Tools] as SCHED_GEN
+  [PUT /:id\n→ Modifier séance] as SCHED_UPD
+  [DELETE /:id\n→ Supprimer séance] as SCHED_DEL
+  [GET /conflicts\n→ Détecter conflits] as SCHED_CONF
+  [POST /campus-transfer\n→ Buffer 45min Guéliz↔Targa] as SCHED_TRANS
+}
+
+package "✅ /api/attendance" #F0FDF4 {
+  [POST /session/start\n→ Démarrer session (Professeur)] as ATT_START
+  [POST /session/close\n→ Fermer + rapport] as ATT_CLOSE
+  [POST /scan\n→ Scanner QR (Étudiant)] as ATT_SCAN
+  [GET /session/:id\n→ Liste présences session] as ATT_LIST
+  [GET /student/:id/report\n→ Rapport présences étudiant] as ATT_RPT
+  [POST /manual\n→ Saisie manuelle justifiée] as ATT_MANUAL
+  [GET /fraud-alerts\n→ Alertes anti-fraude (Admin)] as ATT_FRAUD
+}
+
+package "📊 /api/grades" #FFFBEB {
+  [POST /\n→ Saisir note (Professeur)] as GRD_CREATE
+  [PUT /:id\n→ Modifier note (avant validation)] as GRD_UPDATE
+  [POST /validate\n→ Valider session notes (Admin)] as GRD_VALID
+  [GET /student/:id\n→ Notes par étudiant] as GRD_GET
+  [GET /module/:id/stats\n→ Statistiques module] as GRD_STATS
+  [POST /import\n→ Import masse (Excel/CSV)] as GRD_IMPORT
+}
+
+package "⚖️ /api/deliberation" #FDF4FF {
+  [POST /\n→ Créer session délibération] as DELIB_CREATE
+  [POST /:id/run\n→ Lancer calcul automatique] as DELIB_RUN
+  [GET /:id/results\n→ Résultats individuels] as DELIB_RES
+  [POST /:id/publish\n→ Publier résultats] as DELIB_PUB
+  [GET /:id/pv\n→ PV PDF signé] as DELIB_PV
+  [PUT /:id/override\n→ Override jury (motivé + audit)] as DELIB_OVR
+}
+
+package "🎓 /api/pfe" #FEF3C7 {
+  [POST /subjects\n→ Proposer sujet] as PFE_SUBJ
+  [GET /subjects\n→ Catalogue sujets] as PFE_CAT
+  [POST /assign\n→ Affecter étudiant] as PFE_ASSIGN
+  [POST /upload-report\n→ Déposer rapport PDF] as PFE_UPLOAD
+  [GET /:id/plagiarism\n→ Rapport Turnitin] as PFE_PLAG
+  [POST /:id/schedule-defense\n→ Planifier soutenance] as PFE_DEF
+  [POST /:id/grade\n→ Saisir notes jury] as PFE_GRADE
+}
+
+package "💰 /api/finance" #FEE2E2 {
+  [GET /student/:id/balance\n→ Solde scolarité] as FIN_BAL
+  [POST /payment\n→ Initier paiement CMI] as FIN_PAY
+  [POST /payment/callback\n→ Webhook paiement] as FIN_CB
+  [GET /student/:id/invoices\n→ Liste factures] as FIN_INV
+  [POST /block/:id\n→ Bloquer attestations (RULE-FIN-06)] as FIN_BLOCK
+}
+
+package "📢 /api/notifications" #EEF2FF {
+  [GET /\n→ Liste notifications utilisateur] as NOTIF_LIST
+  [POST /\n→ Envoyer notification (Admin)] as NOTIF_SEND
+  [PUT /:id/read\n→ Marquer lue] as NOTIF_READ
+  [POST /broadcast\n→ Diffusion campus-wide] as NOTIF_BROAD
+  [GET /preferences\n→ Préférences canal] as NOTIF_PREF
+}
+
+note bottom #F0FDF4
+  <b>Sécurité API globale :</b>
+  • Bearer JWT (Keycloak OIDC) sur toutes les routes sauf /auth
+  • Rate limiting : 100 req/min par IP (Kong Gateway)
+  • Versioning : /api/v1/... (header Accept-Version)
+  • CORS : whitelist domaines *.emsi.ma + localhost:3000
+  • Validation : class-validator (NestJS Pipes)
+  • Documentation : OpenAPI 3.1 auto-générée via Swagger
+end note
+
+@enduml

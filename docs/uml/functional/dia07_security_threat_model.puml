@@ -1,0 +1,141 @@
+@startuml dia07_security_threat_model
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 10
+skinparam roundcorner 8
+skinparam shadowing false
+
+title <b>🛡️ Modèle de Menaces STRIDE — UNiVora ERP EMSI</b>\nSécurité Applicative · EMSI 2024-2025
+
+skinparam package {
+  BackgroundColor #F8FAFC
+  BorderColor #CBD5E1
+  FontColor #1E3A5F
+  FontSize 12
+}
+
+package "🌐 Zone Publique (Non authentifié)" #FEF2F2 {
+  
+  package "S — Spoofing (Usurpation d'identité)" #FFE4E6 {
+    [🔴 S1 : Attaque credential stuffing\nAPI /auth/login] as S1
+    [🔴 S2 : Phishing liens faux\nportail EMSI] as S2
+    [🟡 S3 : Session hijacking\nToken JWT volé] as S3
+    
+    note bottom of S1 #DCFCE7
+      <b>Mitigation S1:</b>
+      • Rate limiting: 5 tentatives/min/IP
+      • CAPTCHA après 3 échecs
+      • MFA obligatoire (OTP SMS)
+      • bcrypt rounds=12
+    end note
+    
+    note bottom of S3 #DCFCE7
+      <b>Mitigation S3:</b>
+      • JWT expiry: 15min Access
+      • Refresh token: HttpOnly Cookie
+      • Token rotation à chaque refresh
+    end note
+  }
+
+  package "T — Tampering (Falsification)" #FFF3CD {
+    [🔴 T1 : Manipulation note\nAPI /grades PUT] as T1
+    [🔴 T2 : Falsification QR code\nattendance] as T2
+    [🟡 T3 : Injection SQL\nparamètres filtrés] as T3
+    
+    note bottom of T1 #DCFCE7
+      <b>Mitigation T1:</b>
+      • Audit log immuable (audit_logs)
+      • Signature numérique PV
+      • RBAC: seul Admin Scolarité
+      • Hash intégrité avant/après
+    end note
+    
+    note bottom of T2 #DCFCE7
+      <b>Mitigation T2:</b>
+      • HMAC-SHA256 token éphémère
+      • Validité 15 secondes
+      • Géofencing 50m
+    end note
+  }
+}
+
+package "🔒 Zone Authentifiée" #F0FDF4 {
+  
+  package "R — Repudiation (Répudiation)" #FFFBEB {
+    [🟡 R1 : Étudiant nie\nsa présence] as R1
+    [🟡 R2 : Admin nie\nmodification note] as R2
+    
+    note bottom of R1 #DCFCE7
+      <b>Mitigation R1:</b>
+      • Log GPS + timestamp signé
+      • Device fingerprint archivé
+      • Blockchain audit trail
+      • Loi 09-08 CNDP Maroc
+    end note
+  }
+
+  package "I — Information Disclosure (Divulgation)" #FDF4FF {
+    [🔴 I1 : Accès notes\nd'un autre étudiant] as I1
+    [🟡 I2 : Exposition données\npersonnelles (RGPD)] as I2
+    [🟡 I3 : API responses\nverbose (stack traces)] as I3
+    
+    note bottom of I1 #DCFCE7
+      <b>Mitigation I1:</b>
+      • RLS PostgreSQL par tenant
+      • RBAC fin-grained
+      • API: vérification ownership
+      • Tests pentest OWASP
+    end note
+  }
+
+  package "D — Denial of Service (Déni de service)" #FEE2E2 {
+    [🔴 D1 : DDoS API Gateway] as D1
+    [🟡 D2 : Flood notifications\npush massif] as D2
+    
+    note bottom of D1 #DCFCE7
+      <b>Mitigation D1:</b>
+      • Cloudflare DDoS protection
+      • Rate limiting Kong Gateway
+      • Auto-scaling K8s HPA
+      • Circuit breaker (Resilience4j)
+    end note
+  }
+
+  package "E — Elevation of Privilege (Élévation privilèges)" #FFF0F6 {
+    [🔴 E1 : Étudiant accède\nfonctions Admin] as E1
+    [🔴 E2 : IDOR — accès\nressource autre tenant] as E2
+    
+    note bottom of E1 #DCFCE7
+      <b>Mitigation E1:</b>
+      • RBAC strict + Guards NestJS
+      • Keycloak OIDC rôles
+      • Tests autorisation (OWASP A01)
+      • Revue code systématique
+    end note
+    
+    note bottom of E2 #DCFCE7
+      <b>Mitigation E2:</b>
+      • Tenant isolation middleware
+      • RLS au niveau DB
+      • Tests IDOR automatisés
+    end note
+  }
+}
+
+package "📊 Matrice Risques Résidus" #EFF6FF {
+  note as MATRIX
+    <b>Légende niveaux:</b>
+    🔴 CRITIQUE — Action immédiate requise
+    🟡 MODÉRÉ — Plan mitigation à 30j
+    🟢 FAIBLE — Surveillance continue
+    
+    <b>Conformité:</b>
+    • OWASP Top 10 2023
+    • ISO 27001 controls
+    • Loi 09-08 CNDP Maroc (données perso)
+    • RGPD (data subjects Maroc/EU)
+  end note
+}
+
+@enduml

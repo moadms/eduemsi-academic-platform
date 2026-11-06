@@ -1,0 +1,65 @@
+@startuml seq02_zero_excel_deliberation
+title Protocole de Délibération "Zéro Excel" et Scellement Officiel du PV
+autonumber
+skinparam responseMessageBelowArrow true
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+actor "Chef de Département" as DeptHead
+actor "Membres du Jury" as Jury
+boundary "Interface Web Next.js" as WebUI
+control "DeliberationService" as Service
+entity "DeliberationEngine" as Engine
+database "PostgreSQL DB" as DB
+participant "Service PDF / iText" as PDF
+participant "AuditLogService" as Audit
+
+DeptHead -> WebUI: Sélectionne Filière, Promotion et Semestre\nClique sur "Lancer la Délibération Automatique"
+WebUI -> Service: POST /api/v1/deliberations/run\n{semesterId, academicYear}
+
+Service -> DB: SELECT * FROM student_grades WHERE semester_id = ? FOR UPDATE
+DB --> Service: Liste des notes (CC, TP, Examen Ordinaire)
+
+Service -> Engine: computeCohortResults(gradesList)
+
+loop Pour chaque étudiant et chaque module
+    Engine -> Engine: Calculer Moyenne Éléments = (CC * a) + (TP * b) + (Exam * c)
+    Engine -> Engine: Calculer Moyenne Modulaire Globale
+    
+    critical Application Règle Invariable BR-DELIB-04
+        alt Note Examen Final < 7.00 / 20.00
+            Engine -> Engine: Flag hasEliminatoryGrade = TRUE
+            Engine -> Engine: Statut Module = "AJOURNE_RATTRAPAGE"
+        else Note Examen >= 7.00 ET Moyenne Modulaire >= 12.00
+            Engine -> Engine: Statut Module = "VALIDE"
+        else Note Examen >= 7.00 ET Moyenne entre 10.00 et 11.99
+            Engine -> Engine: Statut Module = "VALIDE_PAR_COMPENSATION"
+        else Moyenne Modulaire < 10.00
+            Engine -> Engine: Statut Module = "AJOURNE_RATTRAPAGE"
+        end
+    end
+end
+
+Engine --> Service: CohortDeliberationResults (Moyennes, Classements, Statuts)
+
+Service -> DB: INSERT INTO deliberations (id, semester_id, status, computed_at)\nINSERT INTO module_results (...)
+DB --> Service: OK
+
+Service --> WebUI: 200 OK (Synthèse de délibération, stats, cas litigieux)
+WebUI --> DeptHead: Affiche le tableau interactif de délibération
+
+== Phase de Validation en Commission & Scellement Officiel ==
+Jury -> WebUI: Examen des résultats & Saisie des signatures électroniques
+WebUI -> Service: POST /api/v1/deliberations/{id}/seal\n{jurySignaturesTokens}
+
+Service -> PDF: generateOfficialPV(deliberationId, jurySignatures)
+PDF -> PDF: Générer document A4, filigrane EMSI, tables scellées
+PDF -> PDF: Calculer Empreinte SHA-256 du document
+PDF --> Service: PDF_Bytes + HashSHA256
+
+Service -> DB: UPDATE deliberations SET status = 'SEALED_OFFICIAL',\nreport_hash = ?, sealed_at = NOW()
+Service -> Audit: logAction("DELIBERATION_SEALED", delibId, user, "PV Officiel Validé")
+
+Service --> WebUI: 200 OK (Téléchargement PV Scellé + Notification Étudiants)
+WebUI --> DeptHead: Téléchargement automatique du PV officiel certifié
+@enduml

@@ -1,0 +1,139 @@
+@startuml dia06_notification_flows
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam roundcorner 10
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #6366F1
+  ParticipantBorderColor #6366F1
+  ParticipantBackgroundColor #EEF2FF
+  ParticipantFontColor #1E3A5F
+  NoteBackgroundColor #FEF3C7
+  NoteBorderColor #F59E0B
+  GroupBorderColor #2563EB
+  GroupBackgroundColor #EFF6FF
+  GroupFontColor #1D4ED8
+  LifeLineBorderColor #A5B4FC
+}
+
+title <b>📢 Flux de Notifications — Push · Email · WebSocket · SMS</b>\nUniVora ERP · Système de Notification · EMSI 2024-2025
+
+participant "Événement\nMétier" as EVT #DBEAFE
+participant "RabbitMQ\nBroker" as MQ #FFF7ED
+participant "Notification\nOrchestrator" as ORCH #EEF2FF
+participant "Template\nEngine" as TPL #F0FDF4
+participant "Firebase FCM\n(Push Mobile)" as FCM #FEF2F2
+participant "Brevo API\n(Email)" as EMAIL #F0FDF4
+participant "WebSocket\nServer" as WS #FDF4FF
+participant "Twilio\n(SMS)" as SMS #FFF3CD
+participant "App Mobile\nFlutter" as APP #DBEAFE
+participant "Navigateur\nWeb" as WEB #DCFCE7
+
+== 🔔 CAS 1 : Absence Détectée (RULE-NOT-03) ==
+
+EVT -> MQ : publish('absence.detected')\n{etudiant_id, cours_id,\n salle, heure_fin}
+activate MQ
+MQ -> ORCH : consume('absence.detected')
+deactivate MQ
+activate ORCH
+
+ORCH -> TPL : render('ABSENCE_NOTIF', data)
+activate TPL
+TPL --> ORCH : Template FR: "Absence enregistrée\nCours: GL301 · 09h00"
+deactivate TPL
+
+ORCH -> FCM : sendPush({token: etudiant_fcm_token,\n title: "⚠️ Absence",\n body: "Cours GL301 manqué",\n data: {url: '/presences/detail'}})
+activate FCM
+FCM --> APP : Notification push reçue ✅
+deactivate FCM
+
+ORCH -> EMAIL : sendMail({to: parent@email.ma,\n subject: "Absence de votre enfant",\n template: 'ABSENCE_PARENT'})
+note right EMAIL #FEF3C7
+  Email parents si config activée
+  Délai < 30 min après fin cours
+  RULE-NOT-03
+end note
+
+ORCH -> WS : broadcast('student:{id}:notifications',\n {type: 'ABSENCE', payload: ...})
+activate WS
+WS --> WEB : Event reçu en temps réel ✅
+deactivate WS
+deactivate ORCH
+
+== 📅 CAS 2 : Changement Emploi du Temps (Urgence) ==
+
+EVT -> MQ : publish('schedule.changed')\n{seance_id, old_salle, new_salle,\n affected_users: [list_ids], urgence: true}
+activate MQ
+MQ -> ORCH : consume('schedule.changed')
+deactivate MQ
+activate ORCH
+
+ORCH -> ORCH : Vérifier type.urgence\nSi urgence → multi-canal simultané
+
+par Canaux simultanés (urgence)
+  ORCH -> FCM : Batch push (jusqu'à 500/req)\nGroupe: 'cours_GL3_2025'
+  FCM --> APP : Push reçu ✅
+  
+  ORCH -> WS : broadcast('campus:announcements',\n {priority: HIGH, msg: 'Salle changée'})
+  WS --> WEB : Alert banner affiché ✅
+  
+  ORCH -> SMS : sendSMS(tel, "⚡ Salle changée:\nGL301 → Salle B105")
+  note right SMS #FFF3CD
+    SMS uniquement si urgence = true
+    ET heure < 2h avant séance
+    Coût maîtrisé par règle métier
+  end note
+  SMS --> APP : SMS reçu ✅
+end
+
+ORCH -> MQ : publish('notification.sent')\n{event_id, channels, count_sent}
+deactivate ORCH
+
+== 💰 CAS 3 : Alerte Finance (RULE-FIN-06) ==
+
+EVT -> MQ : publish('payment.overdue')\n{etudiant_id, montant, jours: 11}
+activate MQ
+MQ -> ORCH : consume('payment.overdue')
+deactivate MQ
+activate ORCH
+
+ORCH -> ORCH : Vérifier seuil: jours > 10 (RULE-FIN-06)
+ORCH -> FCM : Push étudiant: "⛔ Attestations bloquées"
+FCM --> APP : Notification reçue ✅
+ORCH -> EMAIL : Email rappel + lien paiement en ligne
+ORCH -> WS : badge_count++ sur espace étudiant
+WS --> WEB : Badge rouge affiché ✅
+
+note right ORCH #FEF2F2
+  <b>RULE-FIN-06 :</b>
+  Blocage attestations si
+  scolarité en retard > 10
+  jours ouvrables
+end note
+
+deactivate ORCH
+
+== 🎓 CAS 4 : Résultats Délibération Disponibles ==
+
+EVT -> MQ : publish('deliberation.published')\n{session_id, filiere, niveau}
+activate MQ
+MQ -> ORCH : consume('deliberation.published')
+deactivate MQ
+activate ORCH
+
+ORCH -> ORCH : Charger liste étudiants concernés
+loop Pour chaque étudiant
+  ORCH -> TPL : render('RESULTS_NOTIF', {note, mention, statut})
+  TPL --> ORCH : Message personnalisé
+  ORCH -> FCM : Push personnalisé\n"📊 Vos résultats : 14.5/20 — BIEN"
+  FCM --> APP : Push reçu ✅
+  ORCH -> EMAIL : Email résultats détaillés + PDF relevé
+end
+
+ORCH -> WS : broadcast('campus:results_available',\n {session: 'S1-2025', filiere: 'GL'})
+WS --> WEB : Banner résultats disponibles ✅
+deactivate ORCH
+
+@enduml

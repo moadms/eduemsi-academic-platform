@@ -1,0 +1,89 @@
+@startuml pkg01_clean_architecture
+title Diagramme de Paquetages & Dépendances Hexagonales (Clean Architecture)
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+package "org.emsi.erp.domain (Cœur Métier Indépendant)" as PkgDomain #WhiteSmoke {
+    package "model" {
+        class "User, Student, Professor" as DomUser
+        class "Campus, Room, Group" as DomCampus
+        class "Seance, Attendance, Textbook" as DomSeance
+        class "Module, Element, Grade, Deliberation" as DomGrade
+        class "ThesisProject, ThesisDefense" as DomPFE
+    }
+    package "repository (Interfaces / Ports)" {
+        interface "StudentRepositoryPort" as PortStudentRepo
+        interface "SeanceRepositoryPort" as PortSeanceRepo
+        interface "DeliberationRepositoryPort" as PortDelibRepo
+        interface "AttendanceTokenPort" as PortToken
+        interface "AIInferencePort" as PortAI
+    }
+    package "exception" {
+        class "BusinessException"
+        class "TransitConflictException"
+        class "EliminatoryGradeException"
+    }
+}
+
+package "org.emsi.erp.application (Cas d'Utilisation & Services)" as PkgApp #LightCyan {
+    package "usecase.attendance" {
+        class "RecordAttendanceUseCase"
+        class "GenerateQRTokenUseCase"
+    }
+    package "usecase.deliberation" {
+        class "RunDeliberationUseCase"
+        class "SealDeliberationReportUseCase"
+    }
+    package "usecase.schedule" {
+        class "OptimizeTimetableUseCase"
+    }
+    package "dto" {
+        class "ScanRequestDTO"
+        class "DeliberationSummaryDTO"
+        class "TimetableDTO"
+    }
+}
+
+package "org.emsi.erp.infrastructure (Adaptateurs Secondaires & Persistance)" as PkgInfra #Cornsilk {
+    package "persistence.jpa" {
+        class "StudentJpaAdapter"
+        class "SeanceJpaAdapter"
+        class "DeliberationJpaAdapter"
+    }
+    package "cache.redis" {
+        class "RedisAttendanceTokenAdapter"
+    }
+    package "ai.ollama" {
+        class "OllamaEmbeddingAdapter"
+    }
+    package "solver.ortools" {
+        class "OrToolsScheduleAdapter"
+    }
+}
+
+package "org.emsi.erp.presentation (Adaptateurs Primaires & REST API)" as PkgWeb #AliceBlue {
+    package "controller" {
+        class "AttendanceRestController"
+        class "DeliberationRestController"
+        class "ScheduleRestController"
+    }
+    package "security" {
+        class "JwtAuthenticationFilter"
+        class "TenantContextFilter"
+    }
+}
+
+' Relations de Dépendance (Règle d'or Clean Architecture : Les dépendances pointent vers l'intérieur)
+PkgApp ..> PkgDomain : Dépend de (Modèle & Ports)
+PkgWeb ..> PkgApp : Déclenche les Use Cases
+PkgInfra ..> PkgDomain : Implémente les Ports (Inversion de Dépendance)
+PkgWeb ..> PkgDomain : Utilise les DTOs mappés du Domaine
+
+PortStudentRepo <|.. StudentJpaAdapter : Implémente
+PortSeanceRepo <|.. SeanceJpaAdapter : Implémente
+PortDelibRepo <|.. DeliberationJpaAdapter : Implémente
+PortToken <|.. RedisAttendanceTokenAdapter : Implémente
+PortAI <|.. OllamaEmbeddingAdapter : Implémente
+
+@enduml

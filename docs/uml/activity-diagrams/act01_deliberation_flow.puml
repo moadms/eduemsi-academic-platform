@@ -1,0 +1,64 @@
+@startuml act01_deliberation_flow
+title Processus de Délibération Semestrielle et Contrôle des Invariants Métier
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+skinparam conditionStyle inside
+
+|Enseignants|
+start
+:Saisir l'ensemble des notes (CC, TP, Examen Ordinaire);
+:Confirmer la complétude et soumettre au département;
+
+|Chef de Département / Jury|
+:Vérifier la complétude des notes de la filière;
+if (Notes manquantes ?) then (oui)
+    :Envoyer une relance urgente aux professeurs retardataires;
+    stop
+else (non)
+    :Verrouiller la saisie des notes (Freeze);
+    :Lancer le calcul automatisé de délibération;
+endif
+
+|Moteur de Délibération (Système)|
+:Acquérir les données de la cohorte;
+repeat :Pour chaque étudiant de la promotion;
+    :Calculer les moyennes des éléments constitutifs;
+    :Calculer la moyenne pondérée de chaque module;
+    
+    if (Note Examen Final < 7.00/20.00 ?) then (oui)
+        #pink:Marquer le module NON VALIDE;
+        #pink:Déclencher Ajournement en Rattrapage\n(Application stricte BR-DELIB-04);
+    else (non)
+        if (Moyenne Modulaire >= 12.00/20 ?) then (oui)
+            #lightgreen:Valider le Module (V);
+        else (non)
+            if (Moyenne Modulaire >= 10.00 et Moyenne Semestre >= 10.00 ?) then (oui)
+                #lightyellow:Valider par Compensation (VPC);
+            else (non)
+                #pink:Ajourner le Module en Rattrapage (NV);
+            endif
+        endif
+    endif
+repeat while (Étudiants restants ?) is (oui) not (non)
+
+:Calculer les moyennes semestrielles et classements de la cohorte;
+:Produire le projet de Procès-Verbal (PV) préliminaire;
+
+|Chef de Département / Jury|
+:Examiner le PV en commission de délibération;
+if (Ajustements ou dérogations exceptionnelles ?) then (oui)
+    :Consigner la motivation dans le rapport d'incident;
+    :Appliquer la rectification validée par le jury;
+endif
+:Signer électroniquement le PV officiel;
+
+|Moteur de Délibération (Système)|
+:Générer le PDF scellé avec empreinte cryptographique SHA-256;
+:Horodater et consigner l'opération dans audit_logs (Loi 09-08);
+:Générer automatiquement les listes de convocation aux rattrapages;
+
+|Portail Étudiant|
+:Publier les relevés de notes officiels;
+:Ouvrir la fenêtre légale de recours de 72 heures;
+stop
+@enduml

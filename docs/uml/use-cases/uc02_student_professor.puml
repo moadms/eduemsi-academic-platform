@@ -1,0 +1,50 @@
+@startuml uc02_student_professor
+title Cas d'Utilisation Détaillés - Cycle Cours, Assiduité Mobile & Pédagogie
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+actor "Étudiant EMSI" as Student
+actor "Professeur EMSI" as Prof
+actor "Service Scolarité" as Scol
+actor "Serveur d'Horloge NTP" as NTP <<Système>>
+actor "Système Redis (TTL)" as Redis <<Système>>
+
+rectangle "Module Pédagogie & Assiduité Intelligente" {
+    usecase "Projeter le QR Code Dynamique" as UC_GenQR
+    usecase "Renouveler le Jeton toutes les 15s" as UC_RotateToken
+    usecase "Scanner le QR Code via App Mobile" as UC_ScanQR
+    usecase "Vérifier la validité temporelle (15s)" as UC_VerifyTTL
+    usecase "Vérifier l'unicité du Device ID" as UC_VerifyDevice
+    usecase "Enregistrer l'émargement" as UC_SaveAttendance
+    usecase "Déclarer un problème technique d'émargement" as UC_ReportTechIssue
+    usecase "Saisir le Cahier de Texte Post-Séance" as UC_CahierTexte
+    usecase "Joindre des supports de cours (PDF/Slides)" as UC_AttachResources
+    usecase "Notifier l'Enseignant à T_fin" as UC_NotifyProf
+    usecase "Consulter l'Historique d'Assiduité" as UC_ViewAttendance
+    usecase "Déposer un Justificatif Médical" as UC_SubmitMedicalCert
+    usecase "Valider/Rejeter le Justificatif" as UC_ValidateCert
+}
+
+Prof --> UC_GenQR
+UC_GenQR ..> UC_RotateToken : <<include>>
+UC_RotateToken --> Redis : stocke jeton 15s
+UC_RotateToken --> NTP : synchronise heure
+
+Student --> UC_ScanQR
+UC_ScanQR ..> UC_VerifyTTL : <<include>>
+UC_ScanQR ..> UC_VerifyDevice : <<include>>
+UC_VerifyTTL ..> UC_SaveAttendance : <<include>>
+UC_ScanQR ..> UC_ReportTechIssue : <<extend>> \n(si échec caméra/réseau)
+
+Prof --> UC_CahierTexte
+UC_CahierTexte ..> UC_AttachResources : <<extend>>
+UC_NotifyProf --> Prof : push à T_fin de cours
+UC_NotifyProf ..> UC_CahierTexte : déclenche
+
+Student --> UC_ViewAttendance
+Student --> UC_SubmitMedicalCert
+Scol --> UC_ValidateCert
+UC_ValidateCert ..> UC_ViewAttendance : met à jour statut
+@enduml

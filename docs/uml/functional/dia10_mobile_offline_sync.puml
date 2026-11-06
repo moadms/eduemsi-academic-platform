@@ -1,0 +1,142 @@
+@startuml dia10_mobile_offline_sync
+!theme plain
+skinparam backgroundColor #FAFAFA
+skinparam defaultFontName "Segoe UI"
+skinparam defaultFontSize 11
+skinparam roundcorner 10
+skinparam shadowing false
+skinparam sequence {
+  ArrowColor #059669
+  ParticipantBorderColor #059669
+  ParticipantBackgroundColor #F0FDF4
+  ParticipantFontColor #065F46
+  NoteBackgroundColor #FEF3C7
+  NoteBorderColor #F59E0B
+  GroupBorderColor #7C3AED
+  GroupBackgroundColor #F5F3FF
+}
+
+title <b>📱 Architecture Offline-First Flutter — Synchronisation Différée</b>\nUniVora ERP · App Mobile · EMSI 2024-2025
+
+participant "UI Flutter\n(Dart)" as UI #DBEAFE
+participant "BLoC Layer\n(State Mgmt)" as BLOC #EEF2FF
+participant "Repository\n(Offline-First)" as REPO #F0FDF4
+participant "Isar DB\n(Local SQLite)" as ISAR #FFF7ED
+participant "Sync Queue\n(Pending ops)" as QUEUE #FDF4FF
+participant "Connectivity\nMonitor" as CONN #FFFBEB
+participant "HTTP Client\nDio" as HTTP #DBEAFE
+participant "API Backend\nNestJS" as API #EFF6FF
+
+== 📱 Cas 1 : Application démarrée (Mode Hors-ligne) ==
+
+UI -> BLOC : Ouvrir emploi du temps
+activate BLOC
+BLOC -> REPO : getSchedule(userId, week)
+activate REPO
+REPO -> CONN : isConnected?
+activate CONN
+CONN --> REPO : ❌ Hors-ligne (WiFi Off)
+deactivate CONN
+REPO -> ISAR : SELECT * FROM schedules\nWHERE user_id=? AND week=?
+activate ISAR
+ISAR --> REPO : [Data en cache]\n⚠️ Dernière MàJ: il y a 2h
+deactivate ISAR
+REPO --> BLOC : ScheduleData + {stale: true, cached_at: ...}
+deactivate REPO
+BLOC --> UI : Afficher planning\n+ Banner "Mode hors-ligne"
+deactivate BLOC
+note right UI #FEF3C7
+  L'étudiant voit son emploi
+  du temps même sans réseau
+  Indicateur cache visible
+end note
+
+== ✅ Cas 2 : Scan QR Présence Hors-ligne ==
+
+UI -> BLOC : Scanner QR code
+activate BLOC
+BLOC -> REPO : recordAttendance({qr_token, gps, timestamp})
+activate REPO
+REPO -> CONN : isConnected?
+CONN --> REPO : ❌ Hors-ligne
+REPO -> ISAR : Valider token QR localement\n(cache session active)
+ISAR --> REPO : Token valide (dans fenêtre 15s)
+REPO -> QUEUE : enqueue({type: 'ATTENDANCE_SCAN',\n payload: {token, gps, ts},\n retry: 3, priority: HIGH})
+activate QUEUE
+QUEUE --> REPO : queued_id = #456
+deactivate QUEUE
+REPO -> ISAR : INSERT presences_pending\n{status: 'PENDING_SYNC'}
+ISAR --> REPO : Saved locally
+REPO --> BLOC : {success: true, mode: 'OFFLINE', sync_pending: true}
+deactivate REPO
+BLOC --> UI : ✅ Présence enregistrée\n(sync automatique dès réseau)
+deactivate BLOC
+
+== 🔄 Cas 3 : Retour en Ligne — Synchronisation Automatique ==
+
+CONN -> BLOC : onConnectivityChanged(CONNECTED)
+activate BLOC
+BLOC -> REPO : triggerSync()
+activate REPO
+
+REPO -> ISAR : SELECT * FROM sync_queue\nWHERE status='PENDING'\nORDER BY priority DESC, created_at ASC
+ISAR --> REPO : [3 opérations en attente]
+
+loop Pour chaque opération pending
+  REPO -> HTTP : POST /api/attendance/scan\n{payload, offline_timestamp}
+  activate HTTP
+  HTTP -> API : Request avec header\nX-Offline-Mode: true
+  activate API
+  
+  alt Sync réussie
+    API --> HTTP : 200 OK {presence_id, validated: true}
+    deactivate API
+    HTTP --> REPO : Success
+    deactivate HTTP
+    REPO -> ISAR : UPDATE sync_queue SET status='SYNCED'
+    REPO -> ISAR : UPDATE presences SET status='CONFIRMED'
+    
+  else Conflit détecté (doublon côté serveur)
+    API --> HTTP : 409 Conflict {reason: 'ALREADY_RECORDED'}
+    HTTP --> REPO : ConflictError
+    REPO -> ISAR : UPDATE sync_queue SET status='CONFLICT'
+    REPO -> BLOC : notifyConflict(op_id, reason)
+    BLOC --> UI : ⚠️ Présence déjà enregistrée\n(ignorée — pas d'erreur)
+    
+  else Erreur réseau (retry)
+    HTTP --> REPO : NetworkError
+    REPO -> QUEUE : reschedule(op_id, delay=30s)
+  end
+end
+
+REPO --> BLOC : SyncResult {synced: 2, conflicts: 1, pending: 0}
+deactivate REPO
+BLOC --> UI : 🔄 Synchronisation terminée\n2 présences confirmées
+deactivate BLOC
+
+== 📥 Cas 4 : Mise à Jour Cache (Fond) ==
+
+CONN -> REPO : Connexion stable depuis 5min
+activate REPO
+REPO -> HTTP : GET /api/schedule?week=current&delta=last_sync
+activate HTTP
+HTTP -> API : Delta sync (seulement nouvelles données)
+API --> HTTP : {changes: [...], deleted: [...], server_ts: ...}
+deactivate HTTP
+REPO -> ISAR : UPSERT schedules (merge delta)
+REPO -> ISAR : DELETE schedules WHERE id IN (deleted_ids)
+REPO -> ISAR : UPDATE sync_metadata SET last_sync=now()
+deactivate REPO
+
+note bottom #DCFCE7
+  <b>Stratégie Cache Isar (Local DB Flutter):</b>
+  • TTL par type de données :
+    Emploi du temps : 24h
+    Notes (lectures seules) : 7j
+    Profil étudiant : 30j
+  • Taille max cache : 50MB
+  • Priorité sync : ATTENDANCE > GRADES > SCHEDULE
+  • Conflict resolution : Server-wins (côté métier critique)
+end note
+
+@enduml

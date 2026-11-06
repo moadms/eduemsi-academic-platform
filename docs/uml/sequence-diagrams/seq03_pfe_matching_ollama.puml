@@ -1,0 +1,54 @@
+@startuml seq03_pfe_matching_ollama
+title Affectation Intelligente des Jurys de PFE par Modèle Local Ollama
+autonumber
+skinparam responseMessageBelowArrow true
+skinparam shadowing false
+skinparam defaultFontName "Segoe UI"
+
+actor "Coordinateur PFE" as Coord
+boundary "Console Admin Next.js" as UI
+control "ThesisMatchService" as Service
+participant "Local Ollama LLM\n(Llama 3.2 on-premise)" as Ollama
+database "PostgreSQL (pgvector)" as DB
+participant "NotificationService" as Notif
+
+Coord -> UI: Sélectionne la session de soutenance PFE 5A\nClique sur "Optimiser la Répartition des Jurys"
+UI -> Service: POST /api/v1/theses/match-juries\n{academicYear, departmentId}
+
+Service -> DB: SELECT id, title, abstract, supervisor_id FROM theses WHERE status = 'SUBMITTED'
+DB --> Service: Liste des mémoires de PFE déposés
+
+Service -> DB: SELECT id, name, skills_keywords, max_juries FROM professors
+DB --> Service: Profils et compétences des enseignants
+
+loop Pour chaque mémoire de PFE soumis
+    Service -> Ollama: POST /api/embeddings\n{model: "llama3.2", prompt: thesis.abstract}
+    Ollama --> Service: Vector<1024> (Embedding Sémantique)
+    Service -> DB: UPDATE theses SET embedding_vector = ? WHERE id = ?
+end
+
+Service -> Service: Calcul de la Matrice de Similarité Cosinus\ncos(theta) = (A . B) / (||A|| * ||B||)
+
+loop Pour chaque PFE
+    Service -> Service: Filtrer les candidats enseignants :
+    note over Service
+    Contraintes strictes :
+    1. Score de similarité cosinus >= 0.70
+    2. Enseignant != Encadrant du projet (BR-PFE-07)
+    3. Respect de la charge maximale par enseignant (<= 4 par jour)
+    4. Disponibilité de créneau de salle sans conflit
+    end note
+    Service -> Service: Assigner Président du Jury + Rapporteur optimal
+end
+
+Service -> DB: INSERT INTO thesis_defenses (thesis_id, president_id, rapporteur_id, slot_id)
+DB --> Service: Affectations enregistrées à l'état 'PROPOSED'
+
+Service --> UI: 200 OK (Grille prédictive des soutenances avec scores de confiance)
+UI --> Coord: Visualisation de la grille d'affectation avec jauges d'adéquation
+
+Coord -> UI: Valide la grille après ajustements mineurs
+UI -> Service: POST /api/v1/theses/defenses/publish
+Service -> Notif: Envoyer convocations officielles (iCal + Email) aux étudiants et jurys
+Notif --> Coord: Convocations expédiées avec succès
+@enduml
