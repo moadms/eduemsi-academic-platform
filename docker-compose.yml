@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  # -------------------------------------------------------------
+  # Base de Données Relationnelle PostgreSQL 16
+  # -------------------------------------------------------------
+  postgres:
+    image: postgres:16-alpine
+    container_name: emsi-postgres-db
+    environment:
+      POSTGRES_DB: emsi_academic_db
+      POSTGRES_USER: emsi_admin
+      POSTGRES_PASSWORD: emsi_secure_password_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend-spring/src/main/resources/db/migration/V1__init_schema.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - emsi-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U emsi_admin -d emsi_academic_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # -------------------------------------------------------------
+  # Backend API Spring Boot 3.3 (Java 21, OR-Tools, Gemini AI)
+  # -------------------------------------------------------------
+  backend:
+    build:
+      context: ./backend-spring
+      dockerfile: Dockerfile
+    container_name: emsi-backend-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/emsi_academic_db
+      SPRING_DATASOURCE_USERNAME: emsi_admin
+      SPRING_DATASOURCE_PASSWORD: emsi_secure_password_2026
+      SPRING_PROFILES_ACTIVE: prod
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-AIzaSyPlaceholderFreeTierKey}
+    ports:
+      - "8080:8080"
+    networks:
+      - emsi-network
+
+  # -------------------------------------------------------------
+  # Frontend Web Angular 18 Standalone & Tailwind CSS
+  # -------------------------------------------------------------
+  frontend:
+    build:
+      context: ./frontend-angular
+      dockerfile: Dockerfile
+    container_name: emsi-frontend-web
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+    networks:
+      - emsi-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  emsi-network:
+    driver: bridge
